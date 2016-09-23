@@ -1,0 +1,264 @@
+\documentclass[authoryear]{elsarticle}
+
+% ------------ packages -------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[OT1]{fontenc}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+\usepackage{url}
+\usepackage[bookmarks]{hyperref}
+
+%\usetikzlibrary{shapes.misc,fit}
+\usetikzlibrary{%
+   arrows,%
+   calc,%
+   fit,%
+   patterns,%
+   plotmarks,%
+   shapes.geometric,%
+   shapes.misc,%
+   shapes.symbols,%
+   shapes.arrows,%
+   shapes.callouts,%
+   shapes.multipart,%
+   shapes.gates.logic.US,%
+   shapes.gates.logic.IEC,%
+   er,%
+   automata,%
+   backgrounds,%
+   chains,%
+   topaths,%
+   trees,%
+   petri,%
+   mindmap,%
+   matrix,%
+   calendar,%
+   folding,%
+   fadings,%
+   through,%
+   patterns,%
+   positioning,%
+   scopes,%
+   decorations.fractals,%
+   decorations.shapes,%
+   decorations.text,%
+   decorations.pathmorphing,%
+   decorations.pathreplacing,%
+   decorations.footprints,%
+   decorations.markings,%
+   shadows}
+
+%\usepackage{hyperref}
+%\usepackage[bookmarks]{hyperref}
+%\usepackage[colorlinks=true,citecolor=red,linkcolor=black]{hyperref}
+
+% ------------ custom defs -------------
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\posreals}{\reals_{>0}}
+\newcommand{\posrealszero}{\reals_{\ge 0}}
+\newcommand{\naturals}{\mathbb{N}}
+
+\newcommand{\dd}{\,\mathrm{d}}
+
+\newcommand{\mbf}[1]{\mathbf{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\renewcommand{\vec}[1]{{\bm#1}}
+
+\newcommand{\uz}{^{(0)}} % upper zero
+\newcommand{\un}{^{(n)}} % upper n
+\newcommand{\ui}{^{(i)}} % upper i
+
+\newcommand{\ul}[1]{\underline{#1}}
+\newcommand{\ol}[1]{\overline{#1}}
+
+\newcommand{\Rsys}{R_\text{sys}}
+\newcommand{\lRsys}{\ul{R}_\text{sys}}
+\newcommand{\uRsys}{\ol{R}_\text{sys}}
+
+\newcommand{\Fsys}{F_\text{sys}}
+\newcommand{\lFsys}{\ul{F}_\text{sys}}
+\newcommand{\uFsys}{\ol{F}_\text{sys}}
+
+\def\Rsys{R_\text{sys}}
+\def\Tsys{T_\text{sys}}
+
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\V}{\operatorname{Var}}
+\newcommand{\wei}{\operatorname{Wei}} % Weibull Distribution
+\newcommand{\ig}{\operatorname{IG}}   % Inverse Gamma Distribution
+
+\newcommand{\El}{\ul{\operatorname{E}}}
+\newcommand{\Eu}{\ol{\operatorname{E}}}
+
+\def\yz{y\uz}
+\def\yn{y\un}
+%\def\yi{y\ui}
+\newcommand{\yfun}[1]{y^{({#1})}}
+\newcommand{\yfunl}[1]{\ul{y}^{({#1})}}
+\newcommand{\yfunu}[1]{\ol{y}^{({#1})}}
+
+\def\ykz{y\uz_k}
+\def\ykn{y\un_k}
+
+\def\yzl{\ul{y}\uz}
+\def\yzu{\ol{y}\uz}
+\def\ynl{\ul{y}\un}
+\def\ynu{\ol{y}\un}
+\def\yil{\ul{y}\ui}
+\def\yiu{\ol{y}\ui}
+
+\def\ykzl{\ul{y}\uz_k}
+\def\ykzu{\ol{y}\uz_k}
+\def\yknl{\ul{y}\un_k}
+\def\yknu{\ol{y}\un_k}
+
+\newcommand{\ykzfun}[1]{y\uz_{#1}}
+\newcommand{\ykzlfun}[1]{\ul{y}\uz_{#1}}
+\newcommand{\ykzufun}[1]{\ol{y}\uz_{#1}}
+
+\def\nz{n\uz}
+\def\nn{n\un}
+%\def\ni{n\ui}
+\newcommand{\nfun}[1]{n^{({#1})}}
+\newcommand{\nfunl}[1]{\ul{n}^{({#1})}}
+\newcommand{\nfunu}[1]{\ol{n}^{({#1})}}
+
+\def\nkz{n\uz_k}
+\def\nkn{n\un_k}
+\newcommand{\nkzfun}[1]{n\uz_{#1}}
+\newcommand{\nkzlfun}[1]{\ul{n}\uz_{#1}}
+\newcommand{\nkzufun}[1]{\ol{n}\uz_{#1}}
+
+\def\nzl{\ul{n}\uz}
+\def\nzu{\ol{n}\uz}
+\def\nnl{\ul{n}\un}
+\def\nnu{\ol{n}\un}
+\def\nil{\ul{n}\ui}
+\def\niu{\ol{n}\ui}
+
+\def\nkzl{\ul{n}\uz_k}
+\def\nkzu{\ol{n}\uz_k}
+\def\nknl{\ul{n}\un_k}
+\def\nknu{\ol{n}\un_k}
+
+
+\def\taut{\tau(\vec{t})}
+\def\ttau{\tilde{\tau}}
+\def\ttaut{\ttau(\vec{t})}
+
+\def\MZ{\mathcal{M}\uz}
+\def\MN{\mathcal{M}\un}
+
+\def\MkZ{\mathcal{M}\uz_k}
+\def\MkN{\mathcal{M}\un_k}
+
+\def\PkZ{\Pi\uz_k}
+\def\PkN{\Pi\un_k}
+\newcommand{\PZi}[1]{\Pi\uz_{#1}}
+
+\def\tnow{t_\text{now}}
+\def\tpnow{t^+_\text{now}}
+
+
+% ------------ options -------------
+
+\allowdisplaybreaks
+
+\journal{RESS}
+
+\begin{document}
+
+% ------------ frontmatter -------------
+
+\begin{frontmatter}
+\title{Condition-Based Maintenance for Systems based on Bayesian Component Models***}
+
+\author[tue]{Gero Walter}
+\ead{g.m.walter@tue.nl}
+\author[tue]{Simme Douwe Flapper}
+\ead{s.d.p.flapper@tue.nl}
+
+\address[tue]{School of Industrial Engineering, Eindhoven University of Technology, Eindhoven, Netherlands}
+
+
+\begin{abstract}
+CBM when no (continuous) degradation signal for system available, but status of components observable (works yes/no)
+
+use method from asce-asme paper:
+gives delay time distribution, base maintenance decision directly on that
+(via threshold for reliability?)
+
+Bayesian approach allows
+component models to include expert info, test data (if available), and status of components in the running system
+(write down explicit formula for test data including censored observations)
+
+main message: can do cbm without degradation signal,
+useful for redundant systems,
+method reflects aleatory and epistemic uncertainty in all information sources
+\end{abstract}
+
+\begin{keyword}
+condition-based maintenance \sep system reliability \sep delay time model \sep survival signature \sep imprecise probability \sep p-box
+\end{keyword}
+\end{frontmatter}
+
+
+% ------------ manuscript -------------
+
+\section{Introduction}
+\label{intro}
+
+CBM usually with directly or indirectly observable continuous measurable condition / degradation signal,
+delay time (time till failure) via distance of current signal level to fixed known failure threshold
+%but in practice threshold often not known
+
+here we propose a different approach to CBM: if no degradation signal for system available,
+use system layout (reliability block diagram) and information on components' status:
+need only to observe when a component fails,
+and expert information about expected component failure times.
+
+i.e., model not for a degradation signal of the system, but for component lifetimes:
+we use the well-known Weibull model for component lifetimes.
+To keep the model simple, we assume known shape parameter,
+and that components fail independently.
+these simplifying assumptions might not hold in practice,
+then model can serve as approximation.
+
+The Bayesian approach to the Weibull model allows to integrate, for each component type,
+three sources of information: expert knowledge, data from component tests,
+and status of components in the monitored system, i.e., current system condition.
+
+Furthermore, our method appropriately reflects epistemic uncertainty,
+by using parametric p-boxes, an imprecise probability model, for the component models.
+
+epistemic vs. aleatoric uncertainty: big topic in reliability and risk
+
+***NASA Langley UQ challenge, illustration that uniform distribution does not express ignorance (Edoardo Patelli)***
+
+The proposed system delay time model adequately reflects uncertainty in the delay time distribution
+according to the current system status,
+in particular making more cautious predictions when failure behaviour in the monitored system
+seems to deviate from what is expected from expert knowledge and test data.
+
+
+\section*{Acknowledgements}
+
+CAMPI
+
+%\bibliographystyle{elsarticle-num}
+%\bibliography{refs}
+
+\end{document}
