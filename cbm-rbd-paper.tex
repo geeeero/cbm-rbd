@@ -230,7 +230,7 @@ use system layout (reliability block diagram) and information on components' sta
 need only to observe when a component fails,
 and expert information about expected component failure times.
 
-i.e., model not for a degradation signal of the system, but for component lifetimes:
+i.e., parametric model not for a degradation signal of the system or delay time, but for component lifetimes:
 we use the well-known Weibull model for component lifetimes.
 To keep the model simple, we assume known shape parameter,
 and that components fail independently.
@@ -246,13 +246,51 @@ by using parametric p-boxes, an imprecise probability model, for the component m
 
 epistemic vs. aleatoric uncertainty: big topic in reliability and risk
 
-***NASA Langley UQ challenge, illustration that uniform distribution does not express ignorance (Edoardo Patelli)***
+***refer to Terje Aven, NASA Langley UQ challenge, illustration that uniform distribution does not express ignorance (Edoardo Patelli)***
 
 The proposed system delay time model adequately reflects uncertainty in the delay time distribution
 according to the current system status,
 in particular making more cautious predictions when failure behaviour in the monitored system
 seems to deviate from what is expected from expert knowledge and test data.
 
+***to add timing of next inspection into the model we would need to add interval-censored data
+(failure has happened between last and current inspection)
+
+***3-param Weibull for repaired/exchanged components? Means `just' to shift time?
+(introduces new component type for $\Rsys(t)$ calculation but with same posterior parameters as `unshifted' component type)
+
+***Wang \& Jia 2007 give a model that uses Bayesian updating,
+but the actual model is different:
+
+They have a model for defects arrival (homogeneous Poisson process with rate $\lambda$, so no aging),
+model for delay time (time between defect and failure) is Weibull $h \sim \wei(\alpha,\beta)$,
+and each of $\lambda, \alpha, \beta$ has a Gamma prior distribution.
+The expected overall cost rate is then used to find a cost-optimal inspection interval.
+For this they assume that failures are immediately repaired,
+and defects found in an inspection are then repaired.
+Is this really CBM?
+
+They use prior predictive distributions for certain statistics (number of defects, number of failures, \ldots between $0$ and $T$)
+to obtain prior values for the Gamma hyperparameters,
+by solving prior predictive equations -- but give no detail on how they actually do this.
+
+In the end they actually do not advocate to calculate the posterior expected cost rate (15),
+but rather plug in posterior estimates for $\lambda, \alpha, \beta$,
+so neglecting uncertainty in estimation.
+%They also do not indicate how sensitive 
+
+We do not assume a parametric distribution for delay time,
+it rather arises as a consequence of the system layout and component failure distributions.
+
+Expert input in our model is, for each component type,
+Weibull shape parameter, range of expected failure time (translated to scale parameter),
+and range of expert info weight (how sure about mean failure time guess).
+By using ranges we do a systematic sensitivity analysis.
+
+Our model gives the lower and upper delay time distribution at $\tnow$,
+so takes current system condition into account.
+We need additional criteria to indicate repair now yes/no.
+(Could indicate which failed component(s) to repair best.)
 
 \section*{Acknowledgements}
 
