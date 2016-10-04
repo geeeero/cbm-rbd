@@ -293,6 +293,40 @@ so neglecting uncertainty in estimation.
 it rather arises as a consequence of the system layout and component failure distributions.)
 
 
+\section{***summary of ASCE-ASME paper}
+
+sets of priors on component survival,
+survival signature,
+test data inclusion,
+noninformatiove censoring,
+set of system reliability curves as output,
+wider set in case of prior-data conflict
+
+
+\section{***extensions to ASCE-ASME paper}
+
+repaired components: separate type in survival signature,
+but same hyperparameter learning.
+
+\section{***from (set of) survival curves to maintenance decision}
+
+infinite-horizon cost rate (discounted as well?)
+like in age-based policy:
+this indicates in how much time from now one should repair the system
+
+\begin{align*}
+g(\tau) &= \frac{ECC(\tau)}{ECL(\tau)} = \frac{c_p \Rsys(\tau) + c_u \big(1-\Rsys(\tau)\big)}{\tau \Rsys(\tau) + \int_0^\tau \Rsys(t) \dd t}
+\end{align*}
+
+and $\tau^* = \arg\min g(\tau)$ is the cost-optimal repair time from now
+
+sets of $\Rsys(t)$: need to determine sets of $g(\tau)$.
+for each $\tau$, fix $\Rsys(\tau) \in [\lRsys(\tau), \uRsys(\tau)]$ and optimize $I(\tau) = \int_0^\tau \Rsys(t) \dd t$:
+$\ol{I}(\tau)$ by $\uRsys(t)$, $\ul{I}(\tau)$ by $\lRsys(t)$ until level of $\Rsys(\tau)$.
+
+from sets of $g(\tau)$ to (set of) $\tau^*$:
+worst case, best case, interval (how?)
+
 
 \section{Outlook}
 
