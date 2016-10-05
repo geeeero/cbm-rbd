@@ -259,7 +259,7 @@ and range of expert info weight (how sure about mean failure time guess).
 By using ranges we do a systematic sensitivity analysis.
 
 Our model gives the lower and upper delay time distribution at $\tnow$,
-so takes current system condition into account.
+taking current system condition into account.
 
 We need additional criteria to indicate repair now yes/no.
 (Could indicate which failed component(s) to repair best.)
@@ -267,12 +267,13 @@ We need additional criteria to indicate repair now yes/no.
 
 \subsection{Literature***}
 
-example for Bayesian method in maintenance planning: \cite{2007:wang-jia}
+Example for Bayesian method in maintenance planning: \cite{2007:wang-jia}
 
 ***Wang \& Jia (2007) propose a model that uses Bayesian updating,
 but the model aims to identify an optimal inspection interval.
 This is CBM via inspections, not CBM via continuous monitoring as we aim to do.
 
+\begin{scriptsize}
 Wang \& Jia (2007) have a model for defects arrival (homogeneous Poisson process with rate $\lambda$, so no aging),
 model for delay time (time between defect and failure) is Weibull $h \sim \wei(\alpha,\beta)$,
 and each of $\lambda, \alpha, \beta$ has a Gamma prior distribution.
@@ -287,13 +288,18 @@ by solving prior predictive equations -- but give no detail on how they actually
 In the end they actually do not advocate to calculate the posterior expected cost rate (15),
 but rather plug in posterior estimates for $\lambda, \alpha, \beta$,
 so neglecting uncertainty in estimation.
-%They also do not indicate how sensitive 
-
 (We do not assume a parametric distribution for delay time,
 it rather arises as a consequence of the system layout and component failure distributions.)
 
+\end{scriptsize}
 
-\section{***summary of ASCE-ASME paper}
+Example for Bayesian method in CBM with continuous monitoring: \cite{2011:elwany-et-al}
+(exponential degradation model, whose parameters $\theta'$ and $\beta$ each have a prior
+which is updated using the degradation signal history,
+and use total expected infinite-horizon discounted cost to determine the maintenance policy)
+
+
+\section{***summary of ASCE-ASME paper method}
 
 sets of priors on component survival,
 survival signature,
@@ -306,26 +312,39 @@ wider set in case of prior-data conflict
 \section{***extensions to ASCE-ASME paper}
 
 repaired components: separate type in survival signature,
-but same hyperparameter learning.
+but same hyperparameter learning (using actual age).
+
 
 \section{***from (set of) survival curves to maintenance decision}
 
-infinite-horizon cost rate (discounted as well?)
+infinite-horizon cost rate $g(\tau)$ (discounted as well?)
 like in age-based policy:
-this indicates in how much time from now one should repair the system
-
+this indicates in how much time from now ($\tnow$) it is economical to repair the system
 \begin{align*}
 g(\tau) &= \frac{ECC(\tau)}{ECL(\tau)} = \frac{c_p \Rsys(\tau) + c_u \big(1-\Rsys(\tau)\big)}{\tau \Rsys(\tau) + \int_0^\tau \Rsys(t) \dd t}
 \end{align*}
+and $\tau^* = \arg\min g(\tau) - \tnow$ is the cost-optimal repair time from now
+($\Rsys(\cdot)$ is always in terms of time since system startup)
 
-and $\tau^* = \arg\min g(\tau)$ is the cost-optimal repair time from now
-
-sets of $\Rsys(t)$: need to determine sets of $g(\tau)$.
+Sets of $\Rsys(t)$: need to determine sets of $g(\tau)$.
 for each $\tau$, fix $\Rsys(\tau) \in [\lRsys(\tau), \uRsys(\tau)]$ and optimize $I(\tau) = \int_0^\tau \Rsys(t) \dd t$:
-$\ol{I}(\tau)$ by $\uRsys(t)$, $\ul{I}(\tau)$ by $\lRsys(t)$ until level of $\Rsys(\tau)$.
+\begin{itemize}
+\item nonpar.: $\ol{I}(\tau)$ by $\uRsys(t)$, $\ul{I}(\tau)$ by $\lRsys(t)$ until level of $\Rsys(\tau)$.
+\item par.: optimize over $\nkzfun{1} \in \left[\nkzlfun{1}, \nkzufun{1}\right], \ldots, \nkzfun{K} \in \left[\nkzlfun{K}, \nkzufun{K}\right]$\\
+(is $g(\tau)$ indeed monotone in $\ykzfun{1}, \ldots \ykzfun{K}$?)
+\end{itemize}
 
-from sets of $g(\tau)$ to (set of) $\tau^*$:
+From sets of $g(\tau)$ to (set of) $\tau^*$:
 worst case, best case, interval (how?)
+
+Or, alternatively, simple 95\% policy? repair time from now such that system failure probability is below 5\%
+
+
+\section{Case study / numerical example}
+
+what system layout? something that demonstrates the power of the method (complex layout) or something simple?
+
+complex: e.g., bridge system where each of the four elements is a two out of three, and the bridge element is a two-parallel.
 
 
 \section{Outlook}
@@ -341,6 +360,9 @@ introduces new component type for $\Rsys(t)$ calculation but with same posterior
 \section*{Acknowledgements}
 
 CAMPI
+
+
+\section*{Bibliography}
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{refs}
