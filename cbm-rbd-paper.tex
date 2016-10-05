@@ -84,6 +84,8 @@
 \newcommand{\ul}[1]{\underline{#1}}
 \newcommand{\ol}[1]{\overline{#1}}
 
+\newcommand{\Tsys}{T_\text{sys}}
+
 \newcommand{\Rsys}{R_\text{sys}}
 \newcommand{\lRsys}{\ul{R}_\text{sys}}
 \newcommand{\uRsys}{\ol{R}_\text{sys}}
@@ -92,8 +94,8 @@
 \newcommand{\lFsys}{\ul{F}_\text{sys}}
 \newcommand{\uFsys}{\ol{F}_\text{sys}}
 
-\def\Rsys{R_\text{sys}}
-\def\Tsys{T_\text{sys}}
+\newcommand{\lgt}{\ul{g}}
+\newcommand{\ugt}{\ol{g}}
 
 \newcommand{\E}{\operatorname{E}}
 \newcommand{\V}{\operatorname{Var}}
@@ -184,7 +186,7 @@
 % ------------ frontmatter -------------
 
 \begin{frontmatter}
-\title{Condition-Based Maintenance for Systems based on Bayesian Component Models***}
+\title{Condition-Based Maintenance for Systems based on Bayesian P-Box Component Models***}
 
 \author[tue]{Gero Walter}
 \ead{g.m.walter@tue.nl}
@@ -198,20 +200,19 @@
 CBM when no (continuous) degradation signal for system available, but status of components observable (works yes/no)
 
 use method from asce-asme paper:
-gives delay time distribution, base maintenance decision directly on that
-(via threshold for reliability?)
+gives RUL in form of a p-box (set of distributions), base maintenance decision directly on that
+(via upper expected cost rate)
 
 Bayesian approach allows
 component models to include expert info, test data (if available), and status of components in the running system
-(write down explicit formula for test data including censored observations)
 
-main message: can do cbm without degradation signal,
-useful for redundant systems,
+main message: can do CBM for systems without degradation signal,
+especially useful for redundant systems,
 method reflects aleatory and epistemic uncertainty in all information sources
 \end{abstract}
 
 \begin{keyword}
-condition-based maintenance \sep system reliability \sep delay time model \sep survival signature \sep imprecise probability \sep p-box
+condition-based maintenance \sep system reliability \sep remaining useful life \sep survival signature \sep imprecise probability \sep p-box
 \end{keyword}
 \end{frontmatter}
 
@@ -221,21 +222,24 @@ condition-based maintenance \sep system reliability \sep delay time model \sep s
 \section{Introduction}
 \label{intro}
 
-CBM usually with directly or indirectly observable continuous measurable condition / degradation signal,
-delay time (time till failure) via distance of current signal level to fixed known failure threshold
+CBM usually with directly or indirectly observable continuously measurable condition / degradation signal,
+estimated time till failure (RUL) via distance of current signal level to fixed known failure threshold.
+Inspection-based CBM via delay time model, modeling the time between detectable degradation and failure,
+again time till failure via distance of current degradation level to fixed known failure threshold,
+In both cases, maintenance decision via control limit / threshold for the signal.
 %but in practice threshold often not known
 
-here we propose a different approach to CBM: if no degradation signal for system available,
+Here we propose a different approach to CBM: if no degradation signal for system available,
 use system layout (reliability block diagram) and information on components' status:
 need only to observe when a component fails,
 and expert information about expected component failure times.
 
-i.e., parametric model not for a degradation signal of the system or delay time, but for component lifetimes:
+We use a parametric model not for a degradation signal of the system or for the delay time, but for component lifetimes:
 we use the well-known Weibull model for component lifetimes.
 To keep the model simple, we assume known shape parameter,
 and that components fail independently.
-these simplifying assumptions might not hold in practice,
-then model can serve as approximation.
+These simplifying assumptions might not hold in practice,
+then the model can serve as a first approximation.
 
 The Bayesian approach to the Weibull model allows to integrate, for each component type,
 three sources of information: expert knowledge, data from component tests,
@@ -244,34 +248,33 @@ and status of components in the monitored system, i.e., current system condition
 Furthermore, our method appropriately reflects epistemic uncertainty,
 by using parametric p-boxes, an imprecise probability model, for the component models.
 
-epistemic vs. aleatoric uncertainty: big topic in reliability and risk
+***epistemic vs. aleatoric uncertainty: big topic in reliability and risk
 
 ***refer to Terje Aven, NASA Langley UQ challenge, illustration that uniform distribution does not express ignorance (Edoardo Patelli)***
 
-The proposed system delay time model adequately reflects uncertainty in the delay time distribution
+The proposed system RUL model adequately reflects uncertainty in the RUL distribution
 according to the current system status,
 in particular making more cautious predictions when failure behaviour in the monitored system
-seems to deviate from what is expected from expert knowledge and test data.
+seems to deviate from what is expected from expert knowledge and previous (test) data.
 
 Expert input in our model is, for each component type,
 Weibull shape parameter, range of expected failure time (translated to scale parameter),
 and range of expert info weight (how sure about mean failure time guess).
 By using ranges we do a systematic sensitivity analysis.
 
-Our model gives the lower and upper delay time distribution at $\tnow$,
-taking current system condition into account.
+Our model gives lower and upper bounds for the distribution of time till system failure,
+taking current (at time $\tnow$) system condition into account.
 
-We need additional criteria to indicate repair now yes/no.
-(Could indicate which failed component(s) to repair best.)
+Based on this, the additional criteria of expected cost rate is used to indicate repair now yes/no.
+(Could also indicate which failed component(s) to repair best.)
 
 
 \subsection{Literature***}
 
-Example for Bayesian method in maintenance planning: \cite{2007:wang-jia}
-
-***Wang \& Jia (2007) propose a model that uses Bayesian updating,
+Example for Bayesian method in CBM via inspections: \cite{2007:wang-jia}
+propose a model that uses Bayesian updating,
 but the model aims to identify an optimal inspection interval.
-This is CBM via inspections, not CBM via continuous monitoring as we aim to do.
+%This is CBM via inspections, not CBM via continuous monitoring as we aim to do.
 
 \begin{scriptsize}
 Wang \& Jia (2007) have a model for defects arrival (homogeneous Poisson process with rate $\lambda$, so no aging),
@@ -298,63 +301,169 @@ Example for Bayesian method in CBM with continuous monitoring: \cite{2011:elwany
 which is updated using the degradation signal history,
 and use total expected infinite-horizon discounted cost to determine the maintenance policy)
 
+Example for Bayesian method in prediction of system remaining useful life: \cite{2012:sun-et-al}
+(constructs health index for a system based on sensor measurements,
+health status prediction is updated sequentially,
+leads to RUL distribution like our method,
+but no link from RUL to maintenance decision)
+
+\cite{2011:kim-et-al} develop a periodic monitoring CBM policy
+where a maintenance decision is triggered when
+a Bayesian control chart (a sequentially updated health indicator) %posterior probability that system is in a 'warning' state
+exceeds a control limit (threshold) that is determined
+by minimizing the expected average cost per time unit.
+(We use the same cost criterion, but base the maintenance decision directly on our exact RUL estimation.)
+
+***typical recent example for Bayesian network models in maintenance -- could also cover system reliabilty terrain***
+maybe Jones et al (RESS 95:3, 2010) ``The use of Bayesian network modelling for maintenance planning in a manufacturing industry'',
+or Bouaziz et al (2013) ``Towards Bayesian network methodology for predicting equipment health factor of complex semiconductor systems''
+
+\begin{scriptsize}
+Bayesian networks (BNs) are a very general method to jointly model multiple dependent random variables in a Bayesian way. 
+This needs assessments of conditional independece relations, and conditional probability models for each variable,
+the latter often in form of conditional probability tables (discrete variables).
+A Bayesian network models probabilistic relations between variables,
+unlike a reliability block diagram, which gives a deterministic relation
+between the status of components and the system state.
+
+One could model a system as a BN (each component is a variable),
+but that would add a lot of complications.
+Most algorithms for BNs assume discrete distributions,
+and do not scale well to large networks (many tasks are NP-hard).
+
+The above papers seem to use a BN to model a degradation signal or (system) health index (have to check again to be sure).
+Our approach is different, as we get an exact formulation for the system RUL directly.
+
+\end{scriptsize}
+
 
 \section{***summary of ASCE-ASME paper method}
 
 sets of priors on component survival,
 survival signature,
-test data inclusion,
+test data inclusion
+(write down explicit formula for test data including censored observations),
 noninformatiove censoring,
 set of system reliability curves as output,
 wider set in case of prior-data conflict
 
 
-\section{***extensions to ASCE-ASME paper}
+\section{***extensions to ASCE-ASME paper method}
+\label{sec:extensions}
 
-repaired components: separate type in survival signature,
-but same hyperparameter learning (using actual age).
+when repaired/replaced components are present in system,
+then one needs to use actual ages (and not time since system startup) in parameter update,
+introduces new component type for $\Rsys(t)$ calculation but with same posterior parameters as unreplaced component type
+
+repaired/replaced components require the creation of a separate type in the survival signature decomposition
+and thus the calculation of separate posterior predictive probabilities
+$P(C^k_t = l_k \mid \nkz,\ykz,\text{test data},\text{monitoring data})$,
+which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
+
+output is a set of current system reliability curves
+taking into account the current system state,
+including the current ages of system components, 
+and the lifetime histories of all component types,
+including test data and expert assessments.
+The set of current, updated system reliability curves gives a RUL estimate
+in the form of a p-box, thus reflecting both aleatoric and epistemic uncertainty in the estimate.
 
 
-\section{***from (set of) survival curves to maintenance decision}
+\section{***from (set of) reliability curves to maintenance decision}
 
-infinite-horizon cost rate $g(\tau)$ (discounted as well?)
-like in age-based policy:
-this indicates in how much time from now ($\tnow$) it is economical to repair the system
-\begin{align*}
-g(\tau) &= \frac{ECC(\tau)}{ECL(\tau)} = \frac{c_p \Rsys(\tau) + c_u \big(1-\Rsys(\tau)\big)}{\tau \Rsys(\tau) + \int_0^\tau \Rsys(t) \dd t}
-\end{align*}
+\subsection{***unit cost rate}
+
+To find the optimal moment for maintenance based on the current set of system reliability curves,
+we minimize the expected average cost per time unit,
+or unit cost rate, $g(\tau)$. (could be discounted as well, out of scope here.)
+%like in age-based policy
+This is similar to the approach by \cite{2011:kim-et-al},
+where we optimize directly the moment of maintenance $\tau$
+instead of a control limit for a control chart, or a threshold for a degradation signal.
+An advantage of our approach is that
+it indicates, for any current time $\tnow$, at which point in the future it is economical to repair the system,
+thus allowing for set-up time for maintenance work.
+
+Due to our extensions from Section~\ref{sec:extensions},
+maintenance work can consist of replacing (or returning to an as-good-as-new state) some or all failed or non-failed components,
+as arbitrary component ages can be taken into account.
+(However, computation times decrease when all components of the same type are replaced at the same time,
+as then the duplication of component types for the survival signature decomposition is not necessary.)
+
+Let $c_p$ be the cost of planned / preventive maintenance, and $c_u$ the cost of unplanned / breakdown maintenance, where $c_p < c_u$.
+Then the unit cost rate is, according to renewal theory, given by
+\begin{align}
+g(\tau) &= \frac{ECC(\tau)}{ECL(\tau)} = \frac{c_p \Rsys(\tau) + c_u \big(1-\Rsys(\tau)\big)}{\tau \Rsys(\tau) + \int_0^\tau \Rsys(t) \dd t}\,,
+\end{align}
 and $\tau^* = \arg\min g(\tau) - \tnow$ is the cost-optimal repair time from now
 ($\Rsys(\cdot)$ is always in terms of time since system startup)
 
-Sets of $\Rsys(t)$: need to determine sets of $g(\tau)$.
-for each $\tau$, fix $\Rsys(\tau) \in [\lRsys(\tau), \uRsys(\tau)]$ and optimize $I(\tau) = \int_0^\tau \Rsys(t) \dd t$:
+
+\subsection{***bounds for unit cost rate}
+
+Bounds for $\Rsys(t)$ lead to bounds for $g(\tau)$.
+%For each $\tau$, fix $\Rsys(\tau) \in [\lRsys(\tau), \uRsys(\tau)]$ and optimize $I(\tau) = \int_0^\tau \Rsys(t) \dd t$
+%nonparametrically: $\ol{I}(\tau)$ by $\uRsys(t)$, $\ul{I}(\tau)$ by $\lRsys(t)$ until level of $\Rsys(\tau)$.
+Can get bounds $\lgt(\tau)$ and $\ugt(\tau)$ in the same way as bounds $\lRsys(t)$ and $\uRsys(t)$ in ASCE-ASME paper:
+need to optimize only over
+$\nkzfun{1} \in \left[\nkzlfun{1}, \nkzufun{1}\right], \ldots, \nkzfun{K} \in \left[\nkzlfun{K}, \nkzufun{K}\right]$.
+
+This works because, like $\Rsys(t)$, also $g(\tau)$ is monotone in $\ykzfun{1}, \ldots \ykzfun{K}$:
+$\Rsys(\tau)$ is monotone in $\ykzfun{1}, \ldots \ykzfun{K}$ (ASCE-ASME paper),
+and $g(\tau)$ is monotonely decreasing in $\Rsys(\tau)$:
+
+First look at $I(\tau) := \int_0^\tau \Rsys(t) \dd t$.
+A lower bound for $I(\tau)$ is $\tau \Rsys(\tau)$ (obtained when $\Rsys(t)$ drops to $\Rsys(\tau)$ immediately after $t=0$),
+and an upper bound for $I(\tau)$ is $\tau$ (obtained when $\Rsys(t)$ remains at $1$ until immediately prior to $t = \tau$).
+Therefore, for each $\tau$ and $\Rsys(\tau)$ there exists a constant $R^* \in [\Rsys(\tau), 1]$
+such that $I(\tau) = \tau R^*$.
+Note that $R^*$ increases when $\Rsys(\tau)$ increases.
+
+Setting $\Rsys(\tau) =: R$ and $g(\tau) =: g$ to simplify notation, we get
+\begin{align*}
+g &= \frac{c_p R + c_u (1-R)}{\tau R + \tau R^*}
+   = \frac{(c_p - c_u) R + c_u}{\tau R + \tau R^*}\,.
+\end{align*}
+As $(c_p -c_u) < 0$, the enumerator of $g$ is monotonely decreasing in $R$.
+The denominator of $g$ is monotonely increasing in $R$, since $R^*$ must increase when $R$ increases.
+In total, $g$ is thus monotonely decreasing in $R$.
+
+***formulate above as theorem?
+
+
+\subsection{***from bounds for $g(\tau)$ to (set of) $\tau^*$:}
+
+%worst case, best case, interval (how?)
 \begin{itemize}
-\item nonpar.: $\ol{I}(\tau)$ by $\uRsys(t)$, $\ul{I}(\tau)$ by $\lRsys(t)$ until level of $\Rsys(\tau)$.
-\item par.: optimize over $\nkzfun{1} \in \left[\nkzlfun{1}, \nkzufun{1}\right], \ldots, \nkzfun{K} \in \left[\nkzlfun{K}, \nkzufun{K}\right]$\\
-(is $g(\tau)$ indeed monotone in $\ykzfun{1}, \ldots \ykzfun{K}$?)
+\item worst case (minimax strategy): minimizing $\ugt(\tau)$ leads to $\tau^*_u$.
+\item interval dominance: for each $\tau$, we get a $g(\tau)$ interval $[\lgt(\tau), \ugt(\tau)]$.
+Throw out all $\tau$'s for which $\lgt(\tau) \ge \ugt(\tau^*_u)$.
+This will leave us with the set of $\tau$'s that are not dominated by $\tau^*_u$.
+(The set will be quite wide probably.)
+\item parametric / maximality (?): collect all $\tau$'s for which there is a prior parameter combination such that $\tau$ minimizes $g(\tau)$.
+(Need to do grid search over $\nkz$'s, or keep optimal pars when calculating $\lgt(\tau)$.)
 \end{itemize}
 
-From sets of $g(\tau)$ to (set of) $\tau^*$:
-worst case, best case, interval (how?)
+\subsection{***simple 95\% policy}
 
-Or, alternatively, simple 95\% policy? repair time from now such that system failure probability is below 5\%
+Or, alternatively to all the above, simple 95\% policy?
+Repair time from now such that lower system reliability is at least 95\%, i.e., upper system failure probability is at most 5\%.
 
 
 \section{Case study / numerical example}
 
-what system layout? something that demonstrates the power of the method (complex layout) or something simple?
+which system layout? something that demonstrates the power of the method (complex layout) or something simple?
 
 complex: e.g., bridge system where each of the four elements is a two out of three, and the bridge element is a two-parallel.
+
+or the simplified brake system from ASCE-ASME paper?
 
 
 \section{Outlook}
 
-*** to add timing of next inspection into the model we would need to add interval-censored data
-(failure has happened between last and current inspection)
+*** to use the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
+we would need to add interval-censored data (failure has happened between last and current inspection)
 
-*** if repaired/exchanged components are present in system,
-the one needs to use actual ages (and not time since system startup) in parameter update,
-introduces new component type for $\Rsys(t)$ calculation but with same posterior parameters as unreplaced component type
 
 
 \section*{Acknowledgements}
@@ -365,6 +474,7 @@ CAMPI
 \section*{Bibliography}
 
 \bibliographystyle{elsarticle-harv}
+
 \bibliography{refs}
 
 \end{document}
