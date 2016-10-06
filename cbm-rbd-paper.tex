@@ -223,10 +223,11 @@ condition-based maintenance \sep system reliability \sep remaining useful life \
 \label{intro}
 
 CBM usually with directly or indirectly observable continuously measurable condition / degradation signal,
-estimated time till failure (RUL) via distance of current signal level to fixed known failure threshold.
+estimated time till failure (RUL) \citep{2014:rul-review, 2011:rul-review-statistical}
+via distance of current signal level to fixed known failure threshold.
 Inspection-based CBM via delay time model, modeling the time between detectable degradation and failure,
 again time till failure via distance of current degradation level to fixed known failure threshold,
-In both cases, maintenance decision via control limit / threshold for the signal.
+In both cases, maintenance decision via control limit / threshold for the signal, RUL not explicitely calculated.
 %but in practice threshold often not known
 
 Here we propose a different approach to CBM: if no degradation signal for system available,
@@ -246,11 +247,22 @@ three sources of information: expert knowledge, data from component tests,
 and status of components in the monitored system, i.e., current system condition.
 
 Furthermore, our method appropriately reflects epistemic uncertainty,
-by using parametric p-boxes, an imprecise probability model, for the component models.
+by using sets of conjugate priors \citep{diss} for the component models.
+The resulting sets of component posteriors are equivalent to parametric p-boxes,
+an imprecise probability model popular in risk and reliability engineering.
 
-***epistemic vs. aleatoric uncertainty: big topic in reliability and risk
+These parametric posteriors are then used to calculate the exact distribution of system RUL,
+we therefore accomplish the same as \cite{2013:si-et-al} for their situation.
+
+***figure of process: set of component priors $\to$ set of component posteriors $\to$ system RUL $\to$ $g(\tau)$ $\to$ $\tau^*$
+
+***single $\tau^*$ vs set of $\tau^*$: decision support
+
+***discuss \cite{2015:sankararaman}, epistemic vs. aleatoric uncertainty: big topic in reliability and risk
 
 ***refer to Terje Aven, NASA Langley UQ challenge, illustration that uniform distribution does not express ignorance (Edoardo Patelli)***
+
+***we go beyond what \cite{2015:sankararaman} recommends
 
 The proposed system RUL model adequately reflects uncertainty in the RUL distribution
 according to the current system status,
@@ -299,13 +311,23 @@ it rather arises as a consequence of the system layout and component failure dis
 Example for Bayesian method in CBM with continuous monitoring: \cite{2011:elwany-et-al}
 (exponential degradation model, whose parameters $\theta'$ and $\beta$ each have a prior
 which is updated using the degradation signal history,
-and use total expected infinite-horizon discounted cost to determine the maintenance policy)
+and use total expected infinite-horizon discounted cost to determine the maintenance policy,
+RUL not explicitely calculated)
 
 Example for Bayesian method in prediction of system remaining useful life: \cite{2012:sun-et-al}
 (constructs health index for a system based on sensor measurements,
 health status prediction is updated sequentially,
 leads to RUL distribution like our method,
 but no link from RUL to maintenance decision)
+
+\cite{2013:si-et-al} do CBM with continuous monitoring taking into account the whole degradation path history.
+The authors provide exact expressions for the RUL distribution, which is updated in a Bayesian framework.
+The RUL distribution is used to construct a replacement decision model using the unit cost rate
+(eq. 35, citation Wang and Zhang 2005)\\
+***this is most similar to what we do: exact RUL distribution $\to$ maintenance decision,
+but we have component status instead of degradation signal as basis for RUL,
+and we model epistemic uncertainties!\\
+***check again to be sure, whot do they say about selection of prior parameters?***
 
 \cite{2011:kim-et-al} develop a periodic monitoring CBM policy
 where a maintenance decision is triggered when
