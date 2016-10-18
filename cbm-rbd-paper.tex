@@ -90,6 +90,7 @@
 \newcommand{\lRsys}{\ul{R}_\text{sys}}
 \newcommand{\uRsys}{\ol{R}_\text{sys}}
 
+\newcommand{\fsys}{f_\text{sys}}
 \newcommand{\Fsys}{F_\text{sys}}
 \newcommand{\lFsys}{\ul{F}_\text{sys}}
 \newcommand{\uFsys}{\ol{F}_\text{sys}}
@@ -277,9 +278,14 @@ By using ranges we do a systematic sensitivity analysis.
 Our model gives lower and upper bounds for the distribution of time till system failure,
 taking current (at time $\tnow$) system condition into account.
 
-Based on this, the additional criteria of expected cost rate is used to indicate repair now yes/no.
+Based on this, the additional criteria of unit cost rate is used to indicate the optimal time for repair.
 (Could also indicate which failed component(s) to repair best.)
 
+An advantage of our approach is that
+it indicates, for any current time $\tnow$, at which point in the future it is economical to repair the system,
+thus allowing for set-up time for maintenance work.
+
+***all expressed in time, but could also be in usage (number of cycles, etc).
 
 \subsection{Literature***}
 
@@ -320,14 +326,14 @@ health status prediction is updated sequentially,
 leads to RUL distribution like our method,
 but no link from RUL to maintenance decision)
 
-\cite{2013:si-et-al} do CBM with continuous monitoring taking into account the whole degradation path history.
-The authors provide exact expressions for the RUL distribution, which is updated in a Bayesian framework.
-The RUL distribution is used to construct a replacement decision model using the unit cost rate
-(eq. 35, citation Wang and Zhang 2005)\\
+\cite{2013:si-et-al} do CBM with continuous monitoring for a single component,
+taking into account the whole degradation path history.
+The authors provide exact expressions for the RUL distribution, which is updated in an empirical Bayesian framework using conjugate priors.
+The RUL distribution is used to construct a replacement decision model using the unit cost rate via renewal reward
+(eq. 35)\\
 ***this is most similar to what we do: exact RUL distribution $\to$ maintenance decision,
 but we have component status instead of degradation signal as basis for RUL,
 and we model epistemic uncertainties!\\
-***check again to be sure, whot do they say about selection of prior parameters?***
 
 \cite{2011:kim-et-al} develop a periodic monitoring CBM policy
 where a maintenance decision is triggered when
@@ -393,32 +399,60 @@ in the form of a p-box, thus reflecting both aleatoric and epistemic uncertainty
 
 \section{***from (set of) reliability curves to maintenance decision}
 
-\subsection{***unit cost rate}
-
 To find the optimal moment for maintenance based on the current set of system reliability curves,
 we minimize the expected average cost per time unit,
-or unit cost rate, $g(\tau)$. (could be discounted as well, out of scope here.)
-%like in age-based policy
-This is similar to the approach by \cite{2011:kim-et-al},
-where we optimize directly the moment of maintenance $\tau$
-instead of a control limit for a control chart, or a threshold for a degradation signal.
-An advantage of our approach is that
-it indicates, for any current time $\tnow$, at which point in the future it is economical to repair the system,
-thus allowing for set-up time for maintenance work.
+or unit cost rate, $g(\tau)$ %, where $\tau$ is the moment when preventive maintenance is exectued.
+(could be discounted as well, out of scope here.)
+
+In the literature, commonly two ways to calculate the unit cost rate are considered,
+a renewal reward theory based long-term unit cost rate $g_r(\tau)$,
+and the one-cycle cost rate $g_1(\tau)$ \citep{1996:mazzuchi-soyer}.
+We will discuss both approaches here with their advantages and disadvanatges.
+
+Let $c_p$ be the cost of planned / preventive maintenance, and $c_u$ the cost of unplanned / breakdown maintenance, where $c_p < c_u$.
+
+\subsection{***unit cost rate via renewal reward}
+
+The renewal reward theory based approach considers the unit cost rate as a long-term average,
+where the proposed policy is used over a large number of replacement cycles,
+and cycles can be seen as stochastic copies of each other.
+Under this assumption, the unit cost rate is, according to renewal theory,
+given as the expected cycle cost $ECC(\tau)$ divided by the expected cycle length $ECL(\tau)$:
+\begin{align}
+g_r(\tau) &= \frac{ECC(\tau)}{ECL(\tau)} = \frac{c_p \Rsys(\tau) + c_u \big(1-\Rsys(\tau)\big)}{\tau \Rsys(\tau) + \int_0^\tau \Rsys(t) \dd t}\,,
+\end{align}
+and $\tau_r^* = \arg\min g_r(\tau) - \tnow$ is the cost-optimal repair time from now
+(since $\Rsys(\cdot)$ is always in terms of time since system startup)
+
+***most often used in literature \citep{2013:si-et-al}, \citep{2011:kim-et-al}
+
+***stochastic copies assumption implies that the system is in the same state at the start of each cycle,
+so $c_p$ needs to include the costs of replacing all components
+to bring the system into the same state as at startup time.
+
+\subsection{***one-cycle unit cost rate}
+
+The one-cycle unit cost rate approach considers only the costs with respect to the current cycle.
+Conditional on the (random) system failure time $\Tsys$, the unit cost rate is 
+\begin{align*}
+g_1(\tau \mid \Tsys) &=
+\begin{cases}
+c_p / \tau  & \text{if } \Tsys \ge \tau \\
+c_u / \Tsys & \text{if } \Tsys < \tau
+\end{cases}
+\end{align*}
+
+Taking the expectation over $\Tsys$ leads to the unit cost rate being
+\begin{align*}
+g_1(\tau) &= \E[g_1(\tau \mid \Tsys)] = \frac{c_p}{\tau} \Rsys(\tau) + c_u \int_0^\tau \frac{1}{t} \fsys(t) \dd t
+\end{align*}
+***here, $\Rsys(\cdot)$ shifted such that $\tnow = 0$.
 
 Due to our extensions from Section~\ref{sec:extensions},
 maintenance work can consist of replacing (or returning to an as-good-as-new state) some or all failed or non-failed components,
 as arbitrary component ages can be taken into account.
 (However, computation times decrease when all components of the same type are replaced at the same time,
 as then the duplication of component types for the survival signature decomposition is not necessary.)
-
-Let $c_p$ be the cost of planned / preventive maintenance, and $c_u$ the cost of unplanned / breakdown maintenance, where $c_p < c_u$.
-Then the unit cost rate is, according to renewal theory, given by
-\begin{align}
-g(\tau) &= \frac{ECC(\tau)}{ECL(\tau)} = \frac{c_p \Rsys(\tau) + c_u \big(1-\Rsys(\tau)\big)}{\tau \Rsys(\tau) + \int_0^\tau \Rsys(t) \dd t}\,,
-\end{align}
-and $\tau^* = \arg\min g(\tau) - \tnow$ is the cost-optimal repair time from now
-($\Rsys(\cdot)$ is always in terms of time since system startup)
 
 
 \subsection{***bounds for unit cost rate}
