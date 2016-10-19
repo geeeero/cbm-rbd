@@ -1,0 +1,282 @@
+\documentclass[authoryear]{elsarticle}
+
+% ------------ packages -------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[OT1]{fontenc}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+\usepackage{url}
+\usepackage[bookmarks]{hyperref}
+
+%\usetikzlibrary{shapes.misc,fit}
+\usetikzlibrary{%
+   arrows,%
+   calc,%
+   fit,%
+   patterns,%
+   plotmarks,%
+   shapes.geometric,%
+   shapes.misc,%
+   shapes.symbols,%
+   shapes.arrows,%
+   shapes.callouts,%
+   shapes.multipart,%
+   shapes.gates.logic.US,%
+   shapes.gates.logic.IEC,%
+   er,%
+   automata,%
+   backgrounds,%
+   chains,%
+   topaths,%
+   trees,%
+   petri,%
+   mindmap,%
+   matrix,%
+   calendar,%
+   folding,%
+   fadings,%
+   through,%
+   patterns,%
+   positioning,%
+   scopes,%
+   decorations.fractals,%
+   decorations.shapes,%
+   decorations.text,%
+   decorations.pathmorphing,%
+   decorations.pathreplacing,%
+   decorations.footprints,%
+   decorations.markings,%
+   shadows}
+
+%\usepackage{hyperref}
+%\usepackage[bookmarks]{hyperref}
+%\usepackage[colorlinks=true,citecolor=red,linkcolor=black]{hyperref}
+
+% ------------ custom defs -------------
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\posreals}{\reals_{>0}}
+\newcommand{\posrealszero}{\reals_{\ge 0}}
+\newcommand{\naturals}{\mathbb{N}}
+
+\newcommand{\dd}{\,\mathrm{d}}
+
+\newcommand{\mbf}[1]{\mathbf{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\renewcommand{\vec}[1]{{\bm#1}}
+
+\newcommand{\uz}{^{(0)}} % upper zero
+\newcommand{\un}{^{(n)}} % upper n
+\newcommand{\ui}{^{(i)}} % upper i
+
+\newcommand{\ul}[1]{\underline{#1}}
+\newcommand{\ol}[1]{\overline{#1}}
+
+\newcommand{\Tsys}{T_\text{sys}}
+
+\newcommand{\Rsys}{R_\text{sys}}
+\newcommand{\lRsys}{\ul{R}_\text{sys}}
+\newcommand{\uRsys}{\ol{R}_\text{sys}}
+
+\newcommand{\fsys}{f_\text{sys}}
+\newcommand{\Fsys}{F_\text{sys}}
+\newcommand{\lFsys}{\ul{F}_\text{sys}}
+\newcommand{\uFsys}{\ol{F}_\text{sys}}
+
+\newcommand{\lgt}{\ul{g}}
+\newcommand{\ugt}{\ol{g}}
+
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\V}{\operatorname{Var}}
+\newcommand{\wei}{\operatorname{Wei}} % Weibull Distribution
+\newcommand{\ig}{\operatorname{IG}}   % Inverse Gamma Distribution
+
+\newcommand{\El}{\ul{\operatorname{E}}}
+\newcommand{\Eu}{\ol{\operatorname{E}}}
+
+\def\yz{y\uz}
+\def\yn{y\un}
+%\def\yi{y\ui}
+\newcommand{\yfun}[1]{y^{({#1})}}
+\newcommand{\yfunl}[1]{\ul{y}^{({#1})}}
+\newcommand{\yfunu}[1]{\ol{y}^{({#1})}}
+
+\def\ykz{y\uz_k}
+\def\ykn{y\un_k}
+
+\def\yzl{\ul{y}\uz}
+\def\yzu{\ol{y}\uz}
+\def\ynl{\ul{y}\un}
+\def\ynu{\ol{y}\un}
+\def\yil{\ul{y}\ui}
+\def\yiu{\ol{y}\ui}
+
+\def\ykzl{\ul{y}\uz_k}
+\def\ykzu{\ol{y}\uz_k}
+\def\yknl{\ul{y}\un_k}
+\def\yknu{\ol{y}\un_k}
+
+\newcommand{\ykzfun}[1]{y\uz_{#1}}
+\newcommand{\ykzlfun}[1]{\ul{y}\uz_{#1}}
+\newcommand{\ykzufun}[1]{\ol{y}\uz_{#1}}
+
+\def\nz{n\uz}
+\def\nn{n\un}
+%\def\ni{n\ui}
+\newcommand{\nfun}[1]{n^{({#1})}}
+\newcommand{\nfunl}[1]{\ul{n}^{({#1})}}
+\newcommand{\nfunu}[1]{\ol{n}^{({#1})}}
+
+\def\nkz{n\uz_k}
+\def\nkn{n\un_k}
+\newcommand{\nkzfun}[1]{n\uz_{#1}}
+\newcommand{\nkzlfun}[1]{\ul{n}\uz_{#1}}
+\newcommand{\nkzufun}[1]{\ol{n}\uz_{#1}}
+
+\def\nzl{\ul{n}\uz}
+\def\nzu{\ol{n}\uz}
+\def\nnl{\ul{n}\un}
+\def\nnu{\ol{n}\un}
+\def\nil{\ul{n}\ui}
+\def\niu{\ol{n}\ui}
+
+\def\nkzl{\ul{n}\uz_k}
+\def\nkzu{\ol{n}\uz_k}
+\def\nknl{\ul{n}\un_k}
+\def\nknu{\ol{n}\un_k}
+
+
+\def\taut{\tau(\vec{t})}
+\def\ttau{\tilde{\tau}}
+\def\ttaut{\ttau(\vec{t})}
+
+\def\MZ{\mathcal{M}\uz}
+\def\MN{\mathcal{M}\un}
+
+\def\MkZ{\mathcal{M}\uz_k}
+\def\MkN{\mathcal{M}\un_k}
+
+\def\PkZ{\Pi\uz_k}
+\def\PkN{\Pi\un_k}
+\newcommand{\PZi}[1]{\Pi\uz_{#1}}
+
+\def\tnow{t_\text{now}}
+\def\tpnow{t^+_\text{now}}
+
+
+% ------------ options -------------
+
+\allowdisplaybreaks
+
+\journal{***}
+
+\begin{document}
+
+% ------------ frontmatter -------------
+
+\begin{frontmatter}
+\title{Condition-Based Maintenance for Systems based on Bayesian P-Box Component Models***}
+
+\author[tue]{Gero Walter}
+\ead{g.m.walter@tue.nl}
+\author[tue]{Simme Douwe Flapper}
+\ead{s.d.p.flapper@tue.nl}
+
+\address[tue]{School of Industrial Engineering, Eindhoven University of Technology, Eindhoven, Netherlands}
+
+
+\begin{abstract}
+CBM when no (continuous) degradation signal for system available, but status of components observable (works yes/no)
+
+use method from asce-asme paper:
+gives RUL in form of a p-box (set of distributions), base maintenance decision directly on that
+(via upper expected cost rate)
+
+Bayesian approach allows
+component models to include expert info, test data (if available), and status of components in the running system
+
+main message: can do CBM for systems without degradation signal,
+especially useful for redundant systems,
+method reflects aleatory and epistemic uncertainty in all information sources
+\end{abstract}
+
+\begin{keyword}
+condition-based maintenance \sep system reliability \sep remaining useful life \sep survival signature \sep imprecise probability \sep p-box
+\end{keyword}
+\end{frontmatter}
+
+% ------------ manuscript -------------
+
+\section{Introduction}
+\label{intro}
+
+main message:
+can do CBM for systems without degradation signal,
+especially useful for redundant systems,
+method reflects aleatory and epistemic uncertainty in all information sources
+
+use method from asce-asme paper:
+gives RUL in form of a p-box (set of distributions), base maintenance decision directly on that
+(via upper expected cost rate?)
+
+Furthermore, our method appropriately reflects epistemic uncertainty,
+by using sets of conjugate priors \citep{diss} for the component models.
+The resulting sets of component posteriors are equivalent to parametric p-boxes,
+an imprecise probability model popular in risk and reliability engineering.
+
+***figure of process: set of component priors $\to$ set of component posteriors $\to$ system RUL $\to$ $g(\tau)$ $\to$ $\tau^*$
+
+***single $\tau^*$ vs set of $\tau^*$: decision support
+
+***discuss \cite{2015:sankararaman}, epistemic vs. aleatoric uncertainty: big topic in reliability and risk
+
+***refer to Terje Aven, NASA Langley UQ challenge, illustration that uniform distribution does not express ignorance (Edoardo Patelli)***
+
+***we go beyond what \cite{2015:sankararaman} recommends
+
+The proposed system RUL model adequately reflects uncertainty in the RUL distribution
+according to the current system status,
+in particular making more cautious predictions when failure behaviour in the monitored system
+seems to deviate from what is expected from expert knowledge and previous (test) data.
+
+Expert input in our model is, for each component type,
+Weibull shape parameter, range of expected failure time (translated to scale parameter),
+and range of expert info weight (how sure about mean failure time guess).
+Component test data (can include right-censored observations) is optional.
+By using ranges we do a systematic sensitivity analysis.
+
+Our model gives lower and upper bounds for the distribution of time till system failure,
+taking current (at time $\tnow$) system condition into account.
+
+An advantage of our approach is that
+it indicates, for any current time $\tnow$, at which point in the future it is economical to repair the system,
+thus allowing for set-up time for maintenance work.
+
+***all expressed in time, but could also be in usage (number of cycles, etc).
+
+
+\section*{Acknowledgements}
+
+CAMPI
+
+Frank Coolen for inspiring discussions
+
+\section*{Bibliography}
+
+\bibliographystyle{elsarticle-harv}
+
+\bibliography{refs}
+
+\end{document}

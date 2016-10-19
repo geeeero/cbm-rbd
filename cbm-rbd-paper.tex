@@ -187,7 +187,7 @@
 % ------------ frontmatter -------------
 
 \begin{frontmatter}
-\title{Condition-Based Maintenance for Systems based on Bayesian P-Box Component Models***}
+\title{Condition-Based Maintenance for Complex Systems\\ based on Current Component Status\\ and Bayesian Updating of Component Reliability}
 
 \author[tue]{Gero Walter}
 \ead{g.m.walter@tue.nl}
@@ -198,23 +198,29 @@
 
 
 \begin{abstract}
-CBM when no (continuous) degradation signal for system available, but status of components observable (works yes/no)
+We propose a new way of developing a condition-based maintenance policy for complex systems,
+based not on a one-dimensional continuous degradation signal,
+but on the status of all components within a system.
 
-use method from asce-asme paper:
-gives RUL in form of a p-box (set of distributions), base maintenance decision directly on that
-(via upper expected cost rate)
+By means of the survival signature,
+a generalization of the system signature allowing for multiple component types,
+we obtain a predictive distribution for system survival time
+(also known as RUL, remaining useful life)
+based on which of the system's components currently function or not,
+and the current age of the functioning components.
 
-Bayesian approach allows
-component models to include expert info, test data (if available), and status of components in the running system
+Component time to failure is modeled by a Weibull distribution with fixed shape parameter.
+The scale parameter is iteratively updated in a Bayesian fashion
+using the current (censored and non-censored) component lifetimes.
+Each component type has a separate model that may also include test data.
 
-main message: can do CBM for systems without degradation signal,
-especially useful for redundant systems,
-method reflects aleatory and epistemic uncertainty in all information sources
+The cost-optimal moment of repair for the system is obtained by minimizing the one-cycle unit cost rate.
+The unit cost rate is recalculated at fixed time points,
+leading to a dynamic policy since the aging of components and possible failures will change the cost-optimal moment of repair.
 \end{abstract}
 
 \begin{keyword}
-condition-based maintenance \sep system reliability \sep remaining useful life \sep survival signature \sep imprecise probability \sep p-box
-\end{keyword}
+condition-based maintenance \sep system reliability \sep remaining useful life \sep survival signature \sep one-cycle unit cost rate\end{keyword}
 \end{frontmatter}
 
 
@@ -223,71 +229,158 @@ condition-based maintenance \sep system reliability \sep remaining useful life \
 \section{Introduction}
 \label{intro}
 
-CBM usually with directly or indirectly observable continuously measurable condition / degradation signal,
-estimated time till failure (RUL) \citep{2014:rul-review, 2011:rul-review-statistical}
-via distance of current signal level to fixed known failure threshold.
-Inspection-based CBM via delay time model, modeling the time between detectable degradation and failure,
-again time till failure via distance of current degradation level to fixed known failure threshold,
-In both cases, maintenance decision via control limit / threshold for the signal, RUL not explicitely calculated.
+
+***main message:
+can do CBM for systems without degradation signal,
+especially useful for redundant systems,
+dynamic policy using one-cycle unit cost rate (exact, unlike renewal theorem based!),
+using iterative Bayesian update of component models,
+thus taking all information into account (history and current status)
+
+***Bayesian approach allows component models to include expert info, test data (if available),
+and information that can be gained from the behaviour of components in the running system
+in the form of censored and non-censored component lifetimes 
+
+***we argue that our approach is CBM because it takes current system state into account
+and adjusts the moment of maintenance accordingly.
+
+\subsection*{---------------------}
+***general discussion on CBM as usual
+
+***Condition-based maintenance (CBM) has received considerable attention in the literature.
+The central idea is to maintain technical systems or components at just the right time,
+that is, before they fail,
+but not too early, in order to keep reliability high and operating costs low.
+%most fully use the component's or system's lifetime and to save on maintenance work
+
+***trade-off between risk of failure during operation
+(can lead to costly downtime: idle workforce, missed production, penalties, loss of reputation)
+and costs of premature maintenance
+(wasting potential component / system lifetime, downtime cost, cost of maintenance work)
+
+***so CBM must be based on some information about the state or health of the component / system.
+Two ways: continuous monitoring CBM and inspection-based CBM.
+
+***Continuous monitoring CBM policies are usually derived
+using a directly observable continuously measurable condition / degradation signal,
+or constructs such a signal or health status using indirect measurements.
+Estimated time till failure (RUL) \citep{2014:rul-review, 2011:rul-review-statistical}
+via distance of current signal level to a fixed known failure threshold.
+
+***Inspection-based CBM via delay time model, modeling the time between detectable degradation and failure,
+again time till failure via distance of current degradation level to fixed known failure threshold.
+
+***In both cases, maintenance decision via control limit / threshold for the signal
+(RUL not explicitely calculated)
+by minimizing the expected unit cost rate,
+which is often approximated using the renewal reward theorem.
 %but in practice threshold often not known
 
-Here we propose a different approach to CBM: if no degradation signal for system available,
-use system layout (reliability block diagram) and information on components' status:
-need only to observe when a component fails,
-and expert information about expected component failure times.
+\subsection*{---------------------}
 
-We use a parametric model not for a degradation signal of the system or for the delay time, but for component lifetimes:
-we use the well-known Weibull model for component lifetimes.
-To keep the model simple, we assume known shape parameter,
+Here we propose a different approach to CBM
+for the case when no degradation signal for the system is available,
+but system components can be identified and their functioning status
+(working or not working) can be monitored.
+In this situation, one can use the system's layout in reliability terms
+(i.e., its reliability block diagram) and information on components' status
+to directly calculate the RUL distribution,
+and base the maintenance policy on this distribution.
+(In fact, our approach can be seen as CBM based on a multivariate degradation signal,
+where each component sends a binary signal, and the reliability block diagram is used
+for sensor fusion.)
+
+Our approach can also be seen as a generalization of policies for $k$ out of $N$ systems to arbitrary system layouts.
+Furthermore, our approach allows for multiple types of components in the system,
+with each component type having its own failure behaviour.
+
+%We use a parametric model not for a degradation signal of the system or for the delay time, but for component lifetimes:
+For each component type, we use the well-known Weibull distribution to model component lifetimes.
+To keep the model simple and to demonstrate its feasability, we assume the shape parameter for each component type to be known,
+focusing on learning of the scale parameter,
 and that components fail independently.
-These simplifying assumptions might not hold in practice,
+These simplifying assumptions will often not hold in practice,
 then the model can serve as a first approximation.
+Generally, we see our contribution as opening up an entirely new way to derive CBM policies,
+and thus consider the model in this paper more as a proof of concept,
+where extension to more realistic models must happen in a second step.
+As an example, it is possible to extend the model to learn also the shape parameter along the lines of
+\cite{1969:soland},
+but this is not included here as it would complicate presentation.
+%need only to observe when a component fails,
+%and expert information about expected component failure times.
 
-The Bayesian approach to the Weibull model allows to integrate, for each component type,
+The Bayesian approach to the Weibull model \citep[see, e.g.,][]{1996:mazzuchi-soyer} allows to integrate, for each component type,
 three sources of information: expert knowledge, data from component tests,
-and status of components in the monitored system, i.e., current system condition.
+and the status of components in the monitored system. %, i.e., current system condition.
+These information sources are integrated into a single component model
+using the iterative nature of Bayesian updating,
+leading to a so-called posterior predictive distribution for the number of components surviving at any time in the future.
 
-Furthermore, our method appropriately reflects epistemic uncertainty,
-by using sets of conjugate priors \citep{diss} for the component models.
-The resulting sets of component posteriors are equivalent to parametric p-boxes,
-an imprecise probability model popular in risk and reliability engineering.
+These predictive distributions are then used to calculate the exact distribution of system RUL
+using the survival signature \citep{2012:survsign}.
+(***we therefore accomplish the same as \cite{2013:si-et-al} for their situation.)
 
-These parametric posteriors are then used to calculate the exact distribution of system RUL,
-we therefore accomplish the same as \cite{2013:si-et-al} for their situation.
+By its Bayesian nature, the system RUL distribution adequately reflects the uncertainties in RUL estimation
+related to modeling and prediction \citep{2015:sankararaman},
+readily adapting to any changes in component behaviour.
+The use of conjugate priors means that we get explicit formulas for the RUL distribution,
+so no numerical integration or simulation techniques are necessary.
+This allows for a very frequent, or even real-time, update of the RUL distribution,
+taking into account the changed structure when components have failed
+and the information gain from updating the component reliability distributions.
 
-***figure of process: set of component priors $\to$ set of component posteriors $\to$ system RUL $\to$ $g(\tau)$ $\to$ $\tau^*$
+Based on the RUL distribution at any current time $\tnow$,
+the optimal moment of maintenance given all information available at $\tnow$
+is then determined by minimizing the expected one-cycle unit cost rate.
+The expected one-cycle unit cost rate, also known as one-cycle criterion
+\citep{1984:ansell-bendell-humble,1996:mazzuchi-soyer,2006:coolen-schrijner-coolen},
+makes the trade-off between preventive and corrective maintenance according to the current cycle only,
+unlike the usually employed renewal based criterion,
+which approximates the unit cost rate using a renewal argument \citep[p.~296]{1996:mazzuchi-soyer},
+but is not suited for situations where one may whish to change the strategy per cycle \citep{2006:coolen-schrijner-coolen}.
 
-***single $\tau^*$ vs set of $\tau^*$: decision support
+Since the RUL distribution changes with current time $\tnow$,
+the corresponding optimal moment of maintenance $\tau^*$ changes as well,
+leading to a dynamic adaptive maintenance policy,
+similar to a CBM policy based on a continuosly monitored degradation signal.
+However, unlike such threshold-based CBM policies,
+our approach allows to easily take into account the time needed to set up maintenance work (known as set-up time),
+since it gives the optimal moment of maintenance as a time beyond current time $\tnow$,
+and maintenance can be initiated as soon as $\tau^*$ approaches the set-up time.
 
-***discuss \cite{2015:sankararaman}, epistemic vs. aleatoric uncertainty: big topic in reliability and risk
+In this paper, we assume that at the moment of maintenance,
+all components in the system are replaced,
+so the cost parameters in the unit cost rate must be determined accordingly.
+One could instead consider other replacement schemes (e.g., replacing only the failed components),
+or indeed optimize the unit cost rate over all possible replacement schemes,
+since our method for RUL calculation can handle differently aged components. 
+However, optimizing over replacement schemes opens up a full research programme on its own,
+and for situations with high set-up costs,
+as is typical for CBM applications,
+the replace-all scheme is most likely the cost-optimal strategy. 
 
-***refer to Terje Aven, NASA Langley UQ challenge, illustration that uniform distribution does not express ignorance (Edoardo Patelli)***
 
-***we go beyond what \cite{2015:sankararaman} recommends
+***figure of process: component priors $\to$ component posteriors $\to$ system RUL $\to$ $g(\tau)$ $\to$ $\tau^*$
 
-The proposed system RUL model adequately reflects uncertainty in the RUL distribution
-according to the current system status,
-in particular making more cautious predictions when failure behaviour in the monitored system
-seems to deviate from what is expected from expert knowledge and previous (test) data.
 
-Expert input in our model is, for each component type,
-Weibull shape parameter, range of expected failure time (translated to scale parameter),
-and range of expert info weight (how sure about mean failure time guess).
-By using ranges we do a systematic sensitivity analysis.
+***Expert input in our model is, for each component type,
+Weibull shape parameter, expected failure time (translated to scale parameter),
+and expert info weight (how sure about mean failure time guess).
+Component test data (can include right-censored observations) is optional.
+Further input is system layout (reliability block diagram indicating which component belongs to which type)
+and the cost parameters $c_p$ and $c_u$.
 
-Our model gives lower and upper bounds for the distribution of time till system failure,
-taking current (at time $\tnow$) system condition into account.
+***here all expressed in time, but could also be in usage (number of cycles, etc).
 
-Based on this, the additional criteria of unit cost rate is used to indicate the optimal time for repair.
-(Could also indicate which failed component(s) to repair best.)
+***compare to $M^*$ out of $N$ policy:
+we are dynamic (would mean for a $M^*$ out of $N$ policy that $M^*$ decreases over time due to component aging),
+we learn about component lifetimes,
+and we allow for set-up time
 
-An advantage of our approach is that
-it indicates, for any current time $\tnow$, at which point in the future it is economical to repair the system,
-thus allowing for set-up time for maintenance work.
 
-***all expressed in time, but could also be in usage (number of cycles, etc).
 
-\subsection{Literature***}
+\section{Literature***}
 
 Example for Bayesian method in CBM via inspections: \cite{2007:wang-jia}
 propose a model that uses Bayesian updating,
@@ -526,6 +619,7 @@ we would need to add interval-censored data (failure has happened between last a
 
 CAMPI
 
+Frank Coolen for inspiring discussions
 
 \section*{Bibliography}
 
