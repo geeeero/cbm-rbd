@@ -382,6 +382,13 @@ and we allow for set-up time
 
 \section{Literature***}
 
+***CBM via RUL, $M^*$ out of $N$ policies?
+
+***also generally Bayesian methods in maintenance optimization?
+
+***cite CBM review Olde Keizer, Flapper, Teunter, and other refs from it?
+
+
 Example for Bayesian method in CBM via inspections: \cite{2007:wang-jia}
 propose a model that uses Bayesian updating,
 but the model aims to identify an optimal inspection interval.
@@ -458,148 +465,88 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 \end{scriptsize}
 
 
-\section{***summary of ASCE-ASME paper method}
+\section{***summary of ASCE-ASME paper method minus sets of priors}
 
-sets of priors on component survival,
-survival signature,
+***\cite{2016:walter-coolen}
+
+component model: weibull with fixed shape,
+inverse gamma prior on scale parameter,
+fix priors via expected lifetime and prior strength,
+
 test data inclusion
 (write down explicit formula for test data including censored observations),
-noninformatiove censoring,
-set of system reliability curves as output,
-wider set in case of prior-data conflict
+noninformatiove censoring
 
+RUL via survival signature,
+posterior predictive distributions,
+system reliability curve (RUL) as output,
 
-\section{***extensions to ASCE-ASME paper method}
-\label{sec:extensions}
-
-when repaired/replaced components are present in system,
-then one needs to use actual ages (and not time since system startup) in parameter update,
-introduces new component type for $\Rsys(t)$ calculation but with same posterior parameters as unreplaced component type
-
-repaired/replaced components require the creation of a separate type in the survival signature decomposition
-and thus the calculation of separate posterior predictive probabilities
-$P(C^k_t = l_k \mid \nkz,\ykz,\text{test data},\text{monitoring data})$,
-which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
-
-output is a set of current system reliability curves
+output is the current system reliability curve
 taking into account the current system state,
 including the current ages of system components, 
 and the lifetime histories of all component types,
 including test data and expert assessments.
-The set of current, updated system reliability curves gives a RUL estimate
-in the form of a p-box, thus reflecting both aleatoric and epistemic uncertainty in the estimate.
 
 
-\section{***from (set of) reliability curves to maintenance decision}
+\section{***from reliability curve (RUL) to maintenance decision}
 
 To find the optimal moment for maintenance based on the current set of system reliability curves,
 we minimize the expected average cost per time unit,
-or unit cost rate, $g(\tau)$ %, where $\tau$ is the moment when preventive maintenance is exectued.
+called the unit cost rate, $g(\tau)$,
+to find the cost-optimal moment of maintenance $\tau^*$
 (could be discounted as well, out of scope here.)
 
 In the literature, commonly two ways to calculate the unit cost rate are considered,
-a renewal reward theory based long-term unit cost rate $g_r(\tau)$,
-and the one-cycle cost rate $g_1(\tau)$ \citep{1996:mazzuchi-soyer}.
-We will discuss both approaches here with their advantages and disadvanatges.
+a renewal theory based long-term unit cost rate,
+and the one-cycle cost rate 
+\citep{1984:ansell-bendell-humble,1996:mazzuchi-soyer,2006:coolen-schrijner-coolen}.
+Although the renewal theory based unit cost rate is often used
+in CBM literature \citep{2013:si-et-al,2011:kim-et-al},
+%As we discussed in the Introduction,
+we use the one-cycle cost rate as it is the most appropriate for our situation.
+%since it considers only the costs with respect to the current cycle.
 
 Let $c_p$ be the cost of planned / preventive maintenance, and $c_u$ the cost of unplanned / breakdown maintenance, where $c_p < c_u$.
+As discussed in the Introduction,
+we assume that both $c_p$ and $c_u$ include the cost of replacing all components in the system.
+Usually, set-up costs, work costs and downtime costs are much higher for unplanned / breakdown maintenance,
+such that often, $c_p \ll c_u$.
 
-\subsection{***unit cost rate via renewal reward}
-
-The renewal reward theory based approach considers the unit cost rate as a long-term average,
-where the proposed policy is used over a large number of replacement cycles,
-and cycles can be seen as stochastic copies of each other.
-Under this assumption, the unit cost rate is, according to renewal theory,
-given as the expected cycle cost $ECC(\tau)$ divided by the expected cycle length $ECL(\tau)$:
-\begin{align}
-g_r(\tau) &= \frac{ECC(\tau)}{ECL(\tau)} = \frac{c_p \Rsys(\tau) + c_u \big(1-\Rsys(\tau)\big)}{\tau \Rsys(\tau) + \int_0^\tau \Rsys(t) \dd t}\,,
-\end{align}
-and $\tau_r^* = \arg\min g_r(\tau) - \tnow$ is the cost-optimal repair time from now
-(since $\Rsys(\cdot)$ is always in terms of time since system startup)
-
-***most often used in literature \citep{2013:si-et-al}, \citep{2011:kim-et-al}
-
-***stochastic copies assumption implies that the system is in the same state at the start of each cycle,
-so $c_p$ needs to include the costs of replacing all components
-to bring the system into the same state as at startup time.
-
-\subsection{***one-cycle unit cost rate}
-
-The one-cycle unit cost rate approach considers only the costs with respect to the current cycle.
 Conditional on the (random) system failure time $\Tsys$, the unit cost rate is 
 \begin{align*}
-g_1(\tau \mid \Tsys) &=
+g(\tau \mid \Tsys) &=
 \begin{cases}
 c_p / \tau  & \text{if } \Tsys \ge \tau \\
 c_u / \Tsys & \text{if } \Tsys < \tau
 \end{cases}
 \end{align*}
 
-Taking the expectation over $\Tsys$ leads to the unit cost rate being
-\begin{align*}
-g_1(\tau) &= \E[g_1(\tau \mid \Tsys)] = \frac{c_p}{\tau} \Rsys(\tau) + c_u \int_0^\tau \frac{1}{t} \fsys(t) \dd t
-\end{align*}
+Taking the expectation over $\Tsys$ leads to the expected unit cost rate being
+\begin{align}
+g(\tau) &= \E[g(\tau \mid \Tsys)] = \frac{c_p}{\tau} \Rsys(\tau) + c_u \int_0^\tau \frac{1}{t} \fsys(t) \dd t
+\label{eq:gtau}
+\end{align}
 ***here, $\Rsys(\cdot)$ shifted such that $\tnow = 0$.
 
-Due to our extensions from Section~\ref{sec:extensions},
-maintenance work can consist of replacing (or returning to an as-good-as-new state) some or all failed or non-failed components,
-as arbitrary component ages can be taken into account.
-(However, computation times decrease when all components of the same type are replaced at the same time,
-as then the duplication of component types for the survival signature decomposition is not necessary.)
+We approximate the integral in \eqref{eq:gtau} numerically by a sum,
+where $\fsys(t)$ is calculated via differencen of $\Rsys(t)$ values on a dense grid.
+$g(\tau)$ is likewise evaluated on a dense grid,
+and $\tau^*_{\tnow} = \arg\min g(\tau)$ is determined as the minimum over the grid.
+The lower index $\tnow$ of the optimal moment of maintenance serves to remind that
+$\tau^*$ depends on $\tnow$, and also on the history of the system.
+
+At time $\tnow$, the corresponding $\tau^*_{\tnow}$ gives the optimal moment of maintenance in terms of time to elapse after $\tnow$,
+so in the absolute time scale, the optimal moment of maintenance is at $\tnow + \tau^*_{\tnow}$.
+
+****plot both $\tau^*_{\tnow}$ and $\tnow + \tau^*_{\tnow}$ over time for different failure histories
 
 
-\subsection{***bounds for unit cost rate}
+\section{Comparison with $M^*$ out of $N$ policy}
 
-Bounds for $\Rsys(t)$ lead to bounds for $g(\tau)$.
-%For each $\tau$, fix $\Rsys(\tau) \in [\lRsys(\tau), \uRsys(\tau)]$ and optimize $I(\tau) = \int_0^\tau \Rsys(t) \dd t$
-%nonparametrically: $\ol{I}(\tau)$ by $\uRsys(t)$, $\ul{I}(\tau)$ by $\lRsys(t)$ until level of $\Rsys(\tau)$.
-Can get bounds $\lgt(\tau)$ and $\ugt(\tau)$ in the same way as bounds $\lRsys(t)$ and $\uRsys(t)$ in ASCE-ASME paper:
-need to optimize only over
-$\nkzfun{1} \in \left[\nkzlfun{1}, \nkzufun{1}\right], \ldots, \nkzfun{K} \in \left[\nkzlfun{K}, \nkzufun{K}\right]$.
-
-This works because, like $\Rsys(t)$, also $g(\tau)$ is monotone in $\ykzfun{1}, \ldots \ykzfun{K}$:
-$\Rsys(\tau)$ is monotone in $\ykzfun{1}, \ldots \ykzfun{K}$ (ASCE-ASME paper),
-and $g(\tau)$ is monotonely decreasing in $\Rsys(\tau)$:
-
-First look at $I(\tau) := \int_0^\tau \Rsys(t) \dd t$.
-A lower bound for $I(\tau)$ is $\tau \Rsys(\tau)$ (obtained when $\Rsys(t)$ drops to $\Rsys(\tau)$ immediately after $t=0$),
-and an upper bound for $I(\tau)$ is $\tau$ (obtained when $\Rsys(t)$ remains at $1$ until immediately prior to $t = \tau$).
-Therefore, for each $\tau$ and $\Rsys(\tau)$ there exists a constant $R^* \in [\Rsys(\tau), 1]$
-such that $I(\tau) = \tau R^*$.
-Note that $R^*$ increases when $\Rsys(\tau)$ increases.
-
-Setting $\Rsys(\tau) =: R$ and $g(\tau) =: g$ to simplify notation, we get
-\begin{align*}
-g &= \frac{c_p R + c_u (1-R)}{\tau R + \tau R^*}
-   = \frac{(c_p - c_u) R + c_u}{\tau R + \tau R^*}\,.
-\end{align*}
-As $(c_p -c_u) < 0$, the enumerator of $g$ is monotonely decreasing in $R$.
-The denominator of $g$ is monotonely increasing in $R$, since $R^*$ must increase when $R$ increases.
-In total, $g$ is thus monotonely decreasing in $R$.
-
-***formulate above as theorem?
+***
 
 
-\subsection{***from bounds for $g(\tau)$ to (set of) $\tau^*$:}
-
-%worst case, best case, interval (how?)
-\begin{itemize}
-\item worst case (minimax strategy): minimizing $\ugt(\tau)$ leads to $\tau^*_u$.
-\item interval dominance: for each $\tau$, we get a $g(\tau)$ interval $[\lgt(\tau), \ugt(\tau)]$.
-Throw out all $\tau$'s for which $\lgt(\tau) \ge \ugt(\tau^*_u)$.
-This will leave us with the set of $\tau$'s that are not dominated by $\tau^*_u$.
-(The set will be quite wide probably.)
-\item parametric / maximality (?): collect all $\tau$'s for which there is a prior parameter combination such that $\tau$ minimizes $g(\tau)$.
-(Need to do grid search over $\nkz$'s, or keep optimal pars when calculating $\lgt(\tau)$.)
-\end{itemize}
-
-\subsection{***simple 95\% policy}
-
-Or, alternatively to all the above, simple 95\% policy?
-Repair time from now such that lower system reliability is at least 95\%, i.e., upper system failure probability is at most 5\%.
-
-
-\section{Case study / numerical example}
+\section{Case study / numerical example for complex system layout}
 
 which system layout? something that demonstrates the power of the method (complex layout) or something simple?
 
@@ -609,6 +556,20 @@ or the simplified brake system from ASCE-ASME paper?
 
 
 \section{Outlook}
+
+*** study other replacement schemes, e.g., replacing only failed components:
+when repaired/replaced components are present in system,
+then one needs to use actual ages (and not time since system startup) in parameter update,
+introduces new component type for $\Rsys(t)$ calculation but with same posterior parameters as unreplaced component type.
+Repaired/replaced components require the creation of a separate type in the survival signature decomposition
+and thus the calculation of separate posterior predictive probabilities
+$P(C^k_t = l_k \mid \nkz,\ykz,\text{test data},\text{monitoring data})$,
+which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
+
+
+*** move to sets of priors, set of RUL distributions like in \cite{2016:walter-coolen}.
+Leads to set of $g(\tau)$, finding (set of) $\tau^*$ is then non-trivial,
+needs decision criteria from IP literature like E-admissibility, maximality, or maximin.
 
 *** to use the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 we would need to add interval-censored data (failure has happened between last and current inspection)

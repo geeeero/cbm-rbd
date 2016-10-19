@@ -266,6 +266,135 @@ thus allowing for set-up time for maintenance work.
 
 ***all expressed in time, but could also be in usage (number of cycles, etc).
 
+\section{***summary of ASCE-ASME paper method}
+
+sets of priors on component survival,
+survival signature,
+test data inclusion
+(write down explicit formula for test data including censored observations),
+noninformatiove censoring,
+set of system reliability curves as output,
+wider set in case of prior-data conflict
+
+\section{***extensions to ASCE-ASME paper method}
+\label{sec:extensions}
+
+
+output is a set of current system reliability curves
+taking into account the current system state,
+including the current ages of system components, 
+and the lifetime histories of all component types,
+including test data and expert assessments.
+The set of current, updated system reliability curves gives a RUL estimate
+in the form of a p-box, thus reflecting both aleatoric and epistemic uncertainty in the estimate.
+
+\section{***from (set of) reliability curves to maintenance decision}
+
+To find the optimal moment for maintenance based on the current set of system reliability curves,
+we minimize the expected average cost per time unit,
+or unit cost rate, $g(\tau)$ %, where $\tau$ is the moment when preventive maintenance is exectued.
+(could be discounted as well, out of scope here.)
+
+In the literature, commonly two ways to calculate the unit cost rate are considered,
+a renewal reward theory based long-term unit cost rate $g_r(\tau)$,
+and the one-cycle cost rate $g_1(\tau)$ \citep{1996:mazzuchi-soyer}.
+We will discuss both approaches here with their advantages and disadvanatges.
+
+Let $c_p$ be the cost of planned / preventive maintenance, and $c_u$ the cost of unplanned / breakdown maintenance, where $c_p < c_u$.
+
+\subsection{***unit cost rate via renewal reward}
+
+The renewal reward theory based approach considers the unit cost rate as a long-term average,
+where the proposed policy is used over a large number of replacement cycles,
+and cycles can be seen as stochastic copies of each other.
+Under this assumption, the unit cost rate is, according to renewal theory,
+given as the expected cycle cost $ECC(\tau)$ divided by the expected cycle length $ECL(\tau)$:
+\begin{align}
+g_r(\tau) &= \frac{ECC(\tau)}{ECL(\tau)} = \frac{c_p \Rsys(\tau) + c_u \big(1-\Rsys(\tau)\big)}{\tau \Rsys(\tau) + \int_0^\tau \Rsys(t) \dd t}\,,
+\end{align}
+and $\tau_r^* = \arg\min g_r(\tau) - \tnow$ is the cost-optimal repair time from now
+(since $\Rsys(\cdot)$ is always in terms of time since system startup)
+
+***most often used in literature \citep{2013:si-et-al}, \citep{2011:kim-et-al}
+
+***stochastic copies assumption implies that the system is in the same state at the start of each cycle,
+so $c_p$ needs to include the costs of replacing all components
+to bring the system into the same state as at startup time.
+
+\subsection{***one-cycle unit cost rate}
+
+The one-cycle unit cost rate approach considers only the costs with respect to the current cycle.
+Conditional on the (random) system failure time $\Tsys$, the unit cost rate is 
+\begin{align*}
+g_1(\tau \mid \Tsys) &=
+\begin{cases}
+c_p / \tau  & \text{if } \Tsys \ge \tau \\
+c_u / \Tsys & \text{if } \Tsys < \tau
+\end{cases}
+\end{align*}
+
+Taking the expectation over $\Tsys$ leads to the unit cost rate being
+\begin{align*}
+g_1(\tau) &= \E[g_1(\tau \mid \Tsys)] = \frac{c_p}{\tau} \Rsys(\tau) + c_u \int_0^\tau \frac{1}{t} \fsys(t) \dd t
+\end{align*}
+***here, $\Rsys(\cdot)$ shifted such that $\tnow = 0$.
+
+Due to our extensions from Section~\ref{sec:extensions},
+maintenance work can consist of replacing (or returning to an as-good-as-new state) some or all failed or non-failed components,
+as arbitrary component ages can be taken into account.
+(However, computation times decrease when all components of the same type are replaced at the same time,
+as then the duplication of component types for the survival signature decomposition is not necessary.)
+
+
+\subsection{***bounds for unit cost rate}
+
+Bounds for $\Rsys(t)$ lead to bounds for $g(\tau)$.
+%For each $\tau$, fix $\Rsys(\tau) \in [\lRsys(\tau), \uRsys(\tau)]$ and optimize $I(\tau) = \int_0^\tau \Rsys(t) \dd t$
+%nonparametrically: $\ol{I}(\tau)$ by $\uRsys(t)$, $\ul{I}(\tau)$ by $\lRsys(t)$ until level of $\Rsys(\tau)$.
+Can get bounds $\lgt(\tau)$ and $\ugt(\tau)$ in the same way as bounds $\lRsys(t)$ and $\uRsys(t)$ in ASCE-ASME paper:
+need to optimize only over
+$\nkzfun{1} \in \left[\nkzlfun{1}, \nkzufun{1}\right], \ldots, \nkzfun{K} \in \left[\nkzlfun{K}, \nkzufun{K}\right]$.
+
+This works because, like $\Rsys(t)$, also $g(\tau)$ is monotone in $\ykzfun{1}, \ldots \ykzfun{K}$:
+$\Rsys(\tau)$ is monotone in $\ykzfun{1}, \ldots \ykzfun{K}$ (ASCE-ASME paper),
+and $g(\tau)$ is monotonely decreasing in $\Rsys(\tau)$:
+
+First look at $I(\tau) := \int_0^\tau \Rsys(t) \dd t$.
+A lower bound for $I(\tau)$ is $\tau \Rsys(\tau)$ (obtained when $\Rsys(t)$ drops to $\Rsys(\tau)$ immediately after $t=0$),
+and an upper bound for $I(\tau)$ is $\tau$ (obtained when $\Rsys(t)$ remains at $1$ until immediately prior to $t = \tau$).
+Therefore, for each $\tau$ and $\Rsys(\tau)$ there exists a constant $R^* \in [\Rsys(\tau), 1]$
+such that $I(\tau) = \tau R^*$.
+Note that $R^*$ increases when $\Rsys(\tau)$ increases.
+
+Setting $\Rsys(\tau) =: R$ and $g(\tau) =: g$ to simplify notation, we get
+\begin{align*}
+g &= \frac{c_p R + c_u (1-R)}{\tau R + \tau R^*}
+   = \frac{(c_p - c_u) R + c_u}{\tau R + \tau R^*}\,.
+\end{align*}
+As $(c_p -c_u) < 0$, the enumerator of $g$ is monotonely decreasing in $R$.
+The denominator of $g$ is monotonely increasing in $R$, since $R^*$ must increase when $R$ increases.
+In total, $g$ is thus monotonely decreasing in $R$.
+
+***formulate above as theorem?
+
+
+\subsection{***from bounds for $g(\tau)$ to (set of) $\tau^*$:}
+
+%worst case, best case, interval (how?)
+\begin{itemize}
+\item worst case (minimax strategy): minimizing $\ugt(\tau)$ leads to $\tau^*_u$.
+\item interval dominance: for each $\tau$, we get a $g(\tau)$ interval $[\lgt(\tau), \ugt(\tau)]$.
+Throw out all $\tau$'s for which $\lgt(\tau) \ge \ugt(\tau^*_u)$.
+This will leave us with the set of $\tau$'s that are not dominated by $\tau^*_u$.
+(The set will be quite wide probably.)
+\item parametric / maximality (?): collect all $\tau$'s for which there is a prior parameter combination such that $\tau$ minimizes $g(\tau)$.
+(Need to do grid search over $\nkz$'s, or keep optimal pars when calculating $\lgt(\tau)$.)
+\end{itemize}
+
+\subsection{***simple 95\% policy}
+
+Or, alternatively to all the above, simple 95\% policy?
+Repair time from now such that lower system reliability is at least 95\%, i.e., upper system failure probability is at most 5\%.
 
 \section*{Acknowledgements}
 
