@@ -161,6 +161,7 @@
 \def\taut{\tau(\vec{t})}
 \def\ttau{\tilde{\tau}}
 \def\ttaut{\ttau(\vec{t})}
+\def\tautk{\tau(\vec{t}_k)}
 
 \def\MZ{\mathcal{M}\uz}
 \def\MN{\mathcal{M}\un}
@@ -363,6 +364,12 @@ the replace-all scheme is most likely the cost-optimal strategy.
 
 ***figure of process: component priors $\to$ component posteriors $\to$ system RUL $\to$ $g(\tau)$ $\to$ $\tau^*$
 
+***operation: recalculate $\tau^*$ at fixed dense grid of time points (quasi-continuous),
+this makes sense even if nothing happens because the fact that components in the system still function
+gives information on component distributions;
+alternatively, do the recalculation every time when a component fails (failures contain the most information)
+
+***model allows also to switch to corrective policy when $g(\tau)$ monotonely decreasing (then $\tau \to \infty$)
 
 ***Expert input in our model is, for each component type,
 Weibull shape parameter, expected failure time (translated to scale parameter),
@@ -467,7 +474,11 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 
 \section{***summary of ASCE-ASME paper method minus sets of priors}
 
-***\cite{2016:walter-coolen}
+
+We consider a system with components of $k=1,\ldots,K$ different types;
+for each type $k$, there are $n_k$ exchangeable components in the system.
+
+***example reliability block diagram
 
 component model: weibull with fixed shape,
 inverse gamma prior on scale parameter,
@@ -486,6 +497,173 @@ taking into account the current system state,
 including the current ages of system components, 
 and the lifetime histories of all component types,
 including test data and expert assessments.
+
+***RUL model description below follows closely \cite{2016:walter-coolen},
+which describes the same RUL model.
+However, \cite{2016:walter-coolen} does not consider maintenance policies,
+and focuses on a generalization of the RUL model using sets of priors for the component models
+(effectively parametric P-boxes),
+allowing for vague and partial prior specifications,
+and sensitivity to prior-data conflict.
+
+
+\subsection{Bayesian update of Weibull component models}
+\label{sec:weibull}
+
+Here we describe the model for the component lifetimes,
+together with the Bayesian update procedure which allows to include
+expert knowledge, component tests, and information from the currently monitored components in the system.
+
+For each type $k$ component, we assume that the lifetime $T_{k,i}$ ($i=1,\ldots,n_k$, $k = 1, \ldots, K$)
+is Weibull distributed with fixed shape parameter $\beta_k > 0$,
+in short $T_{k,i} \mid \lambda_k \sim \wei(\beta_k,\lambda_k)$,
+with density and cdf
+\begin{align}
+\label{eq:weibulldens}
+f(t_{k,i} \mid \lambda_k) &= \frac{\beta_k}{\lambda_k} (t_{k,i})^{\beta_k-1} e^{-\frac{(t_{k,i})^{\beta_k}}{\lambda_k}}\,, \\
+\label{eq:weibullcdf}
+F(t_{k,i} \mid \lambda_k) &= 1 - e^{-\frac{(t_{k,i})^{\beta_k}}{\lambda_k}} = P(T_{k,i} \leq t_{k,i} \mid \lambda_k)\,,
+\end{align}
+where $\lambda_k > 0$ and $t > 0$.
+
+The shape parameter $\beta_k$ determines whether the hazard rate is increasing ($\beta_k > 1$)
+or decreasing ($\beta_k < 1$) over time.
+For $\beta_k=1$, one obtains the Exponential distribution with constant hazard rate as a special case.
+To keep things simple, we assume $\beta_k$ to be known.
+(We plan to extend the model to learn also $\beta_k$ in a later step,
+using, e.g., the discretized approach by \cite{1969:soland}.)
+The scale parameter $\lambda_k$ can be interpreted through the relation
+\begin{align}
+\E[T_{k,i} \mid \lambda_k] &= \lambda_k^{1/\beta_k}\, \Gamma(1 + 1/\beta_k)\,.
+\label{eq:lambdainterpret}
+\end{align}
+We will use this equation to convert expected lifetimes to $\lambda_k$ and vice versa.
+
+With a Bayesian approach, one can express expert knowledge about the reliability of the components
+by assigning a so-called prior distribution,
+a distribution over the unknown parameter $\lambda_k$.
+This prior distribution $f(\lambda_k)$ is then updated 
+to the so-called posterior distribution $f(\lambda_k \mid \vec{t})$,
+the distribution over $\lambda_k$ given the data $\vec{t}$,
+via Bayes' rule
+\begin{align*}
+f(\lambda_k \mid \vec{t}) &\propto f(\vec{t}\mid\lambda_k) f(\lambda_k)\,.
+\end{align*}
+The posterior $f(\lambda_k \mid \vec{t})$ subsumes the information
+from both expert knowledge and data,
+and forms the basis for all inferences, like, e.g., predictions.
+
+For the prior over $\lambda_k$,
+a convenient choice is to use the inverse Gamma distribution,
+which is commonly parametrized in terms of the parameters $a_k > 0$ and $b_k > 0$,
+\begin{align}
+f(\lambda_k\mid a_k,b_k) &= \frac{(b_k)^{a_k}}{\Gamma(a_k)} \lambda_k^{-a_k -1} e^{-\frac{b_k}{\lambda_k}}\,,
+\label{eq:ig-def}
+\end{align}
+in short, $\lambda_k \mid a_k, b_k \sim \ig(a_k,b_k)$.
+Here, we have added the prior parameters $a_k$ and $b_k$ in notation
+to indicate that the prior over $\lambda$ depends on their values.
+
+The inverse Gamma is convenient because it is a conjugate prior,
+i.e., the posterior obtained by Bayes' rule is again inverse Gamma and thus easily tractable;
+the prior parameters only need to be updated to obtain the posterior parameters,
+so no numerical integation or simulation techniques are necessary.
+Furthermore, this conjugacy holds also when right-censored observations are used for updating,
+as indicated below.
+
+In place of the usual parametrization in terms of $a_k$ and $b_k$,
+we use the parameters $\nkz > 1$ and $\ykz > 0$
+because they have a simple interpretation.
+They are defined as
+\begin{align}
+\nkz &= a_k - 1 & &\text{ and}
+&
+\ykz &= b_k / \nkz,
+\label{eq:abtony}
+\end{align}
+where $\ykz$ can be interpreted as the prior guess for the scale parameter $\lambda_k$,
+as $\E[\lambda_k\mid\nkz,\ykz] = \ykz$.
+Using \eqref{eq:lambdainterpret},
+we can thus translate an expert's statement of expected component lifetime into a corresponding value for $\ykz$.
+$\nkz$ can be seen as a prior strength or pseudocount,
+this will become clear in the discussion of the update step below.
+
+The parametrization in terms of $\nkz$ and $\ykz$ also clarifies the nature of the combination
+of prior information and data through Bayes' rule.
+In the conjugate setting,
+applying Bayes' rule simply means that the prior parameters $\nkz$ and $\ykz$
+are updated to posterior parameters, which we denote by $\nkn$ and $\ykn$, respectively.
+Assume we observe $n_k = e_k + c_k$ component lifetimes,
+where $e_k$ is the number of actual failure events,
+and $c_k$ is the number of right-censored observations.
+We denote the failure times by $t_{k,1}, \ldots, t_{k,e_k}$,
+and the censoring times by $t^+_{k,1}, \ldots, t^+_{k,c_k}$,
+and collect them in an observation vector $\vec{t}_k = (t_{k,1}, \ldots, t_{k,e_k}, t^+_{k,1}, \ldots, t^+_{k,c_k})$.
+Then, the updated, posterior parameters are
+\begin{align}
+\nkn &= \nkz + e_k\,, 
+&
+\ykn &=  \frac{\nkz \ykz + \tautk}{\nkz + e_k}\,,
+\label{eq:ig-update}
+\end{align}
+where $\tautk = \sum_{i=1}^{e_k} (t_{k,i})^\beta + \sum_{i=1}^{c_k} (t^+_{k,i})^\beta$.
+
+From the simple update rule \eqref{eq:ig-update}, we see that
+$\ykn$ is a weighted average of the prior parameter $\ykz$ and the maximum likelihood (ML) estimator $\tautk/e_k$,
+with weights proportional to $\nkz$ and $e_k$, respectively.
+$\nkz$ can thus be interpreted as a prior strength or pseudocount,
+indicating how much our prior guess should weigh against the $e_k$ observed failure events.
+Furthermore, $\V[\lambda\mid\nkz,\ykz] = (\ykz)^2 / (1 - 1/\nkz)$;
+for fixed $\ykz$, a higher $\nkz$ indicates thus 
+that more probability mass is concentrated around $\ykz$.
+
+Using \eqref{eq:abtony} and \eqref{eq:ig-update}, the posterior distribution over $\lambda_k$ is
+\begin{align}
+\lambda_k \mid \nkz, \ykz, \vec{t}_k \sim \ig(\nkz + e_k + 1, \nkz \ykz + \tautk)\,.
+\label{eq:ig-update-alpha}
+\end{align}
+%where we have added the prior parameters $\nkz$ and $\ykz$ in notation
+%to emphasize that the posterior is a synthesis of prior information and data.
+As this posterior \eqref{eq:ig-update-alpha} can be defined in terms of
+the updated, posterior parameters $\nkn$ and $\ykn$,
+we may also write
+\begin{align*}
+f(\lambda_k \mid \nkz, \ykz, \vec{t}_k) &= f(\lambda_k \mid \nkn, \ykn)\,.
+\end{align*}
+The iterative nature of Bayesian inference means that we can take the updated,
+posterior parameters as new prior parameters and update them again using new data.
+Indeed, we will use this property to use the extra information about components
+that accumulates during operation of the system:
+At any time $\tnow > 0$,
+all non-failed components correspond to a right censored observation $\tpnow$;
+any failed components instead contribute a fully observed, non-censored lifetime,
+and both types of observations can be used in the update step \eqref{eq:ig-update}.
+To keep notation simple,
+we will below denote the parameters of the inverse Gamma distribution by $\nkz$ and $\ykz$,
+regardless of them expressing expert information alone,
+or stemming from the combination of expert information and test data.
+
+
+\section{Reliability functions for complex systems using the survival signature}
+\label{sec:sysrel}
+
+The goal is to find, for a given monitored system, the system reliability curve $\Rsys(t)$ at current time $\tnow$,
+and we will now show how the system reliability function can be efficiently obtained using the survival signature.
+This system reliability gives us the RUL distribution on which we base our adaptive maintenance policy.
+
+We consider systems of arbitrary reliability block diagram layout,
+consisting of components of $K$ different types,
+and there are $n_k$ components of type $k$ in the system.
+This system is observed until time $\tnow$,
+leading to censored observation of lifetimes of components within the system.
+
+
+
+\section{Posterior predictive***}
+
+For this, we need the posterior predictive distribution
+of the number of components that function at times $t > \tnow$,
+which we will derive .
 
 
 \section{***from reliability curve (RUL) to maintenance decision}
