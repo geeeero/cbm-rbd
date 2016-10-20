@@ -648,14 +648,44 @@ or stemming from the combination of expert information and test data.
 \label{sec:sysrel}
 
 The goal is to find, for a given monitored system, the system reliability curve $\Rsys(t)$ at current time $\tnow$,
-and we will now show how the system reliability function can be efficiently obtained using the survival signature.
+and we will now show how the system reliability function, given component models, can be efficiently calculated using the survival signature.
 This system reliability gives us the RUL distribution on which we base our adaptive maintenance policy.
 
 We consider systems of arbitrary reliability block diagram layout,
 consisting of components of $K$ different types,
-and there are $n_k$ components of type $k$ in the system.
+where there are $n_k$ components of type $k$ in the system,
+and the total number of components in the system is $\sum_{k=1}^K n_k = n$.
 This system is observed until time $\tnow$,
-leading to censored observation of lifetimes of components within the system.
+leading to censored observation of certain component lifetimes within the system.
+
+In a system with $n$ components, the state of the components can be expressed by the state vector
+$\vec{x} = (x_1,x_2,\ldots,x_n) \in \{0,1\}^n$,
+with $x_i=1$ if the $i$th component functions and $x_i=0$ if not.
+The structure function $\phi : \{0,1\}^n \rightarrow \{0,1\}$, defined for all possible $\vec{x}$,
+takes  the value 1 if the system functions and 0 if the system does not function for state vector $\vec{x}$ \cite{BP75}.
+Most real-life systems are coherent,
+which means that $\phi(\vec{x})$ is non-decreasing in any of the components of $\vec{x}$,
+so system functioning cannot be improved by worse performance of one or more of its components.
+Furthermore, one can usually assume that $\phi(0, \ldots, 0) = 0$ and $\phi(1, \ldots, 1) = 1$.
+
+The survival signature \cite{2012:survsign} is a summary of the structure function
+for systems with $K$ groups of exchangeable components.
+Denoted by $\Phi(l_1,\ldots,l_K)$, with $l_k=0,1,\ldots,n_k$ for $k=1,\ldots,K$,
+it is defined as the probability for the event that the system functions
+given that precisely $l_k$ of its $n_k$ components of type $k$ function, for each $k\in \{1,\ldots,K\}$.
+Essentially, this creates a $K$-dimensional partition for the event $\Tsys > t$,
+such that $\Rsys(t) = P(\Tsys > t)$ can be calculated using the law of total probability,
+\begin{align}
+P(\Tsys > t) &= \sum_{l_1=0}^{m_1} \cdots \sum_{l_K=0}^{m_K} P(\Tsys > t \mid C^1_t = l_1,\ldots, C^K_t = l_K)
+                                                                                  P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
+             &= \sum_{l_1=0}^{n_1} \cdots \sum_{l_K=0}^{n_K} \Phi(l_1,\ldots,l_K) P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
+             &= \sum_{l_1=0}^{n_1} \cdots \sum_{l_K=0}^{n_K} \Phi(l_1,\ldots,l_K) \prod_{k=1}^K P(C^k_t = l_k)\,,
+\label{eq:sysrel-survsign}
+\end{align}
+where $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$,
+and the last equality holds as we assume that components of different types are independent.
+Note that for coherent systems,
+the survival signature $\Phi(l_1,\ldots,l_K)$ is non-decreasing in each $l_k$.
 
 
 
