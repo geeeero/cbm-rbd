@@ -573,6 +573,7 @@ as indicated below.
 
 In place of the usual parametrization in terms of $a_k$ and $b_k$,
 we use the parameters $\nkz > 1$ and $\ykz > 0$
+(the upper index ${}\uz$ is used to indicate that these are prior parameters)
 because they have a simple interpretation.
 They are defined as
 \begin{align}
@@ -607,6 +608,8 @@ Then, the updated, posterior parameters are
 \label{eq:ig-update}
 \end{align}
 where $\tautk = \sum_{i=1}^{e_k} (t_{k,i})^\beta + \sum_{i=1}^{c_k} (t^+_{k,i})^\beta$.
+The upper index ${}\un$ indicates that these are posterior parameters resulting from an update with $n_k$ observations,
+where we leave out the index $k$ for $n_k$ in the upper index to increase legibility.
 
 From the simple update rule \eqref{eq:ig-update}, we see that
 $\ykn$ is a weighted average of the prior parameter $\ykz$ and the maximum likelihood (ML) estimator $\tautk/e_k$,
@@ -684,16 +687,43 @@ P(\Tsys > t) &= \sum_{l_1=0}^{m_1} \cdots \sum_{l_K=0}^{m_K} P(\Tsys > t \mid C^
 \end{align}
 where $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$,
 and the last equality holds as we assume that components of different types are independent.
-Note that for coherent systems,
-the survival signature $\Phi(l_1,\ldots,l_K)$ is non-decreasing in each $l_k$.
+Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is non-decreasing in each $l_k$.
+
+***An example for the survival signature for the system in Figure *** is given in Table ****.
+
+
+\section{Component posterior predictive distributions***}
+\label{sec:postpred}
+
+To calculate the current system reliability curve,
+we thus need the probabilities $P(C^k_t = l_k)$,
+which give the number of components that function at times $t > \tnow$.
+In our Bayesian framework, these probabilities are given
+by a so-called predictive distribution that can be derived from the distribution over $\lambda$.
+This distribution needs to account for expert knowledge and test data;
+following our comment at the end of Section~\ref{sec:weibull},
+we assume here that ***change notation to $n_k^{(\text{test})}$ and $n_k^{(\text{now})}$???
+
+but also for the information gained from the current run of the system:
+both failure times of components (if any)
+and the right-censoring time $\tnow$ for each non-failed component in the system
+can be used to update $\nkz$ and $\ykz$.
+
+In analogue to the notation from Section~\ref{sec:weibull},
+let $n_k = e_k^{\tnow} + c_k^{\tnow}$ be the number of type $k$ components in the monitored system,
+where $e_k^{\tnow}$ is the number of components that have failed by $\tnow$,
+and $c_k^{\tnow}$ is the number of components that have not failed by $\tnow$.
+We can thus collect these observations, as of $\tnow$, in a vector
+$\vec{t}_k^{\tnow} = (t_{k,1}, \ldots, t_{k,e_k}, \tpnow, \ldots, \tpnow)$,
+containing $n_c$ right-censored obsevations $\tpnow$.
 
 
 
-\section{Posterior predictive***}
 
-For this, we need the posterior predictive distribution
-of the number of components that function at times $t > \tnow$,
-which we will derive .
+Furthermore, the fact that the components in the system that still function have reached the age $\tnow$
+must be used when calculating the posterior predictive distribution.
+
+
 
 
 \section{***from reliability curve (RUL) to maintenance decision}
