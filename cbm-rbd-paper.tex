@@ -132,6 +132,7 @@
 \newcommand{\ykzlfun}[1]{\ul{y}\uz_{#1}}
 \newcommand{\ykzufun}[1]{\ol{y}\uz_{#1}}
 
+
 \def\nz{n\uz}
 \def\nn{n\un}
 %\def\ni{n\ui}
@@ -157,6 +158,8 @@
 \def\nknl{\ul{n}\un_k}
 \def\nknu{\ol{n}\un_k}
 
+\def\yknow{y_k^{(\tnow)}}
+\def\nknow{n_k^{(\tnow)}}
 
 \def\taut{\tau(\vec{t})}
 \def\ttau{\tilde{\tau}}
@@ -472,8 +475,7 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 \end{scriptsize}
 
 
-\section{***summary of ASCE-ASME paper method minus sets of priors}
-
+\section{***Adaptive system RUL / RLD based on Weibull component models}
 
 We consider a system with components of $k=1,\ldots,K$ different types;
 for each type $k$, there are $n_k$ exchangeable components in the system.
@@ -485,12 +487,11 @@ inverse gamma prior on scale parameter,
 fix priors via expected lifetime and prior strength,
 
 test data inclusion
-(write down explicit formula for test data including censored observations),
-noninformatiove censoring
+with noninformatiove right-censoring
 
-RUL via survival signature,
+RUL/RLD via survival signature,
 posterior predictive distributions,
-system reliability curve (RUL) as output,
+system reliability distribution (RUL/RLD) as output,
 
 output is the current system reliability curve
 taking into account the current system state,
@@ -499,12 +500,12 @@ and the lifetime histories of all component types,
 including test data and expert assessments.
 
 ***RUL model description below follows closely \cite{2016:walter-coolen},
-which describes the same RUL model.
+which describes the same RUL/RLD model.
 However, \cite{2016:walter-coolen} does not consider maintenance policies,
-and focuses on a generalization of the RUL model using sets of priors for the component models
-(effectively parametric P-boxes),
+and focuses instead on a generalization of the RUL/RLD model using sets of priors for the component models
+(which can be seen as parametric P-boxes),
 allowing for vague and partial prior specifications,
-and sensitivity to prior-data conflict.
+and sensitivity to prior-data conflict \cite[\S 2.2.3.3]{diss}.
 
 
 \subsection{Bayesian update of Weibull component models}
@@ -641,25 +642,31 @@ At any time $\tnow > 0$,
 all non-failed components correspond to a right censored observation $\tpnow$;
 any failed components instead contribute a fully observed, non-censored lifetime,
 and both types of observations can be used in the update step \eqref{eq:ig-update}.
-To keep notation simple,
-we will below denote the parameters of the inverse Gamma distribution by $\nkz$ and $\ykz$,
-regardless of them expressing expert information alone,
-or stemming from the combination of expert information and test data.
+Before we write this out formally in Section~\ref{sec:postpred},
+we will first present how system reliability functions can be derived based on component models.
+%To keep notation simple,
+%we will below denote the parameters of the inverse Gamma distribution by $\nkz$ and $\ykz$,
+%regardless of them expressing expert information alone,
+%or stemming from the combination of expert information and test data.
 
 
-\section{Reliability functions for complex systems using the survival signature}
+\subsection{Reliability functions for complex systems using the survival signature}
 \label{sec:sysrel}
 
-The goal is to find, for a given monitored system, the system reliability curve $\Rsys(t)$ at current time $\tnow$,
-and we will now show how the system reliability function, given component models, can be efficiently calculated using the survival signature.
-This system reliability gives us the RUL distribution on which we base our adaptive maintenance policy.
+Here we describe how system reliability functions, given fixed component models,
+can be efficiently calculated using the survival signature.
+We will show in Section~***
+how this method can be used to find the system reliability function $\Rsys(t)$ at current time $\tnow$ for a monitored system,
+giving us the RUL/RLD distribution on which we base our adaptive maintenance policy.
 
 We consider systems of arbitrary reliability block diagram layout,
 consisting of components of $K$ different types,
 where there are $n_k$ components of type $k$ in the system,
 and the total number of components in the system is $\sum_{k=1}^K n_k = n$.
-This system is observed until time $\tnow$,
-leading to censored observation of certain component lifetimes within the system.
+An example is given in Figure~***.
+Note that this system cannot be described as a nesting of series and parallel subsystems.
+%This system is observed until time $\tnow$,
+%leading to censored observation of certain component lifetimes within the system.
 
 In a system with $n$ components, the state of the components can be expressed by the state vector
 $\vec{x} = (x_1,x_2,\ldots,x_n) \in \{0,1\}^n$,
@@ -692,22 +699,29 @@ Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is
 ***An example for the survival signature for the system in Figure *** is given in Table ****.
 
 
-\section{Component posterior predictive distributions***}
+\subsection{Component posterior predictive distributions}
 \label{sec:postpred}
 
 To calculate the current system reliability curve,
 we thus need the probabilities $P(C^k_t = l_k)$,
 which give the number of components that function at times $t > \tnow$.
-In our Bayesian framework, these probabilities are given
-by a so-called predictive distribution that can be derived from the distribution over $\lambda$.
-This distribution needs to account for expert knowledge and test data;
-following our comment at the end of Section~\ref{sec:weibull},
-we assume here that ***change notation to $n_k^{(\text{test})}$ and $n_k^{(\text{now})}$???
+In the Bayesian framework, these probabilities are given
+by a so-called posterior predictive distribution that can be derived from the posterior over $\lambda$.
 
-but also for the information gained from the current run of the system:
-both failure times of components (if any)
-and the right-censoring time $\tnow$ for each non-failed component in the system
-can be used to update $\nkz$ and $\ykz$.
+Denote by $\nkn$ and $\ykn$ the parameters obtained
+by updating the prior parameters $\nkz$ and $\ykz$ using test data.
+The corresponding distribution $f(\lambda_l \mid \nkn, \ykn)$
+thus accounts for both expert knowledge and test data.
+However, following our comments at the end of Section~\ref{sec:weibull},
+the component models can be further updated
+using information gained from the current run of the system until $\tnow$:
+Any failure times of failed components,
+and the right-censoring time $\tpnow$ for each non-failed component
+can be used to update $\nkn$ and $\ykn$.
+We denote the resulting parameter values by $\nknow$ and $\yknow$.
+(It is of course possible to update $\nkz$ and $\ykz$ directly to $\nknow$ and $\yknow$ if no test data is available.)
+%Furthermore, the fact that the components in the system that still function have reached the age $\tnow$
+%must be used when calculating the posterior predictive distribution.
 
 In analogue to the notation from Section~\ref{sec:weibull},
 let $n_k = e_k^{\tnow} + c_k^{\tnow}$ be the number of type $k$ components in the monitored system,
@@ -715,18 +729,16 @@ where $e_k^{\tnow}$ is the number of components that have failed by $\tnow$,
 and $c_k^{\tnow}$ is the number of components that have not failed by $\tnow$.
 We can thus collect these observations, as of $\tnow$, in a vector
 $\vec{t}_k^{\tnow} = (t_{k,1}, \ldots, t_{k,e_k}, \tpnow, \ldots, \tpnow)$,
-containing $n_c$ right-censored obsevations $\tpnow$.
+containing $c_k^{\tnow}$ right-censored observations $\tpnow$.
 
 
 
 
-Furthermore, the fact that the components in the system that still function have reached the age $\tnow$
-must be used when calculating the posterior predictive distribution.
 
 
 
 
-\section{***from reliability curve (RUL) to maintenance decision}
+\section{Dynamic maintenance policy based on the current system reliability function (RUL/RLD)}
 
 To find the optimal moment for maintenance based on the current set of system reliability curves,
 we minimize the expected average cost per time unit,
