@@ -161,6 +161,11 @@
 \def\yknow{y_k^{(\tnow)}}
 \def\nknow{n_k^{(\tnow)}}
 
+\newcommand{\nk}{n_k}
+\newcommand{\nkp}{n_k'}
+\newcommand{\yk}{y_k}
+\newcommand{\ykp}{y_k'}
+
 \def\taut{\tau(\vec{t})}
 \def\ttau{\tilde{\tau}}
 \def\ttaut{\ttau(\vec{t})}
@@ -179,6 +184,8 @@
 \def\tnow{t_\text{now}}
 \def\tpnow{t^+_\text{now}}
 
+\newcommand{\Rsysnow}{R^{(t_\text{now})}_\text{sys}}
+\def\Phinow{\Phi^{(t_\text{now})}}
 
 % ------------ options -------------
 
@@ -478,7 +485,7 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 \section{***Adaptive system RUL / RLD based on Weibull component models}
 
 We consider a system with components of $k=1,\ldots,K$ different types;
-for each type $k$, there are $n_k$ exchangeable components in the system.
+for each type $k$, there are $N_k$ exchangeable components in the system.
 
 ***example reliability block diagram
 
@@ -515,7 +522,7 @@ Here we describe the model for the component lifetimes,
 together with the Bayesian update procedure which allows to include
 expert knowledge, component tests, and information from the currently monitored components in the system.
 
-For each type $k$ component, we assume that the lifetime $T_{k,i}$ ($i=1,\ldots,n_k$, $k = 1, \ldots, K$)
+For each type $k$ component, we assume that the lifetime $T_{k,i}$ ($i=1,\ldots,N_k$, $k = 1, \ldots, K$)
 is Weibull distributed with fixed shape parameter $\beta_k > 0$,
 in short $T_{k,i} \mid \lambda_k \sim \wei(\beta_k,\lambda_k)$,
 with density and cdf
@@ -573,29 +580,29 @@ Furthermore, this conjugacy holds also when right-censored observations are used
 as indicated below.
 
 In place of the usual parametrization in terms of $a_k$ and $b_k$,
-we use the parameters $\nkz > 1$ and $\ykz > 0$
-(the upper index ${}\uz$ is used to indicate that these are prior parameters)
-because they have a simple interpretation.
+we use the parameters $\nk > 1$ and $\yk > 0$
+%(the upper index ${}\uz$ is used to indicate that these are prior parameters)
+because they are more simple to interpret.
 They are defined as
 \begin{align}
-\nkz &= a_k - 1 & &\text{ and}
+\nk &= a_k - 1 & &\text{ and}
 &
-\ykz &= b_k / \nkz,
+\yk &= b_k / \nk,
 \label{eq:abtony}
 \end{align}
-where $\ykz$ can be interpreted as the prior guess for the scale parameter $\lambda_k$,
-as $\E[\lambda_k\mid\nkz,\ykz] = \ykz$.
+where $\yk$ can be interpreted as the prior guess for the scale parameter $\lambda_k$,
+as $\E[\lambda_k\mid\nk,\yk] = \yk$.
 Using \eqref{eq:lambdainterpret},
-we can thus translate an expert's statement of expected component lifetime into a corresponding value for $\ykz$.
-$\nkz$ can be seen as a prior strength or pseudocount,
+we can thus translate an expert's statement of expected component lifetime into a corresponding value for $\yk$.
+$\nk$ can be seen as a prior strength or pseudocount,
 this will become clear in the discussion of the update step below.
 
-The parametrization in terms of $\nkz$ and $\ykz$ also clarifies the nature of the combination
+The parametrization in terms of $\nk$ and $\yk$ also clarifies the nature of the combination
 of prior information and data through Bayes' rule.
 In the conjugate setting,
-applying Bayes' rule simply means that the prior parameters $\nkz$ and $\ykz$
-are updated to posterior parameters, which we denote by $\nkn$ and $\ykn$, respectively.
-Assume we observe $n_k = e_k + c_k$ component lifetimes,
+applying Bayes' rule simply means that the prior parameters $\nk$ and $\yk$
+are updated to posterior parameters, which we denote by $\nkp$ and $\ykp$, respectively.
+Assume we observe $N_k = e_k + c_k$ component lifetimes,
 where $e_k$ is the number of actual failure events,
 and $c_k$ is the number of right-censored observations.
 We denote the failure times by $t_{k,1}, \ldots, t_{k,e_k}$,
@@ -603,36 +610,36 @@ and the censoring times by $t^+_{k,1}, \ldots, t^+_{k,c_k}$,
 and collect them in an observation vector $\vec{t}_k = (t_{k,1}, \ldots, t_{k,e_k}, t^+_{k,1}, \ldots, t^+_{k,c_k})$.
 Then, the updated, posterior parameters are
 \begin{align}
-\nkn &= \nkz + e_k\,, 
+\nkp &= \nk + e_k\,, 
 &
-\ykn &=  \frac{\nkz \ykz + \tautk}{\nkz + e_k}\,,
+\ykp &=  \frac{\nk \yk + \tautk}{\nk + e_k}\,,
 \label{eq:ig-update}
 \end{align}
 where $\tautk = \sum_{i=1}^{e_k} (t_{k,i})^\beta + \sum_{i=1}^{c_k} (t^+_{k,i})^\beta$.
-The upper index ${}\un$ indicates that these are posterior parameters resulting from an update with $n_k$ observations,
-where we leave out the index $k$ for $n_k$ in the upper index to increase legibility.
+%The upper index ${}\un$ indicates that these are posterior parameters resulting from an update with $n_k$ observations,
+%where we leave out the index $k$ for $n_k$ in the upper index to increase legibility.
 
 From the simple update rule \eqref{eq:ig-update}, we see that
-$\ykn$ is a weighted average of the prior parameter $\ykz$ and the maximum likelihood (ML) estimator $\tautk/e_k$,
-with weights proportional to $\nkz$ and $e_k$, respectively.
-$\nkz$ can thus be interpreted as a prior strength or pseudocount,
+$\ykp$ is a weighted average of the prior parameter $\yk$ and the maximum likelihood (ML) estimator $\tautk/e_k$,
+with weights proportional to $\nk$ and $e_k$, respectively.
+$\nk$ can thus be interpreted as a prior strength or pseudocount,
 indicating how much our prior guess should weigh against the $e_k$ observed failure events.
-Furthermore, $\V[\lambda\mid\nkz,\ykz] = (\ykz)^2 / (1 - 1/\nkz)$;
-for fixed $\ykz$, a higher $\nkz$ indicates thus 
-that more probability mass is concentrated around $\ykz$.
+Furthermore, $\V[\lambda\mid\nk,\yk] = (\yk)^2 / (1 - 1/\nk)$;
+for fixed $\yk$, a higher $\nk$ indicates thus 
+that more probability mass is concentrated around $\yk$.
 
 Using \eqref{eq:abtony} and \eqref{eq:ig-update}, the posterior distribution over $\lambda_k$ is
 \begin{align}
-\lambda_k \mid \nkz, \ykz, \vec{t}_k \sim \ig(\nkz + e_k + 1, \nkz \ykz + \tautk)\,.
+\lambda_k \mid \nk, \yk, \vec{t}_k \sim \ig(\nk + e_k + 1, \nk \yk + \tautk)\,.
 \label{eq:ig-update-alpha}
 \end{align}
 %where we have added the prior parameters $\nkz$ and $\ykz$ in notation
 %to emphasize that the posterior is a synthesis of prior information and data.
 As this posterior \eqref{eq:ig-update-alpha} can be defined in terms of
-the updated, posterior parameters $\nkn$ and $\ykn$,
+the updated, posterior parameters $\nkp$ and $\ykp$,
 we may also write
 \begin{align*}
-f(\lambda_k \mid \nkz, \ykz, \vec{t}_k) &= f(\lambda_k \mid \nkn, \ykn)\,.
+f(\lambda_k \mid \nk, \yk, \vec{t}_k) &= f(\lambda_k \mid \nkp, \ykp)\,.
 \end{align*}
 The iterative nature of Bayesian inference means that we can take the updated,
 posterior parameters as new prior parameters and update them again using new data.
@@ -656,40 +663,40 @@ we will first present how system reliability functions can be derived based on c
 Here we describe how system reliability functions, given fixed component models,
 can be efficiently calculated using the survival signature.
 We will show in Section~***
-how this method can be used to find the system reliability function $\Rsys(t)$ at current time $\tnow$ for a monitored system,
+how this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
 giving us the RUL/RLD distribution on which we base our adaptive maintenance policy.
 
 We consider systems of arbitrary reliability block diagram layout,
 consisting of components of $K$ different types,
-where there are $n_k$ components of type $k$ in the system,
-and the total number of components in the system is $\sum_{k=1}^K n_k = n$.
-An example is given in Figure~***.
+where there are $N_k$ components of type $k$ in the system,
+and the total number of components in the system is $\sum_{k=1}^K N_k = N$.
+An example system reliability block diagram is given in Figure~***.
 Note that this system cannot be described as a nesting of series and parallel subsystems.
 %This system is observed until time $\tnow$,
 %leading to censored observation of certain component lifetimes within the system.
 
-In a system with $n$ components, the state of the components can be expressed by the state vector
-$\vec{x} = (x_1,x_2,\ldots,x_n) \in \{0,1\}^n$,
+In a system with $N$ components, the state of the components can be expressed by the state vector
+$\vec{x} = (x_1,x_2,\ldots,x_N) \in \{0,1\}^N$,
 with $x_i=1$ if the $i$th component functions and $x_i=0$ if not.
-The structure function $\phi : \{0,1\}^n \rightarrow \{0,1\}$, defined for all possible $\vec{x}$,
-takes  the value 1 if the system functions and 0 if the system does not function for state vector $\vec{x}$ \cite{BP75}.
+The structure function $\phi : \{0,1\}^N \rightarrow \{0,1\}$, defined for all possible $\vec{x}$,
+takes the value 1 if the system functions and 0 if the system does not function for state vector $\vec{x}$ \citep{BP75}.
 Most real-life systems are coherent,
 which means that $\phi(\vec{x})$ is non-decreasing in any of the components of $\vec{x}$,
 so system functioning cannot be improved by worse performance of one or more of its components.
 Furthermore, one can usually assume that $\phi(0, \ldots, 0) = 0$ and $\phi(1, \ldots, 1) = 1$.
 
-The survival signature \cite{2012:survsign} is a summary of the structure function
+The survival signature \citep{2012:survsign} is a summary of the structure function
 for systems with $K$ groups of exchangeable components.
-Denoted by $\Phi(l_1,\ldots,l_K)$, with $l_k=0,1,\ldots,n_k$ for $k=1,\ldots,K$,
+Denoted by $\Phi(l_1,\ldots,l_K)$, with $l_k=0,1,\ldots,N_k$ for $k=1,\ldots,K$,
 it is defined as the probability for the event that the system functions
-given that precisely $l_k$ of its $n_k$ components of type $k$ function, for each $k\in \{1,\ldots,K\}$.
+given that precisely $l_k$ of its $N_k$ components of type $k$ function, for each $k\in \{1,\ldots,K\}$.
 Essentially, this creates a $K$-dimensional partition for the event $\Tsys > t$,
 such that $\Rsys(t) = P(\Tsys > t)$ can be calculated using the law of total probability,
 \begin{align}
-P(\Tsys > t) &= \sum_{l_1=0}^{m_1} \cdots \sum_{l_K=0}^{m_K} P(\Tsys > t \mid C^1_t = l_1,\ldots, C^K_t = l_K)
+P(\Tsys > t) &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} P(\Tsys > t \mid C^1_t = l_1,\ldots, C^K_t = l_K)
                                                                                   P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
-             &= \sum_{l_1=0}^{n_1} \cdots \sum_{l_K=0}^{n_K} \Phi(l_1,\ldots,l_K) P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
-             &= \sum_{l_1=0}^{n_1} \cdots \sum_{l_K=0}^{n_K} \Phi(l_1,\ldots,l_K) \prod_{k=1}^K P(C^k_t = l_k)\,,
+             &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} \Phi(l_1,\ldots,l_K) P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
+             &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} \Phi(l_1,\ldots,l_K) \prod_{k=1}^K P(C^k_t = l_k)\,,
 \label{eq:sysrel-survsign}
 \end{align}
 where $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$,
@@ -699,39 +706,42 @@ Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is
 ***An example for the survival signature for the system in Figure *** is given in Table ****.
 
 
-\subsection{Component posterior predictive distributions}
+\subsection{Component posterior predictive distributions at $\tnow$}
 \label{sec:postpred}
 
-To calculate the current system reliability curve,
-we thus need the probabilities $P(C^k_t = l_k)$,
-which give the number of components that function at times $t > \tnow$.
+To calculate the current system reliability function $\Rsysnow(t)$,
+we thus need, for each $k=1,\ldots, K$, the probabilities $P(C^k_t = l_k)$
+for the number of type $k$ components that function at times $t > \tnow$.
 In the Bayesian framework, these probabilities are given
 by a so-called posterior predictive distribution that can be derived from the posterior over $\lambda$.
 
-Denote by $\nkn$ and $\ykn$ the parameters obtained
-by updating the prior parameters $\nkz$ and $\ykz$ using test data.
-The corresponding distribution $f(\lambda_l \mid \nkn, \ykn)$
-thus accounts for both expert knowledge and test data.
-However, following our comments at the end of Section~\ref{sec:weibull},
+Denote by $\nkz$ and $\ykz$ the parameters reflecting the knowledge base at system start-up time $t=0$.
+These could have been obtained by updating prior parameters $\nk$ and $\yk$ (reflecting expert knowledge)
+to $\nkp$ and $\ykp$ using test data,
+or could be taken directly equal to $\nk$ and $\yk$ if no test data is available.
+In both cases, the distribution $f(\lambda_l \mid \nkz, \ykz)$
+thus accounts for all knowledge on component type $k$ that is available at system start-up.
+
+Following our comments at the end of Section~\ref{sec:weibull},
 the component models can be further updated
 using information gained from the current run of the system until $\tnow$:
 Any failure times of failed components,
 and the right-censoring time $\tpnow$ for each non-failed component
-can be used to update $\nkn$ and $\ykn$.
+can be used to update $\nkz$ and $\ykz$.
 We denote the resulting parameter values by $\nknow$ and $\yknow$.
-(It is of course possible to update $\nkz$ and $\ykz$ directly to $\nknow$ and $\yknow$ if no test data is available.)
+%(It is of course possible to update $\nkz$ and $\ykz$ directly to $\nknow$ and $\yknow$ if no test data is available.)
 %Furthermore, the fact that the components in the system that still function have reached the age $\tnow$
 %must be used when calculating the posterior predictive distribution.
 
 In analogue to the notation from Section~\ref{sec:weibull},
-let $n_k = e_k^{\tnow} + c_k^{\tnow}$ be the number of type $k$ components in the monitored system,
+let $N_k = e_k^{\tnow} + c_k^{\tnow}$ be the number of type $k$ components in the monitored system,
 where $e_k^{\tnow}$ is the number of components that have failed by $\tnow$,
 and $c_k^{\tnow}$ is the number of components that have not failed by $\tnow$.
 We can thus collect these observations, as of $\tnow$, in a vector
 $\vec{t}_k^{\tnow} = (t_{k,1}, \ldots, t_{k,e_k}, \tpnow, \ldots, \tpnow)$,
 containing $c_k^{\tnow}$ right-censored observations $\tpnow$.
 
-
+$\Phinow$
 
 
 
