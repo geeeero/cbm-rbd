@@ -192,6 +192,9 @@
 \def\vectknow{\vec{t}_k^{(\tnow)}}
 \def\Phinow{\Phi^{(\tnow)}}
 \newcommand{\gnow}{g^{(\tnow)}}
+\newcommand{\tausnow}{\tau_*^{(\tnow)}}
+\newcommand{\tsetup}{\tau_{\text{setup}}}
+
 
 % ------------ options -------------
 
@@ -900,14 +903,53 @@ Next, we will describe how an adaptive maintenance policy based on %\eqref{eq:sy
 such a fine discrete approximation of the RLD can be obtained.
 
 
-\section{Dynamic maintenance policy based on the current system reliability function (RUL/RLD)}
+\section{Dynamic/Adaptive maintenance policy based on the current system residual life distribution}
+\label{sec:policy}
+
+We can now derive the adaptive / dynamic maintenance policy
+that resembles a CBM policy.
+However, instead of a determining a threshold for a degradation signal like in usual CBM policies,
+we determine, for each present time $\tnow$,
+the adaptive and dynamic timespan $\tausnow$ which gives the time from $\tnow$ until the optimal moment of maintenance.
+Close to system startup, $\tausnow$ will be large;
+but as components in the system age and some indeed fail over time,
+$\tausnow$ will typically decrease,
+and whenever $\tausnow$ decreases below $\tsetup$, the timespan needed to set up maintenance work
+(often referred to as setup time),
+a preventive maintenance action is initiated.
+
+The optimal time to maintenance $\tausnow$ is determined based on $\Rsysnow(t)$
+using the expected unit cost rate for the current operational cycle, see Section~\ref{sec:costrate} below.
+Each operational cycle starts with the system being in an (as good as) new state,
+i.e., all components in the system are new and have not aged.
+A cycle ends when the system is either maintained preventively at $\tnow + \tausnow$ (on an absolute time scale),
+or the system fails, which triggers a corrective maintenance action.
+We assume that either maintenance action takes negligible time,
+and that either action results in an (as good as) new system state by replacing all components,
+such that the system begins a new cycle begins under identical conditions.
+
+***info from finished cycle is added to component knowledge base,
+thus included in $\nkz$ and $\ykz$ for the following cycle.
+
+Therefore, at each present time $\tnow$
+(at a frequency small enough to be negligible on the system lifetime scale),
+the current residual life distribution $\Rsysnow(t)$ is recalculated,
+and the corresponding $\tausnow$ determined.
+
+***as $\Rsysnow(t)$ on discrete grid until horizon, optimize $\tausnow$ over same discrete grid.
+if $\gnow(\tau)$ always decreasing, corrective maintenance strategy! so we can switch maintenance policy!
 
 
-To find the optimal moment for maintenance based on the current system reliability function $\Rsysnow(t)$,
-we minimize the expected average cost per time unit,
-called the unit cost rate, $g(\tau)$,
-to find the cost-optimal moment of maintenance $\tau_*$
-(could be discounted as well, out of scope here.)
+%To find the optimal moment for maintenance based on the current system reliability function $\Rsysnow(t)$,
+%we minimize the expected average cost per time unit,
+%called the unit cost rate, $g(\tau)$,
+%leading to the cost-optimal moment of maintenance $\tau_*$.
+%(could be discounted as well, out of scope here.)
+
+
+
+\subsection{Expected unit cycle cost rate}
+\label{sec:costrate}
 
 We use the expected one-cycle cost rate 
 \citep{1984:ansell-bendell-humble,1996:mazzuchi-soyer,2006:coolen-schrijner-coolen}
@@ -916,16 +958,15 @@ Although a different, renewal theory based way to calculate the unit cost rate i
 in CBM literature \citep[e.g.,][]{2013:si-et-al,2011:kim-et-al},
 %As we discussed in the Introduction,
 we use the one-cycle cost rate as it is the most appropriate for our situation,
-where $\tau_*$ changes with every cycle, and indeed changes with $\tnow$.
+where $\tau_*$ changes with every cycle, and indeed changes with $\tnow$ within each cycle.
 %since it considers only the costs with respect to the current cycle.
 
 
-\subsection{Expected unit cycle cost rate}
-
-Let $c_p$ be the cost of planned / preventive maintenance, and $c_u$ the cost of unplanned / breakdown maintenance, where $c_p < c_u$.
+Let $c_p$ be the cost of planned (preventive) maintenance, and $c_u$ the cost of unplanned (breakdown) maintenance, where $c_p < c_u$.
 Usually, set-up costs, work costs and downtime costs are much higher for unplanned / breakdown maintenance,
 such that often, $c_p \ll c_u$,
-and these are exactly the situations where CBM is most effective (***cite working paper on relative benefit).
+and these are exactly the situations where CBM is most effective
+(***cite de Jonge and Teunter working paper on relative benefit).
 
 As discussed in the Introduction,
 we assume that both $c_p$ and $c_u$ include the cost of replacing all components in the system.
@@ -1021,6 +1062,8 @@ needs decision criteria from IP literature like E-admissibility, maximality, or 
 
 *** to use the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 we would need to add interval-censored data (failure has happened between last and current inspection)
+
+***$\tsetup$ could vary over time, e.g., longer on weekends or outside office hours,
 
 
 
