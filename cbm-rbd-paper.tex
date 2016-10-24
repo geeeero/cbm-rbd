@@ -908,36 +908,50 @@ such a fine discrete approximation of the RLD can be obtained.
 
 We can now derive the adaptive / dynamic maintenance policy
 that resembles a CBM policy.
-However, instead of a determining a threshold for a degradation signal like in usual CBM policies,
+However, instead of determining a threshold for a degradation signal like in usual CBM policies,
 we determine, for each present time $\tnow$,
 the adaptive and dynamic timespan $\tausnow$ which gives the time from $\tnow$ until the optimal moment of maintenance.
 Close to system startup, $\tausnow$ will be large;
 but as components in the system age and some indeed fail over time,
-$\tausnow$ will typically decrease,
-and whenever $\tausnow$ decreases below $\tsetup$, the timespan needed to set up maintenance work
-(often referred to as setup time),
+$\tausnow$ will typically decrease.
+Let $\tsetup$ be the timespan needed to set up maintenance work,
+often referred to simply as setup time.
+As soon as $\tausnow$ decreases below $\tsetup$,
 a preventive maintenance action is initiated.
 
 The optimal time to maintenance $\tausnow$ is determined based on $\Rsysnow(t)$
-using the expected unit cost rate for the current operational cycle, see Section~\ref{sec:costrate} below.
+by minimizing $\gnow(\tau)$, the expected unit cost rate for the current operational cycle, see Section~\ref{sec:costrate} below.
+
 Each operational cycle starts with the system being in an (as good as) new state,
 i.e., all components in the system are new and have not aged.
-A cycle ends when the system is either maintained preventively at $\tnow + \tausnow$ (on an absolute time scale),
+A cycle ends when the system is either maintained preventively at time $\tnow + \tausnow$ (on an absolute time scale),
 or the system fails, which triggers a corrective maintenance action.
-We assume that either maintenance action takes negligible time,
+The calculation of $\tausnow$ thus resembles the calculation
+of the maintenance interval in an age based policy.
+However, because $\tausnow$ is derived from the current $\Rsysnow(t)$,
+our policy is adaptive and dynamic like a CBM policy. 
+
+It is possible that $\gnow(\tau)$ is monotonely decreasing, corrective maintenance strategy! so we can switch maintenance policy!
+
+During a cycle,
+$\tausnow$ is recalculated at a frequency small enough to be negligible on the system lifetime scale.
+This is possible because we use a fast discrete approximation of the unit cost rate function.
+
+***as $\Rsysnow(t)$ on discrete grid until some horizon, optimize $\tausnow$ over same discrete grid.
+
+*** could update $\tausnow$ every time a component fails,
+but (near) real-time update of $\tau_*$ possible and useful,
+as non-failed components still can be used to update component models ($\nknow$ and $\yknow$) via right-censored observation $\tpnow$.
+
+
+At the end of each cycle,
+the component information gained during the completed cycle is added to the component knowledge base
+by updating the parameters $\nk$ and $\yk$ accordingly,
+%using failure and censoring times as of the end of the cycle.
+such that $\nkz$ and $\ykz$ for the following cycle account for the lifetimes and censoring observed during the previous cycle.
+We assume that both planned and unplanned maintenance action takes negligible time,
 and that either action results in an (as good as) new system state by replacing all components,
-such that the system begins a new cycle begins under identical conditions.
-
-***info from finished cycle is added to component knowledge base,
-thus included in $\nkz$ and $\ykz$ for the following cycle.
-
-Therefore, at each present time $\tnow$
-(at a frequency small enough to be negligible on the system lifetime scale),
-the current residual life distribution $\Rsysnow(t)$ is recalculated,
-and the corresponding $\tausnow$ determined.
-
-***as $\Rsysnow(t)$ on discrete grid until horizon, optimize $\tausnow$ over same discrete grid.
-if $\gnow(\tau)$ always decreasing, corrective maintenance strategy! so we can switch maintenance policy!
+such that the system begins a new cycle always under the same condition.
 
 
 %To find the optimal moment for maintenance based on the current system reliability function $\Rsysnow(t)$,
@@ -947,9 +961,11 @@ if $\gnow(\tau)$ always decreasing, corrective maintenance strategy! so we can s
 %(could be discounted as well, out of scope here.)
 
 
-
 \subsection{Expected unit cycle cost rate}
 \label{sec:costrate}
+
+To determine the optimal time to maintenance $\tausnow$,
+
 
 We use the expected one-cycle cost rate 
 \citep{1984:ansell-bendell-humble,1996:mazzuchi-soyer,2006:coolen-schrijner-coolen}
@@ -993,9 +1009,10 @@ Taking the expectation over $\Tsysnow$ leads to the expected unit cost rate bein
 \gnow(\tau) &= \E[g(\tau \mid \Tsysnow)] = \frac{c_p}{\tau} \Rsysnow(\tau) + c_u \int_0^\tau \frac{1}{t} \fsysnow(t) \dd t
 \label{eq:gtau}
 \end{align}
-***$\fsysnow(t)$ needs to fulfill certain conditions for the integral to exist / to be finite.
 
-$\beta_k > 1$ $\forall k = 1,\ldots,K$ sufficient (****)
+***$\fsysnow(t)$ needs to fulfill certain conditions for the integral to exist / to be finite because of $1/t$.
+we have no problem because of discrete approximation of $\Rsysnow(t)$ resp. $\fsysnow(t)$.
+($\beta_k > 1$ $\forall k = 1,\ldots,K$ sufficient **???**)
 
 ***here, $\Rsysnow(\cdot)$ shifted such that $\tnow = 0$.
 
@@ -1023,10 +1040,7 @@ so in the absolute time scale, the optimal moment of maintenance is at $\tnow + 
 ****plot both $\tau_*^{\tnow}$ and $\tnow + \tau_*^{\tnow}$ over time for different failure histories
 
 
-\subsection{Operational procedure}
 
-*** could update $\tau_*$ every time a component fails,
-but (near) real-time update of $\tau_*$ possible and useful as non-failed components still contribute to knowledge base via right-censored observation $\tpnow$.
 
 
 
