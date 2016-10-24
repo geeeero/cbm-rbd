@@ -488,7 +488,7 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 \end{scriptsize}
 
 
-\section{***Adaptive system RUL / RLD based on Weibull component models}
+\section{Adaptive system residual life distribution based on Weibull component models}
 
 ***component model: weibull with fixed shape,
 inverse gamma prior on scale parameter,
@@ -772,7 +772,8 @@ As an example, the survival signature for the system in Figure~\ref{fig:bridge-l
 
 To calculate the current system reliability function $\Rsysnow(t)$,
 we thus need, for each $k=1,\ldots, K$, the probabilities $P(C^k_t = l_k)$
-for the number of type $k$ components that function at times $t > \tnow$.
+for the number of type $k$ components that function at times $t > \tnow$,
+taking into account all information available at $\tnow$.
 In the Bayesian framework, these probabilities are given
 by a so-called posterior predictive distribution that can be derived from the posterior over $\lambda$.
 
@@ -812,6 +813,8 @@ P(C^k_t = l_k\mid\nkz,\ykz, \vectknow) }\hspace*{5.75ex} \nonumber\\  %
 \label{eq:postpredtnow}
 \end{align}
 where $T^k$ is the Weibull distributed lifetime of a component of type $k$.
+Note that through the condition $T^k > \tnow$, we also take into account
+that the components in the system age $\tnow$.
 Now, by the Weibull assumption \eqref{eq:weibullcdf}, one has
 \begin{align}
 P(T^k \leq t \mid T^k > \tnow, \lambda_k)
