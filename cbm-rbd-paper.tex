@@ -918,31 +918,36 @@ Let $\tsetup$ be the timespan needed to set up maintenance work,
 often referred to simply as setup time.
 As soon as $\tausnow$ decreases below $\tsetup$,
 a preventive maintenance action is initiated.
+%and executed at time $\tnow + \tausnow$.
 
 The optimal time to maintenance $\tausnow$ is determined based on $\Rsysnow(t)$
 by minimizing $\gnow(\tau)$, the expected unit cost rate for the current operational cycle, see Section~\ref{sec:costrate} below.
-
 Each operational cycle starts with the system being in an (as good as) new state,
 i.e., all components in the system are new and have not aged.
-A cycle ends when the system is either maintained preventively at time $\tnow + \tausnow$ (on an absolute time scale),
+A cycle ends when the system is either maintained preventively, %at time $\tnow + \tausnow$ (on an absolute time scale),
 or the system fails, which triggers a corrective maintenance action.
-The calculation of $\tausnow$ thus resembles the calculation
-of the maintenance interval in an age based policy.
-However, because $\tausnow$ is derived from the current $\Rsysnow(t)$,
+The calculation of $\tausnow$ for a fixed $\tnow$ resembles the calculation
+of the maintenance interval in an age based policy;
+however, because $\tausnow$ is derived from the current $\Rsysnow(t)$,
 our policy is adaptive and dynamic like a CBM policy. 
 
-It is possible that $\gnow(\tau)$ is monotonely decreasing, corrective maintenance strategy! so we can switch maintenance policy!
+It is also possible that $\gnow(\tau)$ is monotonely decreasing.
+In this case, it is, at the moment $\tnow$, optimal to correctively maintain the system.
+This means that our approach is not only capable of finding the optimal moment for preventive maintenance,
+but also capable of indicating when corrective maintenance is the better option.
+%i.e., capable of choosing the maintenance policy.
 
 During a cycle,
 $\tausnow$ is recalculated at a frequency small enough to be negligible on the system lifetime scale.
-This is possible because we use a fast discrete approximation of the unit cost rate function.
-
-***as $\Rsysnow(t)$ on discrete grid until some horizon, optimize $\tausnow$ over same discrete grid.
-
-*** could update $\tausnow$ every time a component fails,
-but (near) real-time update of $\tau_*$ possible and useful,
-as non-failed components still can be used to update component models ($\nknow$ and $\yknow$) via right-censored observation $\tpnow$.
-
+This is feasible because we use a fast discrete approximation of the unit cost rate function $\gnow(\tau)$,
+and determine $\tausnow$ with a simple grid search.
+Updating $\tausnow$ frequently is useful because,
+even in absence of failures of system components,
+all components age, and also non-failure adds information to the component models.
+Both factors influence $\Rsysnow(t)$ and thus $\tausnow$.
+%An alternative would be to update $\tausnow$ only when a component fails,
+%but as a (near) real-time update of $\taausnow$ is possible and useful,
+%as non-failed components still can be used to update component models ($\nknow$ and $\yknow$) via right-censored observation $\tpnow$.
 
 At the end of each cycle,
 the component information gained during the completed cycle is added to the component knowledge base
@@ -952,7 +957,6 @@ such that $\nkz$ and $\ykz$ for the following cycle account for the lifetimes an
 We assume that both planned and unplanned maintenance action takes negligible time,
 and that either action results in an (as good as) new system state by replacing all components,
 such that the system begins a new cycle always under the same condition.
-
 
 %To find the optimal moment for maintenance based on the current system reliability function $\Rsysnow(t)$,
 %we minimize the expected average cost per time unit,
@@ -965,18 +969,15 @@ such that the system begins a new cycle always under the same condition.
 \label{sec:costrate}
 
 To determine the optimal time to maintenance $\tausnow$,
-
-
-We use the expected one-cycle cost rate 
+we use the expected one-cycle cost rate 
 \citep{1984:ansell-bendell-humble,1996:mazzuchi-soyer,2006:coolen-schrijner-coolen}
-to calculate the unit cost rate.
+as the unit cost rate.
 Although a different, renewal theory based way to calculate the unit cost rate is often used
 in CBM literature \citep[e.g.,][]{2013:si-et-al,2011:kim-et-al},
 %As we discussed in the Introduction,
 we use the one-cycle cost rate as it is the most appropriate for our situation,
-where $\tau_*$ changes with every cycle, and indeed changes with $\tnow$ within each cycle.
+where $\tausnow$ changes with every cycle, and indeed changes with $\tnow$ within each cycle.
 %since it considers only the costs with respect to the current cycle.
-
 
 Let $c_p$ be the cost of planned (preventive) maintenance, and $c_u$ the cost of unplanned (breakdown) maintenance, where $c_p < c_u$.
 Usually, set-up costs, work costs and downtime costs are much higher for unplanned / breakdown maintenance,
@@ -984,13 +985,14 @@ such that often, $c_p \ll c_u$,
 and these are exactly the situations where CBM is most effective
 (***cite de Jonge and Teunter working paper on relative benefit).
 
-As discussed in the Introduction,
+As discussed in the Introduction and above,
 we assume that both $c_p$ and $c_u$ include the cost of replacing all components in the system.
-That means that every time a new cycle starts, the system is the same state with all components (as-good-as) new.
+That means that every time a new cycle starts, the system is in the same state with all components (as-good-as) new.
 Replacement schemes that do not replace all components need to take into account the different ages of components in the system
 at the start of a new cycle.
 While this is in principle possible in our approach,
-notation explodes to account for that***
+exploring such selective replacement schemes is out of scope for this paper
+and worthy for a seperate contribution.
 
 Let $\Tsysnow$ be the random variable corresponding to $\Rsysnow(t)$,
 giving the (random) system failure time for times $t > \tnow$,
@@ -1014,14 +1016,13 @@ Taking the expectation over $\Tsysnow$ leads to the expected unit cost rate bein
 we have no problem because of discrete approximation of $\Rsysnow(t)$ resp. $\fsysnow(t)$.
 ($\beta_k > 1$ $\forall k = 1,\ldots,K$ sufficient **???**)
 
-***here, $\Rsysnow(\cdot)$ shifted such that $\tnow = 0$.
-
-***if $\gnow(\tau)$ monotonely decreasing, corrective maintenance is optimal: policy switch!
+%***here, $\Rsysnow(\cdot)$ shifted such that $\tnow = 0$.
 
 
 \subsection{Numerical optimization of the expected unit cycle cost rate}
 
-*** not possible / *** to minimize $\gnow(\tau)$ analytically.
+%*** not possible / *** to minimize $\gnow(\tau)$ analytically.
+***we calculate $\Rsysnow(t)$ on discrete grid until some horizon, optimize $\tausnow$ over same discrete grid.
 
 We approximate the integral in \eqref{eq:gtau} numerically by a sum,
 where $\fsysnow(t)$ is calculated via differences of $\Rsysnow(t)$ values on a dense grid.
@@ -1032,30 +1033,27 @@ and $\tau_*^{(\tnow)} = \arg\min \gnow(\tau)$ is determined as the minimum over 
 
 ***calculations in \textsf{R} can be vectorized and are thus fast.
 
-At time $\tnow$, the corresponding $\tau_*^{\tnow}$ gives the optimal moment of maintenance in terms of time to elapse after $\tnow$,
-so in the absolute time scale, the optimal moment of maintenance is at $\tnow + \tau_*^{\tnow}$.
+***if min $\gnow(\tau)$ at horizon, corrective maintenance is optimal: policy switch!
+%***if $\tau_*^{(\tnow)}$ larger than certain horizon, than conclude corrective policy
 
-***if $\tau_*^{(\tnow)}$ larger than certain horizon, than conclude corrective policy
+%At time $\tnow$, the corresponding $\tausnow$ gives the optimal moment of maintenance in terms of time to elapse after $\tnow$,
+%so in the absolute time scale, the optimal moment of maintenance is at $\tnow + \tau_*^{\tnow}$.
 
 ****plot both $\tau_*^{\tnow}$ and $\tnow + \tau_*^{\tnow}$ over time for different failure histories
 
 
 
 
-
-
 \section{Comparison with $M^*$ out of $N$ policy}
 
-***
+***???
 
 
 \section{Case study / numerical example for complex system layout}
 
-which system layout? something that demonstrates the power of the method (complex layout) or something simple?
+use simple system layout, example history of compnents failing
 
-complex: e.g., bridge system where each of the four elements is a two out of three, and the bridge element is a two-parallel.
-
-or the simplified brake system from ASCE-ASME paper?
+use the simplified brake system from ASCE-ASME paper?
 
 
 \section{Outlook}
@@ -1063,10 +1061,10 @@ or the simplified brake system from ASCE-ASME paper?
 *** study other replacement schemes, e.g., replacing only failed components:
 when repaired/replaced components are present in system,
 then one needs to use actual ages (and not time since system startup) in parameter update,
-introduces new component type for $\Rsys(t)$ calculation but with same posterior parameters as unreplaced component type.
+introduces new component type for $\Rsysnow(t)$ calculation but with same posterior parameters as unreplaced component type.
 Repaired/replaced components require the creation of a separate type in the survival signature decomposition
 and thus the calculation of separate posterior predictive probabilities
-$P(C^k_t = l_k \mid \nkz,\ykz,\text{test data},\text{monitoring data})$,
+$P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
 which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
 
 
