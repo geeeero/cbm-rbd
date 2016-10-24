@@ -814,7 +814,7 @@ P(C^k_t = l_k\mid\nkz,\ykz, \vectknow) }\hspace*{5.75ex} \nonumber\\  %
 \end{align}
 where $T^k$ is the Weibull distributed lifetime of a component of type $k$.
 Note that through the condition $T^k > \tnow$, we also take into account
-that the components in the system age $\tnow$.
+that the components in the system have the age $\tnow$.
 Now, by the Weibull assumption \eqref{eq:weibullcdf}, one has
 \begin{align}
 P(T^k \leq t \mid T^k > \tnow, \lambda_k)
@@ -880,8 +880,24 @@ Note that if one or several components have failed by $\tnow$,
 the system layout changes, and with it the survival signature $\Phi(l_1,\ldots,l_K)$,
 so we denote the updated survival signature by $\Phinow(l_1,\ldots,l_K)$.
 
-Next, we will describe how an adaptive maintenance policy based on \eqref{eq:sysrel-tnow}
-can be obtained.
+For each prediction time $t$,
+\eqref{eq:sysrel-tnow} is a sum over over $\prod_{k=1}^K (\cknow + 1)$ terms;
+however, some of these terms correspond to $\Phinow(l_1,\ldots,l_K) = 0$,
+which can thus be disregarded.
+For each of the remaining terms,
+we must calculate the product $\prod_{k=1}^K P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)$.
+For all products, the constituting factors can be taken from the same table
+enumerating $P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)$ for all $l_k \in \{0, 1, \cknow\}$, $k=1\ldots,K$,
+so \eqref{eq:postpred-priorparams} needs to be invoked 
+only $\sum_{k=1}^K (\cknow + 1)$ times.
+
+We will evaluate \eqref{eq:sysrel-tnow} on a dense grid of prediction times $t > \tnow$,
+thus discretely approximating the RLD.
+As the evaluation of \eqref{eq:sysrel-tnow} for each $t$ does not involve any complex numeric calculations or Monte Carlo sampling,
+the grid of prediction values can be very fine.
+
+Next, we will describe how an adaptive maintenance policy based on %\eqref{eq:sysrel-tnow}
+such a fine discrete approximation of the RLD can be obtained.
 
 
 \section{Dynamic maintenance policy based on the current system reliability function (RUL/RLD)}
