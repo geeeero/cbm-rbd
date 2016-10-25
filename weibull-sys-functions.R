@@ -1,11 +1,9 @@
 ###############################################################################
-#       Functions to calculate and plot sets of reliability curves            #
+#       Functions to calculate and plot system reliability functions          #
 #       for systems consisting of Weibull components with fixed shape         #
 ###############################################################################
 
-# provides dinvgamma(x, shape, scale) where shape = alpha and scale = beta
-library(actuar)
-library(luck)
+library(actuar) # provides dinvgamma(x, shape, scale) where shape = alpha and scale = beta
 library(ReliabilityTheory)
 library(ggplot2)
 library(reshape2)
@@ -40,36 +38,35 @@ cpigfornoptim <- function(n, y, t, ...)
 # function to calculate P(C_t = l | n^(0), y^(0), data),
 # the posterior predictive probability that l components function at time t
 # in the system observed until t_now (notion "of type k" dropped here)
-# this implements (20)
-# n0y0    pair c(n0,y0) of prior parameters
+# n0y0    pair c(n0,y0) of prior parameters (start of cycle values)
 # t       time t for which to calculate P(C_t), t > t_now
-# l       number of functioning components, \in {0, 1, ..., n-e}
+# l       number of functioning components, \in {0, 1, ..., c = n-e}
 # n       number of components in the system
 # tnow    time until the system is observed
 # fts     vector of length e giving the observed failure times,
 #         or NULL if no failures observed
 # beta    fixed weibull shape parameter
 # prior   whether the prior predictive should be calculated,
-#         when FALSE, fts is ignored 
+#         when TRUE, fts is ignored 
 postpredC <- function(n0y0, beta, n, fts, tnow, t, l, prior = FALSE){
   if (t < tnow)
     stop("t must be larger than tnow")
   if(!prior){
     e <- length(fts)
     if (n < e)
-      stop("there can be at most n failure times!")
+      stop("too many elements in fts, there can be at most n failure times!")
   } else {
     e <- 0
   }
   if (l > n-e)
-    stop("l can be at most n-e")
+    stop("l can be at most c=n-e")
   nn <- n0y0[1] + e
   if(!prior)
-    nnyn <- n0y0[1]*n0y0[2] + (n-e)*tnow + sum(fts^beta)
+    nnyn <- n0y0[1]*n0y0[2] + (n-e)*(tnow^beta) + sum(fts^beta)
   else
     nnyn <- n0y0[1]*n0y0[2]
   j <- seq(0, n-e-l)
-  choose(n-e, l) * sum( (-1)^j * choose(n-e-l, j) * (nnyn/(nnyn + (l+j)*(t^beta - tnow^beta)))^(nn + 1))
+  choose(n-e, l) * sum( (-1)^j * choose(n-e-l, j) * (nnyn/(nnyn + (l+j)*(t^beta - tnow^beta)))^(nn + 1) )
 }
 
 # calculates the probability mass function for C_t
