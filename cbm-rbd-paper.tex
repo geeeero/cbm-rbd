@@ -225,7 +225,8 @@ but on the status of all components within a system.
 By means of the survival signature,
 a generalization of the system signature allowing for multiple component types,
 we obtain a predictive distribution for system survival time
-(also known as RUL, remaining useful life)
+%(also known as RUL, remaining useful life)
+(known as residual life distribution, RLD)
 based on which of the system's components currently function or not,
 and the current age of the functioning components.
 
@@ -304,7 +305,7 @@ but system components can be identified and their functioning status
 (working or not working) can be monitored.
 In this situation, one can use the system's layout in reliability terms
 (i.e., its reliability block diagram) and information on components' status
-to directly calculate the RUL distribution,
+to directly calculate the residual life distribution (RLD),
 and base the maintenance policy on this distribution.
 (In fact, our approach can be seen as CBM based on a multivariate degradation signal,
 where each component sends a binary signal, and the reliability block diagram is used
@@ -337,20 +338,20 @@ These information sources are integrated into a single component model
 using the iterative nature of Bayesian updating,
 leading to a so-called posterior predictive distribution for the number of components surviving at any time in the future.
 
-These predictive distributions are then used to calculate the exact distribution of system RUL
+These predictive distributions are then used to calculate the exact distribution of system residual life
 using the survival signature \citep{2012:survsign}.
 (***we therefore accomplish the same as \cite{2013:si-et-al} for their situation.)
 
-By its Bayesian nature, the system RUL distribution adequately reflects the uncertainties in RUL estimation
+By its Bayesian nature, the system residual life distribution adequately reflects the uncertainties %in RUL estimation
 related to modeling and prediction \citep{2015:sankararaman},
 readily adapting to any changes in component behaviour.
-The use of conjugate priors means that we get explicit formulas for the RUL distribution,
+The use of conjugate priors means that we get explicit formulas for the RLD,
 so no numerical integration or simulation techniques are necessary.
-This allows for a very frequent, or even real-time, update of the RUL distribution,
+This allows for a very frequent, or even real-time, update of the RLD,
 taking into account the changed structure when components have failed
 and the information gain from updating the component reliability distributions.
 
-Based on the RUL distribution at any current time $\tnow$,
+Based on the RLD at any current time $\tnow$,
 the optimal moment of maintenance given all information available at $\tnow$
 is then determined by minimizing the expected one-cycle unit cost rate.
 The expected one-cycle unit cost rate, also known as one-cycle criterion
@@ -360,35 +361,35 @@ unlike the usually employed renewal based criterion,
 which approximates the unit cost rate using a renewal argument \citep[p.~296]{1996:mazzuchi-soyer},
 but is not suited for situations where one may whish to change the strategy per cycle \citep{2006:coolen-schrijner-coolen}.
 
-Since the RUL distribution changes with current time $\tnow$,
-the corresponding optimal moment of maintenance $\tau^*$ changes as well,
+Since the RLD changes with current time $\tnow$,
+the corresponding optimal moment of maintenance $\tausnow$ changes as well,
 leading to a dynamic adaptive maintenance policy,
 similar to a CBM policy based on a continuosly monitored degradation signal.
 However, unlike such threshold-based CBM policies,
 our approach allows to easily take into account the time needed to set up maintenance work (known as set-up time),
 since it gives the optimal moment of maintenance as a time beyond current time $\tnow$,
-and maintenance can be initiated as soon as $\tau^*$ approaches the set-up time.
+and maintenance can be initiated as soon as $\tausnow$ equals the set-up time.
 
 In this paper, we assume that at the moment of maintenance,
 all components in the system are replaced,
 so the cost parameters in the unit cost rate must be determined accordingly.
 One could instead consider other replacement schemes (e.g., replacing only the failed components),
 or indeed optimize the unit cost rate over all possible replacement schemes,
-since our method for RUL calculation can handle differently aged components. 
+since our method for RLD calculation can handle differently aged components. 
 However, optimizing over replacement schemes opens up a full research programme on its own,
 and for situations with high set-up costs,
 as is typical for CBM applications,
 the replace-all scheme is most likely the cost-optimal strategy. 
 
 
-***figure of process: component priors $\to$ component posteriors $\to$ system RUL $\to$ $g(\tau)$ $\to$ $\tau^*$
+***figure of process: component priors $\to$ component posteriors $\to$ system RLD $\to$ $\gnow(\tau)$ $\to$ $\tausnow$
 
-***operation: recalculate $\tau^*$ at fixed dense grid of time points (quasi-continuous),
-this makes sense even if nothing happens because the fact that components in the system still function
+***operation: recalculate $\tausnow$ at fixed dense grid of time points (quasi-continuous),
+this makes sense even when no failures happen because the fact that components in the system still function
 gives information on component distributions;
 alternatively, do the recalculation every time when a component fails (failures contain the most information)
 
-***model allows also to switch to corrective policy when $g(\tau)$ monotonely decreasing (then $\tau \to \infty$)
+***model allows also to switch to corrective policy when $\gnow(\tau)$ monotonely decreasing (then $\tausnow \to \infty$)
 
 ***Expert input in our model is, for each component type,
 Weibull shape parameter, expected failure time (translated to scale parameter),
@@ -408,7 +409,7 @@ and we allow for set-up time
 
 \section{Literature***}
 
-***CBM via RUL, $M^*$ out of $N$ policies?
+***CBM via RUL/RLD, $M^*$ out of $N$ policies?
 
 ***also generally Bayesian methods in maintenance optimization?
 
@@ -908,7 +909,7 @@ such a fine discrete approximation of the RLD can be obtained.
 
 We can now derive the adaptive / dynamic maintenance policy
 that resembles a CBM policy.
-However, instead of determining a threshold for a degradation signal like in usual CBM policies,
+However, instead of determining a threshold for a degradation signal like in usual CBM approaches,
 we determine, for each present time $\tnow$,
 the adaptive and dynamic timespan $\tausnow$ which gives the time from $\tnow$ until the optimal moment of maintenance.
 Close to system startup, $\tausnow$ will be large;
@@ -944,7 +945,7 @@ and determine $\tausnow$ with a simple grid search.
 Updating $\tausnow$ frequently is useful because,
 even in absence of failures of system components,
 all components age, and also non-failure adds information to the component models.
-Both factors influence $\Rsysnow(t)$ and thus $\tausnow$.
+Both aspects influence $\Rsysnow(t)$ and thus $\tausnow$.
 %An alternative would be to update $\tausnow$ only when a component fails,
 %but as a (near) real-time update of $\taausnow$ is possible and useful,
 %as non-failed components still can be used to update component models ($\nknow$ and $\yknow$) via right-censored observation $\tpnow$.
@@ -954,9 +955,12 @@ the component information gained during the completed cycle is added to the comp
 by updating the parameters $\nk$ and $\yk$ accordingly,
 %using failure and censoring times as of the end of the cycle.
 such that $\nkz$ and $\ykz$ for the following cycle account for the lifetimes and censoring observed during the previous cycle.
-We assume that both planned and unplanned maintenance action takes negligible time,
-and that either action results in an (as good as) new system state by replacing all components,
+%We assume that both planned and unplanned maintenance action takes negligible time,
+We assume that both a planned and unplanned maintenance action results in an (as good as) new system state by replacing all components,
 such that the system begins a new cycle always under the same condition.
+As we use a one-cycle criterion, the time these maintenance actions take does not matter for the determination of $\tausnow$.
+Downtimes are instead accounted for via the costs parameters,
+as described next.
 
 %To find the optimal moment for maintenance based on the current system reliability function $\Rsysnow(t)$,
 %we minimize the expected average cost per time unit,
@@ -981,8 +985,8 @@ where $\tausnow$ changes with every cycle, and indeed changes with $\tnow$ withi
 
 Let $c_p$ be the cost of planned (preventive) maintenance, and $c_u$ the cost of unplanned (breakdown) maintenance, where $c_p < c_u$.
 Usually, set-up costs, work costs and downtime costs are much higher for unplanned / breakdown maintenance,
-such that often, $c_p \ll c_u$,
-and these are exactly the situations where CBM is most effective
+such that often, $c_p \ll c_u$.
+CBM is known to be most effective when the difference between $c_p$ and $c_u$ is large
 (***cite de Jonge and Teunter working paper on relative benefit).
 
 As discussed in the Introduction and above,
@@ -1051,7 +1055,7 @@ and $\tau_*^{(\tnow)} = \arg\min \gnow(\tau)$ is determined as the minimum over 
 
 \section{Case study / numerical example for complex system layout}
 
-use simple system layout, example history of compnents failing
+use simple system layout, example history of components failing
 
 use the simplified brake system from ASCE-ASME paper?
 
@@ -1068,14 +1072,15 @@ $P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
 which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
 
 
-*** move to sets of priors, set of RUL distributions like in \cite{2016:walter-coolen}.
-Leads to set of $g(\tau)$, finding (set of) $\tau^*$ is then non-trivial,
-needs decision criteria from IP literature like E-admissibility, maximality, or maximin.
+*** move to sets of priors, set of residual life distributions like in \cite{2016:walter-coolen}.
+Leads to set of $\gnow(\tau)$, finding (set of) $\tausnow$ is then non-trivial,
+needs decision criteria from imprecise probability literature like E-admissibility, maximality, or maximin
+\citep[see, e.g., \S 9***][]{itip}.
 
 *** to use the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 we would need to add interval-censored data (failure has happened between last and current inspection)
 
-***$\tsetup$ could vary over time, e.g., longer on weekends or outside office hours,
+***$\tsetup$ could vary over time, e.g., longer on weekends or outside office hours
 
 
 
