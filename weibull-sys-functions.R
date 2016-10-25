@@ -58,14 +58,14 @@ postpredC <- function(n0y0, beta, n, fts, tnow, t, l, prior = FALSE){
   } else {
     e <- 0
   }
-  if (l > n-e)
+  if (l > n-e) # any(l > n-e?)
     stop("l can be at most c=n-e")
   nn <- n0y0[1] + e
   if(!prior)
     nnyn <- n0y0[1]*n0y0[2] + (n-e)*(tnow^beta) + sum(fts^beta)
   else
     nnyn <- n0y0[1]*n0y0[2]
-  j <- seq(0, n-e-l)
+  j <- seq(0, n-e-l) # !!!
   choose(n-e, l) * sum( (-1)^j * choose(n-e-l, j) * (nnyn/(nnyn + (l+j)*(t^beta - tnow^beta)))^(nn + 1) )
 }
 
@@ -120,49 +120,51 @@ fourCornersCcmf <- function(luckobj, beta, n, fts, tnow, t, prior = FALSE){
   cat("br", paste(round(br,4), collapse = " "), "\n")
 }
 
-# calculates the system reliability / survival
-# this implements (13) (last equation in Sec 4.2 using the posterior predictive from 4.3)
+# calculates the system reliability for fixed future time t > tnow
+# order of length K vectors must be the same as in survsign table (!!!)
 #
 # n0y0     list of K prior parameter pairs c(n0,y0)
 # survsign data frame with the survival signature as output by computeSystemSurvivalSignature()
+#          this must be signature for the reduced system if components have failed!
 # beta     vector of K fixed weibull shape parameters
 # fts      list of K vectors giving the observed failure times for the compents of type 1,...,K;
 #          the list element should be NULL if no failure has been observed for type k
 # tnow     time until the system is observed
 # t        time t for which to calculate P(T_sys > t), t > t_now
 # table    if table of posterior predictive probabilities should be given along with the reliability
-# nk       vector of length K giving the number of components of each type,
+# Nk       vector of length K giving the number of components of each type,
 #          this is needed only when reduced survival signature is used
-# prior    whether the prior system relibability should be calculated
-sysrel <- function(n0y0, survsign, beta, fts, tnow, t, table = FALSE, nk = NULL, prior = FALSE){
+# prior    whether the prior system relibability should be calculated (no updating with things observed until tnow)
+sysrel <- function(n0y0, survsign, beta, fts, tnow, t, table = FALSE, Nk = NULL, prior = FALSE){
   K <- length(fts)
-  if(is.null(nk)){
-    nk <- apply(survsign, 2, max)
-    nk <- nk[-length(nk)]
+  if(is.null(Nk)){
+    Nk <- apply(survsign, 2, max)
+    Nk <- Nk[-length(Nk)]
   }
   if(!prior)
     ek <- unlist(lapply(fts, length))
   else
     ek <- rep(0, K)
-  # sumarray <- array(data = NA, dim = nk-ek+1)
-  # dimnames(sumarray) <- lapply(as.list(nk - ek), function(x) as.character(seq(0,x)))
-  # signarray <- sumarray
-  # only those rows of survsign which have up to nk-ek functioning
+  # keep only those rows of survsign which have up to nk-ek functioning
   survsign2 <- survsign
   for (k in 1:K)
-    survsign2 <- survsign2[survsign2[,k] <= (nk-ek)[k],]
+    survsign2 <- survsign2[survsign2[,k] <= (Nk-ek)[k],] # also here necessary that NK, ek have same order as in survsign
+  # keep only those rows where survsign > 0
   if (dim(survsign2)[1] > 1)
     survsign2 <- survsign2[survsign2$Probability > 0,]
+  # calculate component posterior predictive probabilities
   for (k in 1:K){ # for loop is probably slow
     survsign2$tmp <- NA
-    tmpname <- paste("PCt",k,sep="")
+    tmpname <- paste("PCt", names(survsign2)[k], sep="")
     ncols <- length(survsign2)
     names(survsign2) <- c(names(survsign2)[-ncols], tmpname)
+    # better vectorize inner for loop and append vector to survsign, postpredC needs to allow vectorial l
     for (i in 1:dim(survsign2)[1]){
-      survsign2[i,ncols] <- postpredC(n0y0 = n0y0[[k]], beta = beta[k], n = nk[k],
+      survsign2[i,ncols] <- postpredC(n0y0 = n0y0[[k]], beta = beta[k], n = Nk[k],
                                       fts = fts[[k]], tnow = tnow, t = t, l = survsign2[i,k], prior = prior)
     }
   }
+  # joint posterior predictive probabilities
   survsign2$summand <- apply(survsign2[,-(1:K)], 1, prod)
   res <- sum(survsign2$summand)
   if(table)
