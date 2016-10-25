@@ -58,7 +58,7 @@ postpredC <- function(n0y0, beta, n, fts, tnow, t, l, prior = FALSE){
   } else {
     e <- 0
   }
-  if (l > n-e) # any(l > n-e?)
+  if (l > n-e)
     stop("l can be at most c=n-e")
   nn <- n0y0[1] + e
   if(!prior)
@@ -122,10 +122,12 @@ fourCornersCcmf <- function(luckobj, beta, n, fts, tnow, t, prior = FALSE){
 
 # calculates the system reliability for fixed future time t > tnow
 # order of length K vectors must be the same as in survsign table (!!!)
+# (what happens when a component type is no longer in the reduced graph?)
 #
 # n0y0     list of K prior parameter pairs c(n0,y0)
 # survsign data frame with the survival signature as output by computeSystemSurvivalSignature()
 #          this must be signature for the reduced system if components have failed!
+#          -> use induced_subgraph()
 # beta     vector of K fixed weibull shape parameters
 # fts      list of K vectors giving the observed failure times for the compents of type 1,...,K;
 #          the list element should be NULL if no failure has been observed for type k
@@ -133,7 +135,7 @@ fourCornersCcmf <- function(luckobj, beta, n, fts, tnow, t, prior = FALSE){
 # t        time t for which to calculate P(T_sys > t), t > t_now
 # table    if table of posterior predictive probabilities should be given along with the reliability
 # Nk       vector of length K giving the number of components of each type,
-#          this is needed only when reduced survival signature is used
+#          this is needed only when reduced survival signature is used (???)
 # prior    whether the prior system relibability should be calculated (no updating with things observed until tnow)
 sysrel <- function(n0y0, survsign, beta, fts, tnow, t, table = FALSE, Nk = NULL, prior = FALSE){
   K <- length(fts)
@@ -158,7 +160,7 @@ sysrel <- function(n0y0, survsign, beta, fts, tnow, t, table = FALSE, Nk = NULL,
     tmpname <- paste("PCt", names(survsign2)[k], sep="")
     ncols <- length(survsign2)
     names(survsign2) <- c(names(survsign2)[-ncols], tmpname)
-    # better vectorize inner for loop and append vector to survsign, postpredC needs to allow vectorial l
+    # better vectorize inner for loop and append vector to survsign
     for (i in 1:dim(survsign2)[1]){
       survsign2[i,ncols] <- postpredC(n0y0 = n0y0[[k]], beta = beta[k], n = Nk[k],
                                       fts = fts[[k]], tnow = tnow, t = t, l = survsign2[i,k], prior = prior)
