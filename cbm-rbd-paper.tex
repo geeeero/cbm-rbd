@@ -492,6 +492,153 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 \end{scriptsize}
 
 
+\section{Reliability functions for complex systems using the survival signature}
+\label{sec:sysrel}
+
+Here we describe how the system reliability function, given fixed component models and the system layout,
+can be efficiently calculated using the survival signature.
+We will show in Section~\ref{sec:sysreltnow}
+how this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
+giving us the residual life distribution on which we base our adaptive maintenance policy.
+
+We can analyze systems of arbitrary reliability block diagram layout,
+consisting of components of $K$ different types,
+where there are $N_k$ exchangeable components of type $k$ in the system,
+and the total number of components in the system is $\sum_{k=1}^K N_k = N$.
+
+As a running example, we consider a simplified automotive braking system
+consisting of four component types $M$, $H$, $C$ and $P$,
+with reliability block diagram as depicted in Figure~\ref{fig:brakesys-layout}.
+The master brake cylinder ($M$) activates all four wheel brake cylinders ($C_1$ -- $C_4$),
+which in turn actuate a braking pad assembly each ($P_1$ -- $P_4$).
+The hand brake mechanism ($H$) directly actuates the brake pad assemblies $P_3$ and $P_4$;
+the vehicle brakes when at least one brake pad assembly is actuated.
+Note that because of the `handbrake shortcut', this system cannot be described as a nesting of series and parallel subsystems.
+%This system is observed until time $\tnow$,
+%leading to censored observation of certain component lifetimes within the system.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+[typeM/.style={rectangle,draw,fill=black!20,thick,inner sep=0pt,minimum size=8mm}, %font=\footnotesize},
+ typeC/.style={rectangle,draw,fill=black!20,thick,inner sep=0pt,minimum size=8mm}, %font=\footnotesize},
+ typeP/.style={rectangle,draw,fill=black!20,thick,inner sep=0pt,minimum size=8mm}, %font=\footnotesize},
+ typeH/.style={rectangle,draw,fill=black!20,thick,inner sep=0pt,minimum size=8mm}, %font=\footnotesize},
+ type1/.style={rectangle,draw,fill=black!20,very thick,inner sep=0pt,minimum size=8mm},
+ type2/.style={rectangle,draw,fill=black!20,very thick,inner sep=0pt,minimum size=8mm},
+ type3/.style={rectangle,draw,fill=black!20,very thick,inner sep=0pt,minimum size=8mm},
+ cross/.style={cross out,draw=red,very thick,minimum width=9mm, minimum height=7mm},
+ hv path/.style={thick, to path={-| (\tikztotarget)}},
+ vh path/.style={thick, to path={|- (\tikztotarget)}}]
+\begin{scope}[xscale=1.5, yscale=1.2]
+\node[typeM] (M)    at ( 0  , 0  ) {$M$};
+\node[typeC] (C1)   at ( 1  , 1.5) {$C_1$};
+\node[typeC] (C2)   at ( 1  , 0.5) {$C_2$};
+%\node[cross]        at ( 1  , 0.5) {};
+\node[typeC] (C3)   at ( 1  ,-0.5) {$C_3$};
+%\node[cross]        at ( 1  ,-0.5) {};
+\node[typeC] (C4)   at ( 1  ,-1.5) {$C_4$};
+\node[typeP] (P1)   at ( 2  , 1.5) {$P_1$};
+\node[typeP] (P2)   at ( 2  , 0.5) {$P_2$};
+%\node[cross]        at ( 2  , 0.5) {};
+\node[typeP] (P3)   at ( 2  ,-0.5) {$P_3$};
+%\node[cross]        at ( 2  ,-0.5) {};
+\node[typeP] (P4)   at ( 2  ,-1.5) {$P_4$};
+\node[typeH] (H)    at ( 0  ,-1  ) {$H$};
+\coordinate (start)  at (-0.7, 0);
+\coordinate (startC) at ( 0.5, 0);
+\coordinate (startH) at (-0.4, 0);
+\coordinate (Hhop1)  at ( 0.4,-1);
+\coordinate (Hhop2)  at ( 0.6,-1);
+\coordinate (endP)   at ( 2.5, 0);
+\coordinate (end)    at ( 2.8, 0);
+\path (start)     edge[hv path] (M.west)
+      (M.east)    edge[hv path] (startC)
+      (startC)    edge[vh path] (C1.west)
+                  edge[vh path] (C2.west)
+                  edge[vh path] (C3.west)
+                  edge[vh path] (C4.west)
+      (C1.east)   edge[hv path] (P1.west)
+      (C2.east)   edge[hv path] (P2.west)
+      (C3.east)   edge[hv path] (P3.west)
+      (C4.east)   edge[hv path] (P4.west)
+      (endP)      edge[vh path] (P1.east)
+                  edge[vh path] (P2.east)
+                  edge[vh path] (P3.east)
+                  edge[vh path] (P4.east)
+                  edge[hv path] (end)
+      (startH)    edge[vh path] (H.west)
+      (H.east)    edge[hv path] (Hhop1)
+      (Hhop1)     edge[thick,out=90,in=90] (Hhop2)
+      (Hhop2)     edge[hv path] (P3.south)
+                  edge[hv path] (P4.north);
+\end{scope}
+\end{tikzpicture}
+\caption{Reliability block diagram for a simplified automotive brake system
+with four component types $M$, $H$, $C$ and $P$.
+Note that this system layout cannot be expressed as a nesting of series and parallel layouts.
+The corresponding survival signature $\Phi(l_M,l_H,l_C,l_P)$ is given in Table~\ref{tab:brakesys-survsign}.}
+\label{fig:brakesys-layout}
+\end{figure}
+
+In a system with $N$ components, the state of the components can be expressed by the state vector
+$\vec{x} = (x_1,x_2,\ldots,x_N) \in \{0,1\}^N$,
+with $x_i=1$ if the $i$th component functions and $x_i=0$ if not.
+The structure function $\phi : \{0,1\}^N \rightarrow \{0,1\}$, defined for all possible $\vec{x}$,
+takes the value 1 if the system functions and 0 if the system does not function for state vector $\vec{x}$ \citep{BP75}.
+Most real-life systems are coherent,
+which means that $\phi(\vec{x})$ is non-decreasing in any of the components of $\vec{x}$,
+so system functioning cannot be improved by worse performance of one or more of its components.
+Furthermore, one can usually assume that $\phi(0, \ldots, 0) = 0$ and $\phi(1, \ldots, 1) = 1$.
+
+The survival signature \citep{2012:survsign} is a summary of the structure function
+for systems with $K$ groups of exchangeable components.
+Denoted by $\Phi(l_1,\ldots,l_K)$, with $l_k=0,1,\ldots,N_k$ for $k=1,\ldots,K$,
+it is defined as the probability for the event that the system functions
+given that precisely $l_k$ of its $N_k$ components of type $k$ function, for each $k\in \{1,\ldots,K\}$.
+Essentially, this creates a $K$-dimensional partition for the event $\Tsys > t$,
+such that $\Rsys(t) = P(\Tsys > t)$ can be calculated using the law of total probability,
+\begin{align}
+P(\Tsys > t) &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} P(\Tsys > t \mid C^1_t = l_1,\ldots, C^K_t = l_K)
+                                                                                  P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
+             &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} \Phi(l_1,\ldots,l_K) P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
+             &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} \Phi(l_1,\ldots,l_K) \prod_{k=1}^K P(C^k_t = l_k)\,,
+\label{eq:sysrel-survsign}
+\end{align}
+where $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$,
+and the last equality holds as we assume that components of different types are independent.
+Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is non-decreasing in each $l_k$.
+
+Continuing our example,
+the survival signature for the system in Figure~\ref{fig:brakesys-layout} is given in Table~\ref{tab:brakesys-survsign},
+omitting the entries for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_C, l_P) = 1$.
+(The full table would contain $\prod_{k=1}^K (N_k + 1) = 2 \times 2 \times 5 \times 5 = 100$ rows.)
+
+\begin{table}
+\centering
+\begin{tabular}{cccclcccccl}
+  \toprule
+M & H & C & P & $\Phi$ & \quad & M & H & C & P & $\Phi$\\ 
+  \midrule
+1 & 0 & 1 & 1 & 0.25 & & 1 & 0 & 2 & 1 & 0.50 \\ 
+1 & 0 & 1 & 2 & 0.50 & & 1 & 0 & 2 & 2 & 0.83 \\ 
+1 & 0 & 1 & 3 & 0.75 & & 1 & 0 & 3 & 1 & 0.75 \\ 
+0 & 1 & 0 & 1 & 0.50 & & 1 & 1 & 0 & 1 & 0.50 \\ 
+0 & 1 & 0 & 2 & 0.83 & & 1 & 1 & 0 & 2 & 0.83 \\ 
+0 & 1 & 1 & 1 & 0.62 & & 1 & 1 & 1 & 1 & 0.62 \\ 
+0 & 1 & 1 & 2 & 0.92 & & 1 & 1 & 1 & 2 & 0.92 \\ 
+0 & 1 & 2 & 1 & 0.75 & & 1 & 1 & 2 & 1 & 0.75 \\ 
+0 & 1 & 2 & 2 & 0.97 & & 1 & 1 & 2 & 2 & 0.97 \\ 
+0 & 1 & 3 & 1 & 0.88 & & 1 & 1 & 3 & 1 & 0.88 \\ 
+   \bottomrule
+\end{tabular}
+\caption{Survival signature $\Phi(l_M, l_H, l_C, l_P)$
+for the simplified automotive brake system depicted in Figure~\ref{fig:brakesys-layout},
+omitting the rows for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_C, l_P) = 1$.}
+\label{tab:brakesys-survsign}
+\end{table}
+
+
 \section{Adaptive system residual life distribution based on Weibull component models}
 
 ***component model: weibull with fixed shape,
@@ -500,21 +647,12 @@ fix priors via expected lifetime and prior strength,
 test data inclusion
 with noninformatiove right-censoring
 
-***RUL/RLD via survival signature,
-posterior predictive distributions,
-system reliability distribution (RUL/RLD) as output,
-
 ***output is $\Rsysnow(t)$, the current (at time $\tnow$) system reliability function
 (residual life distribution, RLD)
 taking into account the current system state,
 including the current ages of system components, 
 and the lifetime histories of all component types,
 including test data (if available) and expert assessments.
-
-We can analyze systems of arbitrary layout, consisting of components of $k=1,\ldots,K$ different types,
-where for each type $k$, there are $N_k$ exchangeable components in the system.
-As an example, Figure~\ref{fig:bridge-layout} depicts the reliability block diagram of a bridge type system
-with three component types $A$, $B$, $C$, where $N_A=4$, $N_B=1$, and $N_C=1$.
 
 ***Model description in this Section follows closely \cite{2016:walter-coolen},
 who present the same RUL/RLD model.
@@ -524,44 +662,6 @@ and focus instead on a generalization of the RUL/RLD model using sets of priors 
 allowing for vague and partial prior specifications,
 and sensitivity to prior-data conflict \cite[\S 2.2.3.3]{diss}.
 
-\begin{figure}
-\centering
-\begin{tikzpicture}
-[type1/.style={rectangle,draw,fill=black!20,very thick,inner sep=0pt,minimum size=8mm},
- type2/.style={rectangle,draw,fill=black!20,very thick,inner sep=0pt,minimum size=8mm},
- type3/.style={rectangle,draw,fill=black!20,very thick,inner sep=0pt,minimum size=8mm},
- cross/.style={cross out,draw=red,very thick,minimum width=7mm, minimum height=5mm},
- hv path/.style={very thick, to path={-| (\tikztotarget)}},
- vh path/.style={very thick, to path={|- (\tikztotarget)}}]
-%\begin{scope}[scale=0.75]
-\node[type1] (T1-2) at ( 1.4, 1) {$A_1$};
-\node[type1] (T1-3) at ( 1.4,-1) {$A_2$};
-\node[type1] (T1-5) at ( 4.2, 1) {$A_3$};
-\node[type1] (T1-6) at ( 4.2,-1) {$A_4$};
-\node[type2] (T2)   at ( 2.8, 0) {$B_1$};
-\node[type3] (T3)   at ( 5.6, 0) {$C_1$};
-\coordinate (start) at (0  ,0);
-\coordinate (end)   at (6.3,0);
-\coordinate (bista) at (0.7,0);
-\coordinate (biend) at (4.9,0);
-\path (bista)     edge[hv path] (start)
-                  edge[vh path] (T1-2.west)
-                  edge[vh path] (T1-3.west)
-      (T1-2.east) edge[hv path] (T2.north)
-      (T1-3.east) edge[hv path] (T2.south)
-      (T2.north)  edge[vh path] (T1-5.west)
-      (T2.south)  edge[vh path] (T1-6.west)
-      (biend)     edge[vh path] (T1-5.east)
-                  edge[vh path] (T1-6.east)
-                  edge[hv path] (T3.west)
-      (T3.east)   edge[hv path] (end);
-%\end{scope}
-\end{tikzpicture}
-\caption{Reliability block diagram for a `bridge' type system with three component types $A$, $B$, $C$.
-Note that this system layout cannot be expressed as a nesting of series and parallel layouts.
-The corresponding survival signature $\Phi(l_A,l_B,l_C)$ is given in Table~\ref{tab:bridge-survsign}.}
-\label{fig:bridge-layout}
-\end{figure}
 
 \subsection{Bayesian update of Weibull component models}
 \label{sec:weibull}
@@ -703,72 +803,6 @@ we will first present how system reliability functions can be derived based on c
 %we will below denote the parameters of the inverse Gamma distribution by $\nkz$ and $\ykz$,
 %regardless of them expressing expert information alone,
 %or stemming from the combination of expert information and test data.
-
-\begin{table}
-\centering
-\begin{tabular}{ccclccccl}
-  \toprule
-$l_A$ & $l_B$ & $l_C$ & $\Phi$ & \quad & $l_A$ & $l_B$ & $l_C$ & $\Phi$\\ 
-  \midrule
-0 & 0 & 1 & 0    & & 0 & 1 & 1 & 0 \\ 
-1 & 0 & 1 & 0    & & 1 & 1 & 1 & 0 \\ 
-2 & 0 & 1 & 0.33 & & 2 & 1 & 1 & 0.67 \\ 
-3 & 0 & 1 & 1    & & 3 & 1 & 1 & 1 \\ 
-4 & 0 & 1 & 1    & & 4 & 1 & 1 & 1 \\ 
-   \bottomrule
-\end{tabular}
-\caption{Survival signature $\Phi(l_A,l_B,l_C)$ for the bridge system from Figure~\ref{fig:bridge-layout},
-omitting all rows with $l_C=0$, since $\Phi(l_A,l_B,0)=0$ for all $l_A$ and $l_B$.}
-\label{tab:bridge-survsign}
-\end{table}
-
-\subsection{Reliability functions for complex systems using the survival signature}
-\label{sec:sysrel}
-
-Here we describe how system reliability functions, given fixed component models,
-can be efficiently calculated using the survival signature.
-We will show in Section~\ref{sec:sysreltnow}
-how this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
-giving us the RUL/RLD distribution on which we base our adaptive maintenance policy.
-
-We consider systems of arbitrary reliability block diagram layout,
-consisting of components of $K$ different types,
-where there are $N_k$ components of type $k$ in the system,
-and the total number of components in the system is $\sum_{k=1}^K N_k = N$.
-An example system reliability block diagram is given in Figure~\ref{fig:bridge-layout}.
-Note that this system cannot be described as a nesting of series and parallel subsystems.
-%This system is observed until time $\tnow$,
-%leading to censored observation of certain component lifetimes within the system.
-
-In a system with $N$ components, the state of the components can be expressed by the state vector
-$\vec{x} = (x_1,x_2,\ldots,x_N) \in \{0,1\}^N$,
-with $x_i=1$ if the $i$th component functions and $x_i=0$ if not.
-The structure function $\phi : \{0,1\}^N \rightarrow \{0,1\}$, defined for all possible $\vec{x}$,
-takes the value 1 if the system functions and 0 if the system does not function for state vector $\vec{x}$ \citep{BP75}.
-Most real-life systems are coherent,
-which means that $\phi(\vec{x})$ is non-decreasing in any of the components of $\vec{x}$,
-so system functioning cannot be improved by worse performance of one or more of its components.
-Furthermore, one can usually assume that $\phi(0, \ldots, 0) = 0$ and $\phi(1, \ldots, 1) = 1$.
-
-The survival signature \citep{2012:survsign} is a summary of the structure function
-for systems with $K$ groups of exchangeable components.
-Denoted by $\Phi(l_1,\ldots,l_K)$, with $l_k=0,1,\ldots,N_k$ for $k=1,\ldots,K$,
-it is defined as the probability for the event that the system functions
-given that precisely $l_k$ of its $N_k$ components of type $k$ function, for each $k\in \{1,\ldots,K\}$.
-Essentially, this creates a $K$-dimensional partition for the event $\Tsys > t$,
-such that $\Rsys(t) = P(\Tsys > t)$ can be calculated using the law of total probability,
-\begin{align}
-P(\Tsys > t) &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} P(\Tsys > t \mid C^1_t = l_1,\ldots, C^K_t = l_K)
-                                                                                  P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
-             &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} \Phi(l_1,\ldots,l_K) P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big) \nonumber\\
-             &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} \Phi(l_1,\ldots,l_K) \prod_{k=1}^K P(C^k_t = l_k)\,,
-\label{eq:sysrel-survsign}
-\end{align}
-where $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$,
-and the last equality holds as we assume that components of different types are independent.
-Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is non-decreasing in each $l_k$.
-
-As an example, the survival signature for the system in Figure~\ref{fig:bridge-layout} is given in Table~\ref{tab:bridge-survsign}.
 
 
 \subsection{Component posterior predictive distributions at $\tnow$}
