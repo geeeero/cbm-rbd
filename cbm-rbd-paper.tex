@@ -495,10 +495,10 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 \section{Reliability functions for complex systems using the survival signature}
 \label{sec:sysrel}
 
-Here we describe how the system reliability function, given fixed component models and the system layout,
+Here we describe how the system reliability function, given the system layout and arbitrary component models,
 can be efficiently calculated using the survival signature.
-We will show in Section~\ref{sec:sysreltnow}
-how this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
+We will show in Section~\ref{sec:adaptive-sysrel-weibull} how, for a certain choice of component model,
+this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
 giving us the residual life distribution on which we base our adaptive maintenance policy.
 
 We can analyze systems of arbitrary reliability block diagram layout,
@@ -611,8 +611,8 @@ Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is
 
 Continuing our example,
 the survival signature for the system in Figure~\ref{fig:brakesys-layout} is given in Table~\ref{tab:brakesys-survsign},
-omitting the entries for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_C, l_P) = 1$.
-(The full table would contain $\prod_{k=1}^K (N_k + 1) = 2 \times 2 \times 5 \times 5 = 100$ rows.)
+omitting the entries for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_C, l_P) = 1$,
+since the full table would contain $\prod_{k=1}^K (N_k + 1) = 2 \times 2 \times 5 \times 5 = 100$ rows.
 
 \begin{table}
 \centering
@@ -640,33 +640,51 @@ omitting the rows for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_
 
 
 \section{Adaptive system residual life distribution based on Weibull component models}
+\label{sec:adaptive-sysrel-weibull}
 
-***component model: weibull with fixed shape,
-inverse gamma prior on scale parameter,
-fix priors via expected lifetime and prior strength,
-test data inclusion
-with noninformatiove right-censoring
+In this section, we describe how the system reliability function $\Rsysnow(t)$ at current time $\tnow$ 
+can be calculated for a specific choice of component model.
+Section~\ref{sec:policy} will then show how an adaptive maintenance policy
+can be derived for a monitored system based on such a current system residual life distribution. 
 
-***output is $\Rsysnow(t)$, the current (at time $\tnow$) system reliability function
-(residual life distribution, RLD)
-taking into account the current system state,
-including the current ages of system components, 
-and the lifetime histories of all component types,
-including test data (if available) and expert assessments.
+We consider the well-known Weibull model for component lifetimes,
+which is used in a wide variety of reliability studies ***more motivation Weibull***. 
+To keep things simple, we assume that the shape parameter of the Weibull distribution is known,
+and that only the scale parameter needs to be estimated.
+By using a Bayesian approach, described in Section~\ref{sec:weibull},
+our component model allows to include both expert assessments and test data (if available),
+and furthermore can account for component lifetime information from the current run of the system up to $\tnow$.
+%***component model: weibull with fixed shape,
+%inverse gamma prior on scale parameter,
+%fix priors via expected lifetime and prior strength,
+%test data inclusion
+%with noninformatiove right-censoring
+%
+Section~\ref{sec:postpred} then derives the posterior predictive distribution
+for the Weibull component model as needed for the current system reliability calculation.
+Section~\ref{sec:sysreltnow} then adapts the method from Section~\ref{sec:sysrel} for the adaptive setting,
+resulting in a formula for $\Rsysnow(t)$.
+%***output is $\Rsysnow(t)$, the current (at time $\tnow$) system reliability function
+%(residual life distribution, RLD)
+%taking into account the current system state,
+%including the current ages of system components, 
+%and the lifetime histories of all component types,
+%including test data (if available) and expert assessments.
 
-***Model description in this Section follows closely \cite{2016:walter-coolen},
-who present the same RUL/RLD model.
-However, \cite{2016:walter-coolen} do not consider maintenance policies,
-and focus instead on a generalization of the RUL/RLD model using sets of priors for the component models
-(which can be seen as parametric P-boxes),
-allowing for vague and partial prior specifications,
-and sensitivity to prior-data conflict \cite[\S 2.2.3.3]{diss}.
+The model description in this Section follows closely \cite{2016:walter-coolen},
+who presented the same residual life distribution model.
+However, \cite{2016:walter-coolen} do not consider any maintenance policies,
+and focus instead on a generalization of the RLD model using sets of priors for the component models.
+These sets of priors can be seen as parametric P-boxes,
+a certain kind of imprecise probability model \citep[see, e.g.,][]{itip}.
+Such models allow for vague and partial prior specifications,
+and provide sensitivity to prior-data conflict \cite[\S 2.2.3.3]{diss}.
 
 
 \subsection{Bayesian update of Weibull component models}
 \label{sec:weibull}
 
-Here we describe the model for the component lifetimes,
+Here we describe the Weibull model for the component lifetimes,
 together with the Bayesian update procedure which allows to include
 expert knowledge, component tests, and information from the currently monitored components in the system.
 
@@ -797,8 +815,9 @@ At any time $\tnow > 0$,
 all non-failed components correspond to a right censored observation $\tpnow$;
 any failed components instead contribute a fully observed, non-censored lifetime,
 and both types of observations can be used in the update step \eqref{eq:ig-update}.
-Before we write this out formally in Section~\ref{sec:postpred},
-we will first present how system reliability functions can be derived based on component models.
+%Before we write this out formally in Section~\ref{sec:postpred},
+%we will first present how system reliability functions can be derived based on component models.
+
 %To keep notation simple,
 %we will below denote the parameters of the inverse Gamma distribution by $\nkz$ and $\ykz$,
 %regardless of them expressing expert information alone,
@@ -809,7 +828,7 @@ we will first present how system reliability functions can be derived based on c
 \label{sec:postpred}
 
 To calculate the current system reliability function $\Rsysnow(t)$,
-we thus need, for each $k=1,\ldots, K$, the probabilities $P(C^k_t = l_k)$
+we need, for each $k=1,\ldots, K$, the probabilities $P(C^k_t = l_k)$
 for the number of type $k$ components that function at times $t > \tnow$,
 taking into account all information available at $\tnow$.
 In the Bayesian framework, these probabilities are given
@@ -826,7 +845,7 @@ Following our comments at the end of Section~\ref{sec:weibull},
 the component models can be further updated
 using information gained from the current run of the system until $\tnow$:
 Any failure times of failed components,
-and the right-censoring time $\tpnow$ for each non-failed component
+and the right-censoring time $\tpnow$ for each non-failed component,
 can be used to update $\nkz$ and $\ykz$ according to \eqref{eq:ig-update}.
 We denote the resulting parameter values by $\nknow$ and $\yknow$.
 %(It is of course possible to update $\nkz$ and $\ykz$ directly to $\nknow$ and $\yknow$ if no test data is available.)
