@@ -1109,11 +1109,11 @@ Taking the expectation over $\Tsysnow$ leads to the expected unit cost rate bein
 \label{eq:gtau}
 \end{align}
 Note that for the integral to exist in \eqref{eq:gtau},
-$\E[\Tsysnow]$ must exist, which is a condition for $\fsysnow(t)$ for values of $t$ close to $0$ \citep{2006:coolen-schrijner-coolen}.
+$\E[1/\Tsysnow]$ must exist, which is a condition for $\fsysnow(t)$ for values of $t$ close to $0$ \citep{2006:coolen-schrijner-coolen}.
 This restriction probably plays a role in the CBM literature's reluctance to adopt the one-cycle criterion.
 For our approach, however, this condition is not relevant,
 as we use a discrete approximation of $\Rsysnow(t)$ and $\fsysnow(t)$, respectively.
-We will describe next how this approximation is used in \eqref{eq:gtau}.
+We will describe next how we numerically evaluate \eqref{eq:gtau} and find $\tausnow$.
 %($\beta_k > 1$ $\forall k = 1,\ldots,K$ sufficient **???**)
 %***here, $\Rsysnow(\cdot)$ shifted such that $\tnow = 0$.
 
@@ -1122,18 +1122,22 @@ We will describe next how this approximation is used in \eqref{eq:gtau}.
 \label{sec:optim}
 
 %*** not possible / *** to minimize $\gnow(\tau)$ analytically.
-***we calculate $\Rsysnow(t)$ on discrete grid until some horizon, optimize $\tausnow$ over same discrete grid.
+***we calculate $\Rsysnow(t)$ on discrete grid from $\tnow$ until some horizon time $\tnow + t_h$.
+$t_h$ can be determined by practical considerations,
+but generally should reach into the tail of $\Rsysnow(t)$.
+We calculate $\gnow(\tau)$ on the same grid,
+and determine $\tausnow$ as the minimum over this grid.
 
 We approximate the integral in \eqref{eq:gtau} numerically by a sum,
 where $\fsysnow(t)$ is calculated via differences of $\Rsysnow(t)$ values on a dense grid.
 $\gnow(\tau)$ is likewise evaluated on a dense grid,
-and $\tau_*^{(\tnow)} = \arg\min \gnow(\tau)$ is determined as the minimum over the grid.
+and $\tausnow = \arg\min \gnow(\tau)$ is determined as the minimum over the grid.
 %The lower index $\tnow$ of the optimal moment of maintenance serves to remind that
 %$\tau^*$ depends on $\tnow$, and also on the history of the system.
 
 ***calculations in \textsf{R} can be vectorized and are thus fast.
 
-***if min $\gnow(\tau)$ at horizon, corrective maintenance is optimal: policy switch!
+***if min $\gnow(\tau)$ at $\tnow + t_h$, corrective maintenance is optimal: policy switch!
 %***if $\tau_*^{(\tnow)}$ larger than certain horizon, than conclude corrective policy
 
 %At time $\tnow$, the corresponding $\tausnow$ gives the optimal moment of maintenance in terms of time to elapse after $\tnow$,
@@ -1156,6 +1160,8 @@ and $\tau_*^{(\tnow)} = \arg\min \gnow(\tau)$ is determined as the minimum over 
 \section{Outlook}
 \label{sec:outlook}
 
+***$\tsetup$ could vary over time, e.g., longer on weekends or outside office hours
+
 *** study other replacement schemes, e.g., replacing only failed components:
 when repaired/replaced components are present in system,
 then one needs to use actual ages (and not time since system startup) in parameter update,
@@ -1174,7 +1180,6 @@ needs decision criteria from imprecise probability literature like E-admissibili
 *** to use the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 we would need to add interval-censored data (failure has happened between last and current inspection)
 
-***$\tsetup$ could vary over time, e.g., longer on weekends or outside office hours
 
 
 
