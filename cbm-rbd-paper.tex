@@ -186,6 +186,7 @@
 
 \newcommand{\Rsysnow}{R^{(t_\text{now})}_\text{sys}}
 \newcommand{\Tsysnow}{T^{(t_\text{now})}_\text{sys}}
+\newcommand{\tsysnow}{t^{(t_\text{now})}_\text{sys}}
 \newcommand{\fsysnow}{f^{(t_\text{now})}_\text{sys}}
 \def\eknow{e_k^{(\tnow)}}
 \def\cknow{c_k^{(\tnow)}}
@@ -902,17 +903,25 @@ with parameters $\nknow + 1$ and $\nknow\yknow + (l_k + j) (t^{\beta_k} - (\tnow
 allowing to solve the integral using the corresponding normalization constant.
 We thus have, for $l_k \in \{0,1,\ldots,\cknow\}$,
 \begin{align}
-\lefteqn{P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)} \nonumber\\
- &= { \cknow \choose l_k} \sum_{j=0}^{\cknow - l_k} (-1)^j { \cknow - l_k \choose j}
-    \left(\frac{\nknow\yknow}{\nknow\yknow + (l_k + j) \big(t^{\beta_k} - (\tnow)^{\beta_k}\big)}\right)^{\nknow + 1} \nonumber\\
- &= \sum_{j=0}^{\cknow - l_k} (-1)^j \frac{\cknow !}{l_k! j! (\cknow - l_k - j)!}   
-    \left(\frac{\nknow\yknow}{\nknow\yknow + (l_k + j) \big(t^{\beta_k} - (\tnow)^{\beta_k}\big)}\right)^{\nknow + 1} \nonumber\\
- &= \sum_{j=0}^{\cknow - l_k} (-1)^j \frac{\cknow !}{l_k! j! (\cknow - l_k - j)!} \times \nonumber\\ & \hspace*{10ex}  
-    \left(\frac{\nkz\ykz + \sum_{i=1}^{\eknow} (t_{k,i})^{\beta_k} + \cknow       (\tnow)^{\beta_k} }%
-               {\nkz\ykz + \sum_{i=1}^{\eknow} (t_{k,i})^{\beta_k} + (\cknow - l_k - j) (\tnow)^{\beta_k} + (l_k + j) t^{\beta_k} }\right)^{%
-    \nkz + \eknow + 1}.
 \label{eq:postpred-priorparams}
+\lefteqn{P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)}\hspace*{5ex} \nonumber\\
+ &= { \cknow \choose l_k} \sum_{j=0}^{\cknow - l_k} (-1)^j { \cknow - l_k \choose j} \times \nonumber\\ & \hspace*{10ex}
+    \left(\frac{\nknow\yknow}{\nknow\yknow + (l_k + j) \big(t^{\beta_k} - (\tnow)^{\beta_k}\big)}\right)^{\nknow + 1} \,, \\
+ & \quad\text{where } \nknow\yknow = \nkz\ykz + \sum_{i=1}^{\eknow} (t_{k,i})^{\beta_k} + \cknow (\tnow)^{\beta_k} \nonumber\\
+ & \quad\text{and }  \nknow = \nkz + \eknow \,. \nonumber
+% &= { \cknow \choose l_k} \sum_{j=0}^{\cknow - l_k} (-1)^j { \cknow - l_k \choose j} \times \nonumber\\ & \hspace*{1ex}
+%    \left(\frac{\nkz\ykz + \sum_{i=1}^{\eknow} (t_{k,i})^{\beta_k} + \cknow (\tnow)^{\beta_k} }%
+%               {\nkz\ykz + \sum_{i=1}^{\eknow} (t_{k,i})^{\beta_k} + \cknow (\tnow)^{\beta_k} +%
+%                (l_k + j) \big(t^{\beta_k} - (\tnow)^{\beta_k}\big) }\right)^{\nkz + \eknow + 1}.
+% &= \sum_{j=0}^{\cknow - l_k} (-1)^j \frac{\cknow !}{l_k! j! (\cknow - l_k - j)!}   
+%    \left(\frac{\nknow\yknow}{\nknow\yknow + (l_k + j) \big(t^{\beta_k} - (\tnow)^{\beta_k}\big)}\right)^{\nknow + 1} \nonumber\\
+% &= \sum_{j=0}^{\cknow - l_k} (-1)^j \frac{\cknow !}{l_k! j! (\cknow - l_k - j)!} \times \nonumber\\ & \hspace*{10ex}  
+%    \left(\frac{\nkz\ykz + \sum_{i=1}^{\eknow} (t_{k,i})^{\beta_k} + \cknow       (\tnow)^{\beta_k} }%
+%               {\nkz\ykz + \sum_{i=1}^{\eknow} (t_{k,i})^{\beta_k} + (\cknow - l_k - j) (\tnow)^{\beta_k} + (l_k + j) t^{\beta_k} }\right)^{%
+%    \nkz + \eknow + 1}.
 \end{align}
+%where $\nknow\yknow = \nkz\ykz + \sum_{i=1}^{\eknow} (t_{k,i})^{\beta_k} + \cknow (\tnow)^{\beta_k}$
+%and $\nknow = \nkz + \eknow + 1$.
 %These posterior predictive probabilities can also be expressed as a cumulative probability mass function (cmf)
 %\begin{align}
 %F(l_k \mid \nkz,\ykz,\vectknow) = P(C^k_t \leq l_k \mid \nkz,\ykz,\vectknow) 
@@ -929,8 +938,8 @@ to determine the system reliability distribution $\Rsysnow(t)$,
 giving us the probability that the system functions at times $t > \tnow$,
 taking into account all information available at $\tnow$:
 \begin{align}
-\Rsysnow(t) &:= \sum_{l_1=0}^{c_1^{(\tnow)}} \cdots \sum_{l_K=0}^{c_K^{(\tnow)}} \Phinow(l_1,\ldots,l_K)
-                \prod_{k=1}^K P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)\,.
+\Rsysnow(t) &= \sum_{l_1=0}^{c_1^{(\tnow)}} \cdots \sum_{l_K=0}^{c_K^{(\tnow)}} \Phinow(l_1,\ldots,l_K)
+               \prod_{k=1}^K P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)\,.
 \label{eq:sysrel-tnow}
 \end{align}
 Note that if one or several components have failed by $\tnow$,
@@ -960,7 +969,7 @@ such a fine discrete approximation of the RLD can be obtained.
 \section{Dynamic/Adaptive maintenance policy based on the current system residual life distribution}
 \label{sec:policy}
 
-We can now derive the adaptive / dynamic maintenance policy
+We can now derive the adaptive and dynamic maintenance policy
 that resembles a CBM policy.
 However, instead of determining a threshold for a degradation signal like in usual CBM approaches,
 we determine, for each present time $\tnow$,
@@ -972,24 +981,33 @@ Let $\tsetup$ be the timespan needed to set up maintenance work,
 often referred to simply as setup time.
 As soon as $\tausnow$ decreases below $\tsetup$,
 a preventive maintenance action is initiated.
+This operational procedure is described in more detail in Section~\ref{sec:operationalprocedure}.
 %and executed at time $\tnow + \tausnow$.
 
 The optimal time to maintenance $\tausnow$ is determined based on $\Rsysnow(t)$
-by minimizing $\gnow(\tau)$, the expected unit cost rate for the current operational cycle, see Section~\ref{sec:costrate} below.
-Each operational cycle starts with the system being in an (as good as) new state,
-i.e., all components in the system are new and have not aged.
+by minimizing $\gnow(\tau)$, the expected unit cost rate for the current operational cycle.
+(An operational cycle begins with system start-up,
+and ends when either a failure of the system occors, or a preventive maintenance is carried out.)
+This criterion, as described in Section~\ref{sec:costrate} below in detail,
+only assumes that $\Rsysnow(t)$ can be calculated,
+and thus is not tied to our choice of component model.
+One could also consider other optimality criteria to determine $\tausnow$.
+When safety is paramount one could, e.g., determine $\tausnow$ such that
+the probability of system failure is at most at some very low pre-determined level.
+
+Section~\ref{sec:optim} then focuses on our choice of component model and the resulting form for $\Rsysnow(t)$,
+and shows how $\tausnow$ is determined in this situation.
+Numerical examples for different failure histories are given in Section~ref{sec:examples}.
+
+
+\subsection{Operational Procedure}
+\label{sec:operationalprocedure}
+
+Each operational cycle starts with system startup.
+At this point in time, the system being is in an (as good as) new state,
+i.e., all components in the system are (as good as) new and have not aged.
 A cycle ends when the system is either maintained preventively, %at time $\tnow + \tausnow$ (on an absolute time scale),
 or the system fails, which triggers a corrective maintenance action.
-The calculation of $\tausnow$ for a fixed $\tnow$ resembles the calculation
-of the maintenance interval in an age based policy;
-however, because $\tausnow$ is derived from the current $\Rsysnow(t)$,
-our policy is adaptive and dynamic like a CBM policy. 
-
-It is also possible that $\gnow(\tau)$ is monotonely decreasing.
-In this case, it is, at the moment $\tnow$, optimal to correctively maintain the system.
-This means that our approach is not only capable of finding the optimal moment for preventive maintenance,
-but also capable of indicating when corrective maintenance is the better option.
-%i.e., capable of choosing the maintenance policy.
 
 During a cycle,
 $\tausnow$ is recalculated at a frequency small enough to be negligible on the system lifetime scale.
@@ -1003,16 +1021,43 @@ Both aspects influence $\Rsysnow(t)$ and thus $\tausnow$.
 %but as a (near) real-time update of $\taausnow$ is possible and useful,
 %as non-failed components still can be used to update component models ($\nknow$ and $\yknow$) via right-censored observation $\tpnow$.
 
+The calculation of $\tausnow$ for a fixed $\tnow$ resembles the calculation
+of the maintenance interval in an age based policy;
+however, because $\tausnow$ is derived from the current $\Rsysnow(t)$,
+our policy is adaptive and dynamic like a CBM policy. 
+Like in an age-based policy, the derived $\gnow(\tau)$ can also be monotonely decreasing.
+In this case, it is, at the moment $\tnow$, optimal to correctively maintain the system.
+This means that our approach is not only capable of finding the optimal moment for preventive maintenance,
+but also capable of indicating when corrective maintenance is the better option.
+%i.e., capable of choosing the maintenance policy.
+
+A preventive maintenance action is triggered as soon as $\tausnow$ falls below $\tsetup$,
+the time needed to set up maintenance work.
+The system continues to run until maintenance work begins,
+and the cycle ends when maintenance work is completed.
+When the system fails, instead a corrective maintenance action is triggered,
+and the system is down also during the wait until maintenance work begins.
+This additional downtime must be reflected in the cost parameter $c_u$ (see Section~\ref{sec:costrate} below).
+Again, the cycle ends when maintenance work is completed.
+
 At the end of each cycle,
 the component information gained during the completed cycle is added to the component knowledge base
 by updating the parameters $\nk$ and $\yk$ accordingly,
 %using failure and censoring times as of the end of the cycle.
-such that $\nkz$ and $\ykz$ for the following cycle account for the lifetimes and censoring observed during the previous cycle.
+such that $\nkz$ and $\ykz$ for the following cycle account for the (censored) lifetimes observed during the previous cycle.
 %We assume that both planned and unplanned maintenance action takes negligible time,
 We assume that both a planned and unplanned maintenance action results in an (as good as) new system state by replacing all components,
 such that the system begins a new cycle always under the same condition.
-As we use a one-cycle criterion, the time these maintenance actions take does not matter for the determination of $\tausnow$.
-Downtimes are instead accounted for via the costs parameters,
+Replacement schemes that do not replace all components need to take into account the different ages of components in the system
+at the start of a new cycle.
+While this is in principle possible in our approach,
+exploring such selective replacement schemes is out of scope for this paper,
+since optimizing over replacement schemes is, in our view, a higly interesting topic on its own,
+which we will comment on in the Outlook (Section~\ref{sec:outlook}).
+
+As we use a one-cycle criterion, the time both planned and unplanned maintenance actions require
+does not matter directly for the determination of $\tausnow$.
+Downtimes are instead accounted for indirectly via the costs parameters,
 as described next.
 
 %To find the optimal moment for maintenance based on the current system reliability function $\Rsysnow(t)$,
@@ -1041,26 +1086,21 @@ Usually, set-up costs, work costs and downtime costs are much higher for unplann
 such that often, $c_p \ll c_u$.
 CBM is known to be most effective when the difference between $c_p$ and $c_u$ is large
 (***cite de Jonge and Teunter working paper on relative benefit).
-
-As discussed in the Introduction and above,
+%
+As discussed above,
 we assume that both $c_p$ and $c_u$ include the cost of replacing all components in the system.
 That means that every time a new cycle starts, the system is in the same state with all components (as-good-as) new.
-Replacement schemes that do not replace all components need to take into account the different ages of components in the system
-at the start of a new cycle.
-While this is in principle possible in our approach,
-exploring such selective replacement schemes is out of scope for this paper
-and worthy for a seperate contribution.
 
 Let $\Tsysnow$ be the random variable corresponding to $\Rsysnow(t)$,
 giving the (random) system failure time for times $t > \tnow$,
 conditioned on all information available at $\tnow$,
 and $\fsysnow(t)$ be the corresponding density.
-Conditional on $\Tsysnow$, the unit cost rate is 
+Conditional on the realization of $\Tsysnow$, the unit cost rate is 
 \begin{align*}
-g(\tau \mid \Tsysnow) &=
+g(\tau \mid \Tsysnow = \tsysnow) &=
 \begin{cases}
-c_p / \tau  & \text{if } \Tsysnow \ge \tau \\
-c_u / \Tsys & \text{if } \Tsysnow < \tau
+c_p / \tau  & \text{if } \tsysnow \ge \tau \\
+c_u / \Tsys & \text{if } \tsysnow < \tau
 \end{cases}
 \end{align*}
 Taking the expectation over $\Tsysnow$ leads to the expected unit cost rate being
@@ -1068,15 +1108,18 @@ Taking the expectation over $\Tsysnow$ leads to the expected unit cost rate bein
 \gnow(\tau) &= \E[g(\tau \mid \Tsysnow)] = \frac{c_p}{\tau} \Rsysnow(\tau) + c_u \int_0^\tau \frac{1}{t} \fsysnow(t) \dd t
 \label{eq:gtau}
 \end{align}
-
-***$\fsysnow(t)$ needs to fulfill certain conditions for the integral to exist / to be finite because of $1/t$.
-we have no problem because of discrete approximation of $\Rsysnow(t)$ resp. $\fsysnow(t)$.
-($\beta_k > 1$ $\forall k = 1,\ldots,K$ sufficient **???**)
-
+Note that for the integral to exist in \eqref{eq:gtau},
+$\E[\Tsysnow]$ must exist, which is a condition for $\fsysnow(t)$ for values of $t$ close to $0$ \citep{2006:coolen-schrijner-coolen}.
+This restriction probably plays a role in the CBM literature's reluctance to adopt the one-cycle criterion.
+For our approach, however, this condition is not relevant,
+as we use a discrete approximation of $\Rsysnow(t)$ and $\fsysnow(t)$, respectively.
+We will describe next how this approximation is used in \eqref{eq:gtau}.
+%($\beta_k > 1$ $\forall k = 1,\ldots,K$ sufficient **???**)
 %***here, $\Rsysnow(\cdot)$ shifted such that $\tnow = 0$.
 
 
 \subsection{Numerical optimization of the expected unit cycle cost rate}
+\label{sec:optim}
 
 %*** not possible / *** to minimize $\gnow(\tau)$ analytically.
 ***we calculate $\Rsysnow(t)$ on discrete grid until some horizon, optimize $\tausnow$ over same discrete grid.
@@ -1096,24 +1139,22 @@ and $\tau_*^{(\tnow)} = \arg\min \gnow(\tau)$ is determined as the minimum over 
 %At time $\tnow$, the corresponding $\tausnow$ gives the optimal moment of maintenance in terms of time to elapse after $\tnow$,
 %so in the absolute time scale, the optimal moment of maintenance is at $\tnow + \tau_*^{\tnow}$.
 
-****plot both $\tau_*^{\tnow}$ and $\tnow + \tau_*^{\tnow}$ over time for different failure histories
 
 
 
 
-\section{Comparison with $M^*$ out of $N$ policy}
+\section{***numerical examples for complex system layout}
+\label{sec:examples}
 
-***???
+***use simplified brake system from ASCE-ASME paper, example history of components failing
 
+***plot both $\tau_*^{\tnow}$ and $\tnow + \tau_*^{\tnow}$ over time for different failure histories
 
-\section{Case study / numerical example for complex system layout}
-
-use simple system layout, example history of components failing
-
-use the simplified brake system from ASCE-ASME paper?
+***larger simulation study?
 
 
 \section{Outlook}
+\label{sec:outlook}
 
 *** study other replacement schemes, e.g., replacing only failed components:
 when repaired/replaced components are present in system,
