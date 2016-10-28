@@ -987,6 +987,8 @@ This operational procedure is described in more detail in Section~\ref{sec:opera
 %and executed at time $\tnow + \tausnow$.
 
 ***comments about `nervousness' of $\tausnow$ here or in \ref{sec:operationalprocedure}?
+common cause failures currently not in the model, but will seriously influence residual life distribution,
+see comments in Outlook (Section~\ref{sec:outlook})
 
 The optimal time to maintenance $\tausnow$ is determined based on $\Rsysnow(t)$
 by minimizing $\gnow(\tau)$, the expected unit cost rate for the current operational cycle.
@@ -1006,6 +1008,8 @@ Numerical examples for different failure histories are given in Section~ref{sec:
 
 \subsection{Operational Procedure}
 \label{sec:operationalprocedure}
+
+***illustrative figure?
 
 Each operational cycle starts with system startup.
 At this point in time, the system being is in an (as good as) new state,
@@ -1175,6 +1179,11 @@ and thus the calculation of separate posterior predictive probabilities
 $P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
 which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
 
+***common-cause failures will seriously reduce RLD in a way currently not covered by our model.
+This needs to be implemented on the level of component models,
+specifically $P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big)$ 
+(not a product anymore if common-case failures can affect several component times at once).
+Combine ideas from \cite{2015:coolen-coolen-maturi} and \cite{Troffaes2014a}.
 
 *** move to sets of priors, set of residual life distributions like in \cite{2016:walter-coolen}.
 Leads to set of $\gnow(\tau)$, finding (set of) $\tausnow$ is then non-trivial,
