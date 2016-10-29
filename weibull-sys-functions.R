@@ -46,8 +46,8 @@ cpigfornoptim <- function(n, y, t, ...)
 # fts     vector of length e giving the observed failure times,
 #         or NULL if no failures observed
 # beta    fixed weibull shape parameter
-# prior   whether the prior predictive should be calculated,
-#         when TRUE, fts is ignored 
+# prior   whether the prior predictive should be calculated instead
+#         of the posterior predictive; when TRUE, fts is ignored 
 postpredC <- function(n0y0, beta, n, fts, tnow, t, l, prior = FALSE){
   if (t < tnow)
     stop("t must be larger than tnow")
@@ -65,7 +65,7 @@ postpredC <- function(n0y0, beta, n, fts, tnow, t, l, prior = FALSE){
     nnyn <- n0y0[1]*n0y0[2] + (n-e)*(tnow^beta) + sum(fts^beta)
   else
     nnyn <- n0y0[1]*n0y0[2]
-  j <- seq(0, n-e-l) # !!!
+  j <- seq(0, n-e-l) # ??? e=0 if prior, makes sense here ??
   choose(n-e, l) * sum( (-1)^j * choose(n-e-l, j) * (nnyn/(nnyn + (l+j)*(t^beta - tnow^beta)))^(nn + 1) )
 }
 
@@ -120,40 +120,49 @@ fourCornersCcmf <- function(luckobj, beta, n, fts, tnow, t, prior = FALSE){
   cat("br", paste(round(br,4), collapse = " "), "\n")
 }
 
+# postpredC needs N_k, fts_k, calculates e_k and c_k from it 
+
 # calculates the system reliability for fixed future time t > tnow
-# order of length K vectors must be the same as in survsign table (!!!)
-# (what happens when a component type is no longer in the reduced graph?)
+# n0y0, beta, fts may contain only types that are still in the system (according to survsign),
+# so K is here only the number of types still in the system at time tnow
+# type order in n0y0, beta, fts must be the same as in (reduced) survsign table!
 #
-# n0y0     list of K prior parameter pairs c(n0,y0)
 # survsign data frame with the survival signature as output by computeSystemSurvivalSignature()
 #          this must be signature for the reduced system if components have failed!
 #          -> use induced_subgraph()
+# n0y0     list of K prior parameter pairs c(n0,y0)
 # beta     vector of K fixed weibull shape parameters
 # fts      list of K vectors giving the observed failure times for the compents of type 1,...,K;
-#          the list element should be NULL if no failure has been observed for type k
+#          the list element should be NULL if no failure has been observed for type k.
+#          All list element entries must be <= tnow
 # tnow     time until the system is observed
 # t        time t for which to calculate P(T_sys > t), t > t_now
 # table    if table of posterior predictive probabilities should be given along with the reliability
-# Nk       vector of length K giving the number of components of each type,
-#          this is needed only when reduced survival signature is used (???)
-# prior    whether the prior system relibability should be calculated (no updating with things observed until tnow)
-sysrel <- function(n0y0, survsign, beta, fts, tnow, t, table = FALSE, Nk = NULL, prior = FALSE){
-  K <- length(fts)
-  if(is.null(Nk)){
-    Nk <- apply(survsign, 2, max)
-    Nk <- Nk[-length(Nk)]
-  }
-  if(!prior)
+# prior    whether the prior system relibability should be calculated (= no updating with things observed until tnow)
+sysrelnow <- function(survsign, n0y0, beta, Nk = NULL, fts, tnow, t, prior = FALSE, table = FALSE){
+  K <- length(n0y0)
+  #knames <- names(n0y0)
+  # ck from survsign (number of functioning components per type)
+  ck <- apply(survsign, 2, max)
+  ck <- ck[-length(ck)]
+  # e_k from fts (number of failed components per type)
+  ek <- unlist(lapply(fts, length))
+  Nk <- ck + ek
+  if(length(fts) != K | length(beta) != K | length(Nk) != K)
+    stop("Check the length of arguments n0y0, beta, fts.\n
+         They need to contain the same number of elements as there are component types in survsign.")
+
+  if(!prior) # does not postpredC deal with prior vs posterior predictive???!
     ek <- unlist(lapply(fts, length))
   else
     ek <- rep(0, K)
+  ck <- Nk - ek # number of censored (functioning) components per type
   # keep only those rows of survsign which have up to nk-ek functioning
-  survsign2 <- survsign
   for (k in 1:K)
-    survsign2 <- survsign2[survsign2[,k] <= (Nk-ek)[k],] # also here necessary that NK, ek have same order as in survsign
+    survsign <- survsign[survsign[,k] <= ck[k],] # also here necessary that NK, ek have same order as in survsign
   # keep only those rows where survsign > 0
-  if (dim(survsign2)[1] > 1)
-    survsign2 <- survsign2[survsign2$Probability > 0,]
+  if (dim(survsign)[1] > 1) # but only if there is more than one row left
+    survsign <- survsign[survsign$Probability > 0,]
   # calculate component posterior predictive probabilities
   for (k in 1:K){ # for loop is probably slow
     survsign2$tmp <- NA
