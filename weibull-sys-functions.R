@@ -51,76 +51,21 @@ cpigfornoptim <- function(n, y, t, ...)
 postpredC <- function(n0y0, beta, n, fts, tnow, t, l, prior = FALSE){
   if (t < tnow)
     stop("t must be larger than tnow")
+  e <- length(fts)
+  if (n < e)
+    stop("too many elements in fts, there can be at most n failure times!")
+  if (l > n-e | l < 0)
+    stop("l must be in [0, n-e]")
   if(!prior){
-    e <- length(fts)
-    if (n < e)
-      stop("too many elements in fts, there can be at most n failure times!")
-  } else {
-    e <- 0
-  }
-  if (l > n-e)
-    stop("l can be at most c=n-e")
-  nn <- n0y0[1] + e
-  if(!prior)
+    nn <- n0y0[1] + e
     nnyn <- n0y0[1]*n0y0[2] + (n-e)*(tnow^beta) + sum(fts^beta)
-  else
+  } else {
+    nn <- n0y0[1]
     nnyn <- n0y0[1]*n0y0[2]
-  j <- seq(0, n-e-l) # ??? e=0 if prior, makes sense here ??
+  }
+  j <- seq(0, n-e-l)
   choose(n-e, l) * sum( (-1)^j * choose(n-e-l, j) * (nnyn/(nnyn + (l+j)*(t^beta - tnow^beta)))^(nn + 1) )
 }
-
-# calculates the probability mass function for C_t
-postpredCpmf <- function(n0y0, beta, n, fts, tnow, t, prior = FALSE){
-  l <- seq(0, n-length(fts))
-  res <- numeric(length(l))
-  for (i in l) res[i+1] <- postpredC(n0y0, beta, n, fts, tnow, t, i, prior = prior)
-  res <- array(res)
-  dimnames(res)[[1]] <- l
-  res
-}
-
-# calculates the cumulative mass function for C_t
-postpredCcmf <- function(n0y0, beta, n, fts, tnow, t, prior = FALSE){
-  pmf <- postpredCpmf(n0y0, beta, n, fts, tnow, t, prior = prior)
-  cmf <- cumsum(pmf)
-  cmf
-}
-
-# plots the cumulative mass function for C_t
-Ccmfplot <- function(cmf, add = FALSE, ylim = c(0,1), xlab = "l", ylab = "F(C = l)",...){
-  if(add)
-    lines(as.numeric(names(cmf)), cmf, type="s", ...)
-  else
-    plot(as.numeric(names(cmf)), cmf, type="s", ylim = ylim, xlab = xlab, ylab = ylab, ...)
-}
-
-
-# plots and prints the cmfs for the four 'corner' (n0,y0) pairs.
-fourCornersCcmf <- function(luckobj, beta, n, fts, tnow, t, prior = FALSE){
-  n0 <- n0(luckobj)
-  y0 <- y0(luckobj)
-  tl <- postpredCcmf(n0y0 = c(n0[1], y0[2]), beta = beta, n = n, fts = fts, tnow = tnow, t = t, prior = prior)
-  tr <- postpredCcmf(n0y0 = c(n0[2], y0[2]), beta = beta, n = n, fts = fts, tnow = tnow, t = t, prior = prior)
-  bl <- postpredCcmf(n0y0 = c(n0[1], y0[1]), beta = beta, n = n, fts = fts, tnow = tnow, t = t, prior = prior)
-  br <- postpredCcmf(n0y0 = c(n0[2], y0[1]), beta = beta, n = n, fts = fts, tnow = tnow, t = t, prior = prior)
-  Ccmfplot(tl, main = bquote(paste("n0 = [",.(n0[1]),",",.(n0[2]),"], y0 = [",.(round(y0[1],2)),",",.(round(y0[2],2)),"]")))
-  Ccmfplot(tr, lty = 2, add = TRUE)
-  Ccmfplot(bl, col = 2, add = TRUE)
-  Ccmfplot(br, col = 2, lty = 2, add = TRUE)
-  fail <- toString(fts)
-  cens <- paste(toString(tnow),"+", sep="")
-  cens <- paste(rep(cens, n-length(fts)), collapse=",")
-  data <- paste(fail, cens, sep=",")
-  mtext(paste("n = ",toString(n),", data = (",data,"), t = ",toString(t), sep=""), side = 3, line = 0.5)
-  legend("topleft", legend=c("tl","tr","bl","br"), lty=c(1,2,1,2), col=c(1,1,2,2))
-  cat("  ", paste(names(tl), collapse = "      "), "\n")
-  cat("tl", paste(round(tl,4), collapse = " "), "\n")
-  cat("tr", paste(round(tr,4), collapse = " "), "\n")
-  cat("bl", paste(round(bl,4), collapse = " "), "\n")
-  cat("br", paste(round(br,4), collapse = " "), "\n")
-}
-
-# postpredC needs N_k, fts_k, calculates e_k and c_k from it 
 
 # calculates the system reliability for fixed future time t > tnow
 # n0y0, beta, fts may contain only types that are still in the system (according to survsign),
@@ -139,7 +84,7 @@ fourCornersCcmf <- function(luckobj, beta, n, fts, tnow, t, prior = FALSE){
 # t        time t for which to calculate P(T_sys > t), t > t_now
 # table    if table of posterior predictive probabilities should be given along with the reliability
 # prior    whether the prior system relibability should be calculated (= no updating with things observed until tnow)
-sysrelnow <- function(survsign, n0y0, beta, Nk = NULL, fts, tnow, t, prior = FALSE, table = FALSE){
+sysrelnow <- function(survsign, n0y0, beta, fts, tnow, t, prior = FALSE, table = FALSE){
   K <- length(n0y0)
   #knames <- names(n0y0)
   # ck from survsign (number of functioning components per type)
@@ -151,38 +96,122 @@ sysrelnow <- function(survsign, n0y0, beta, Nk = NULL, fts, tnow, t, prior = FAL
   if(length(fts) != K | length(beta) != K | length(Nk) != K)
     stop("Check the length of arguments n0y0, beta, fts.\n
          They need to contain the same number of elements as there are component types in survsign.")
-
-  if(!prior) # does not postpredC deal with prior vs posterior predictive???!
-    ek <- unlist(lapply(fts, length))
-  else
-    ek <- rep(0, K)
-  ck <- Nk - ek # number of censored (functioning) components per type
-  # keep only those rows of survsign which have up to nk-ek functioning
-  for (k in 1:K)
-    survsign <- survsign[survsign[,k] <= ck[k],] # also here necessary that NK, ek have same order as in survsign
   # keep only those rows where survsign > 0
   if (dim(survsign)[1] > 1) # but only if there is more than one row left
     survsign <- survsign[survsign$Probability > 0,]
-  # calculate component posterior predictive probabilities
-  for (k in 1:K){ # for loop is probably slow
-    survsign2$tmp <- NA
-    tmpname <- paste("PCt", names(survsign2)[k], sep="")
-    ncols <- length(survsign2)
-    names(survsign2) <- c(names(survsign2)[-ncols], tmpname)
-    # better vectorize inner for loop and append vector to survsign
-    for (i in 1:dim(survsign2)[1]){
-      survsign2[i,ncols] <- postpredC(n0y0 = n0y0[[k]], beta = beta[k], n = Nk[k],
-                                      fts = fts[[k]], tnow = tnow, t = t, l = survsign2[i,k], prior = prior)
-    }
+  # for each component type, create a column containing 
+  # the component posterior predictive probabilities
+  for (k in 1:K){
+    PCtk <- sapply(survsign[,k], function(l){
+      postpredC(n0y0 = n0y0[[k]], beta = beta[k], n = Nk[k],
+                fts = fts[[k]], tnow = tnow, t = t, l = l, prior = prior)
+    })
+    ssnames <- names(survsign)
+    survsign <- data.frame(survsign, PCtk)
+    names(survsign) <- c(ssnames, paste("PCt", ssnames[k], sep=""))
   }
   # joint posterior predictive probabilities
-  survsign2$summand <- apply(survsign2[,-(1:K)], 1, prod)
-  res <- sum(survsign2$summand)
+  survsign$summand <- apply(survsign[,-(1:K)], 1, prod)
+  res <- sum(survsign$summand)
   if(table)
-    return(list(rel = res, table = survsign2))
+    return(list(rel = res, table = survsign))
   else
     return(res)
 }
+
+# calculates the system reliability for a vector of future times t > tnow,
+# resp. hor time units into the future from tnow evaluated at seqlen points
+# n0y0, beta, fts may contain only types that are still in the system (according to survsign),
+# so K is here only the number of types still in the system at time tnow
+# type order in n0y0, beta, fts must be the same as in (reduced) survsign table!
+#
+# survsign data frame with the survival signature as output by computeSystemSurvivalSignature()
+#          this must be signature for the reduced system if components have failed!
+#          -> use induced_subgraph()
+# n0y0     list of K prior parameter pairs c(n0,y0)
+# beta     vector of K fixed weibull shape parameters
+# fts      list of K vectors giving the observed failure times for the compents of type 1,...,K;
+#          the list element should be NULL if no failure has been observed for type k.
+#          All list element entries must be <= tnow
+# tnow     time until the system is observed
+# prior    whether the prior system relibability should be calculated (= no updating with things observed until tnow)
+# tvec     vector of times t for which to calculate P(T_sys > t), t > t_now
+# hor      how many time units from tnow into the future to calculate sysrelnow
+# seqlen   at how many points to evaluate sysrelnow
+sysrelnowvec <- function(survsign, n0y0, beta, fts, tnow, tvec, prior = FALSE){
+  if(min(tvec) < tnow)
+    stop("Vector of times to evaluate sysrelnow must contain values > tnow")
+  sapply(tvec, function(t){
+    sysrelnow(survsign = survsign, n0y0 = n0y0, beta = beta, fts = fts, tnow = tnow, t = t, prior = prior)
+  })
+}
+
+sysrelnowhor <- function(survsign, n0y0, beta, fts, tnow, hor, seqlen=101, prior = FALSE){
+  tvec <- seq(tnow, tnow + hor, length.out = seqlen)
+  rel <- sapply(tvec, function(t){
+    sysrelnow(survsign = survsign, n0y0 = n0y0, beta = beta, fts = fts, tnow = tnow, t = t, prior = prior)
+  })
+  data.frame(t = tvec, rel = rel)
+}
+
+
+# calculate sysrelnow at repeated times tnow for given failure history
+#
+# sys      system reliability block diagram
+# ctypes   list giving the types of components in the system, same format as
+#          used for setCompTypes(), but needs the same order as in survsign table (!!!)
+# compfts  list with elements named like the vertices in sys, giving the failure
+#          time of this component; can be NULL if component does not fail
+# n0y0     list of K prior parameter pairs c(n0,y0)
+# beta     vector of K fixed weibull shape parameters
+# tnowvec  vector of times for which to evaluate sysrelnow
+# hor      how many time units from tnow into the future to calculate sysrelnow
+# seqlen   at how many points to evaluate sysrelnow
+sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen = 101, prior = FALSE){
+  K <- length(ctypes)
+  # calculate survsign only when something fails
+  # create fts only the same number of times
+  ftschron <- c(0, sort(unlist(compfts))) # when something happens
+  # create list with ftschron-th entry the survsign / fts valid from time in corresponding ftschron element;
+  # first element corresponds to situation at system startup
+  siglist <- as.list(rep(list(NULL), length(ftschron)))
+  siglist[[1]] <- computeSystemSurvivalSignature(sys)
+  ftslist <- as.list(rep(NA, length(ftschron)))
+  ftslist[[1]] <- as.list(rep(list(NULL), K))
+  # which component types are still in the system?
+  presentctypes <- as.list(rep(NA, length(ftschron)))
+  presentctypes[[1]] <- 1:K
+  # now go through ftschron (first element already done) and calculate survsign and fts
+  failedcomps <- numeric(0)
+  for (i in 2:length(ftschron)){
+    failedcomps <- c(failedcomps, names(ftschron[i]))
+    reducedsys <- induced_subgraph(sys, vids=V(sys)[!(name %in% failedcomps)])
+    siglist[[i]] <- computeSystemSurvivalSignature(reducedsys)
+    ftslisti <- ftslist[[i-1]]
+    ftslistiindex <- which(sapply(ctypes, function(ctypesl) names(ftschron[i]) %in% ctypesl))
+    ftslisti[[ftslistiindex]] <- c(ftslisti[[ftslistiindex]], ftschron[i])
+    ftslist[[i]] <- ftslisti
+    presentctypes[[i]] <- which(names(ctypes) %in% names(siglist[[i]]))
+  }
+  #list(siglist=siglist, ftslist=ftslist, prctypes = presentctypes)
+  # now get reliability curves for each tnow
+  res <- data.frame()
+  for (tnow in tnowvec){
+    # index in siglist, ftslist, presentctypes for current (tnow) status
+    tnowi <- max(which(ftschron <= tnow))
+    prctps <- presentctypes[[tnowi]]
+    cat("calculating sysrel for tnow =", tnow, "...\n")
+    current <- data.frame(tnow = tnow,
+                          sysrelnowhor(survsign = siglist[[tnowi]], n0y0 = n0y0[prctps],
+                                       beta = beta[prctps], fts = ftslist[[tnowi]][prctps],
+                                       tnow = tnow, hor = hor, seqlen = seqlen, prior = prior))
+    res <- rbind(res, current)
+  }
+  return(res)
+}
+
+# now gtau and tau*
+  
 
 # calculates the system reliability function for the 2*2^K corner priors
 # (all combinations of K lower and upper n's, for both lower and upper y)
