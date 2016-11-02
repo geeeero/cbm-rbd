@@ -37,7 +37,7 @@ brtnow8 <- sysrelnowhor(br8sysign, brn0y0, brbeta, brfts8, tnow=8, hor=10)
 qplot(brtnow8$t, brtnow8$rel)
 
 # posterior, assuming C2, C3, P2, P3 and H have failed -> take out elements corresponding to H
-brfts8H <- list(c(6, 7), 7, NULL, c(3, 4))
+brfts8H <- list(c(6, 7), 8, NULL, c(3, 4))
 br8H <- induced_subgraph(br, vids=c("s", "M", "C1", "P1", "C4", "P4", "t"))
 br8Hsysign <- computeSystemSurvivalSignature(br8H)
 sysrelnow(br8Hsysign, brn0y0[-2], brbeta[-2], brfts8H[-2], tnow=8, t=8)
@@ -46,23 +46,89 @@ sysrelnowhor(br8Hsysign, brn0y0[-2], brbeta[-2], brfts8H[-2], tnow=8, hor=10, se
 brtnow8H <- sysrelnowhor(br8Hsysign, brn0y0[-2], brbeta[-2], brfts8[-2], tnow=8, hor=10)
 qplot(brtnow8H$t, brtnow8H$rel)
 
-# plot sysrelnow history
-
+# to plot sysrelnow history
 brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = NA, M = NA, P1 = NA, P2 = 3, P3 = 4, P4 = NA)
-brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = NA, M = 5, P1 = 4, P2 = 3, P3 = 4, P4 = NA)
+brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = 8,  M = NA, P1 = NA, P2 = 3, P3 = 4, P4 = NA)
 
-brhist1 <- sysrelnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0:8), hor=10)
+brhist1 <- sysrelnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,8), hor=10)
+#brhist1 <- sysrelnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0:8), hor=10)
 brhist1$tnow <- as.factor(brhist1$tnow)
 histfig1 <- ggplot(brhist1, aes(x = t, y = rel)) + ylim(0, 1) +
   geom_line(aes(group = tnow, colour = tnow)) + xlab(expression(t)) + ylab(expression(R(t)))
 histfig1
 
-#V(br)[name == "M"]
-#br1 <- induced_subgraph(br, vids=V(br)[name != c("C1", "C2")])
+# sysrelnowhist does the right thing
+#plot(brhist1$t, brhist1$rel, type="l")
+#lines(brtnow0$t, brtnow0$rel, col=2)
+#lines(brtnow8$t, brtnow8$rel, col=2)
+
+# what is the difference when parameters do not get updated?
+brhist1prio <- sysrelnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,8), hor=10, prior = TRUE)
+#brhist1prio <- sysrelnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0:8), hor=10, prior = TRUE)
+#brhist1prio$tnow <- as.factor(brhist1prio$tnow)
+histfig2 <- ggplot(rbind(data.frame(updated = "yes", brhist1),
+                         data.frame(updated = "no", brhist1prio)), aes(x = t, y = rel)) + ylim(0, 1) +
+  geom_line(aes(colour = tnow, linetype = updated)) + xlab(expression(t)) + ylab(expression(R(t)))
+histfig2
+
+# unit cost rate gnow
+brgnow0 <- gnowhor(brsysign, brn0y0, brbeta, brfts0, tnow=0, hor=10, seqlen=201)
+qplot(brgnow0$tau, brgnow0$gnow, geom="line") + coord_cartesian(ylim=c(0,1))
+brgnow8 <- gnowhor(br8sysign, brn0y0, brbeta, brfts8, tnow=8, hor=10, seqlen=201)
+qplot(brgnow8$tau, brgnow8$gnow, geom="line") + coord_cartesian(ylim=c(0,1))
+
+oc <- graph.formula(s -- M -- t)
+occtypes <- list("M"=c("M"))
+oc <- setCompTypes(oc, occtypes)
+ocsysign <- computeSystemSurvivalSignature(oc)
+ocbeta <- 2.5
+ocn0y0 <- list(M = c(1, failuretolambda(10, ocbeta)))
+ocgnow0 <- gnowhor(ocsysign, ocn0y0, ocbeta, list(M = NULL), tnow=0, hor=20, seqlen=201)
+ggplot(melt(ocgnow0, id="tau"), aes(x=tau, y=value)) + geom_line(aes(colour = variable))  + coord_cartesian(ylim=c(0,1))
+ocgnow5 <- gnowhor(ocsysign, ocn0y0, ocbeta, list(M = NULL), tnow=5, hor=20, seqlen=201)
+ggplot(melt(ocgnow5, id="tau"), aes(x=tau, y=value)) + geom_line(aes(colour = variable))  + coord_cartesian(ylim=c(0,1))
+
+# gnow & sysrelnow histories
+brghist1 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor = 10, seqlen = 201)
+#brghist1 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0:8), hor=10)
+brghist1$tnow <- as.factor(brghist1$tnow)
+ghistfig1 <- ggplot(brghist1, aes(x = t)) + coord_cartesian(ylim=c(0,1)) +
+  geom_line(aes(group = tnow, colour = tnow, y = gnow), linetype = 1) + xlab(expression(t)) +
+  geom_line(aes(group = tnow, colour = tnow, y = rel), linetype = 2)  + ylab(expression(paste(R[sys]^(t[now]), (t), " and ",
+                                                                                              g^(t[now]), (t))))
+ghistfig1 + guides(colour=guide_legend(title=expression(t[now])))
+
+brghist1a <- brghist1
+names(brghist1a)[c(3,4)] <- c("Reliability", "Unit cost rate")
+brghist1a <- melt(brghist1a, c("tnow", "t"))
+brghist1a <- subset(brghist1a, !is.na(value))
+ghistfig1 <- ggplot(brghist1a, aes(x = t, y = value)) + coord_cartesian(ylim = c(0, 2.1)) +
+  geom_line(aes(colour = tnow, linetype = variable)) + xlab(expression(t)) +
+  #geom_line(aes(colour = tnow)) + xlab(expression(t)) +
+  ylab(expression(paste(g^(t[now]), (t), " and ", R[sys]^(t[now]), (t)))) +
+  #theme(legend.position = 'bottom', legend.direction = 'horizontal') +
+  guides(colour=guide_legend(title=expression(t[now])), linetype=guide_legend(title=NULL))
+  #facet_wrap(~variable, nrow=2, scales = "free_y") + guides(colour=guide_legend(title=expression(t[now])))
+pdf("ghistfig1.pdf", width = 6, height = 3)
+ghistfig1
+dev.off()
+
+#brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor=10)
+#brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor=2)
+#brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor=10, seqlen=501)
+
+brtaus1fine <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, seq(0,8,by=0.1), hor=4, seqlen=401)
+tauhistfig1 <- ggplot(melt(brtaus1fine, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(colour = variable, group = variable)) + ylab(element_blank()) +
+  geom_point(aes(colour = variable, group = variable), size = 0.5) + guides(colour = guide_legend(title=NULL))
+pdf("tauhistfig1.pdf", width = 6, height = 3)
+tauhistfig1
+dev.off()
 
 
 
 
+# -------------------------------------------------------------------------
 
 
 brprtvec <- seq(0, 20, length.out=101)

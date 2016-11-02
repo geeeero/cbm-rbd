@@ -1152,6 +1152,41 @@ and $\tausnow = \arg\min \gnow(\tau)$ is determined as the minimum over the grid
 %so in the absolute time scale, the optimal moment of maintenance is at $\tnow + \tau_*^{\tnow}$.
 
 
+***example figures with very weak prior info, could look different for stronger expert information!
+
+***also example where remaining component type is (close to) exponential,
+such that corrective maintenance becomes optimal!
+
+\begin{figure}
+\includegraphics[width=\textwidth]{ghistfig1}
+\caption{System reliability and unit cost rate functions for $\tnow = 0,2,4,6,8$
+for the system depicted in Figure~\ref{fig:brakesys-layout},
+assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$,
+and $c_u = 1$, $c_p = 0.2$.}
+\label{fig:ghistfig1}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{tauhistfig1}
+\caption{$\tausnow$, $t^* = \tnow + \tausnow$ and $\gnow(\tausnow)$ as functions of $\tnow$
+for the system depicted in Figure~\ref{fig:brakesys-layout},
+assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$,
+and $c_u = 1$, $c_p = 0.2$.
+$\tausnow$ first decreases slightly, then remains basically constant during failure-free periods,
+dropping at each component failure.
+If $\tsetup = 0.5$, the drop of $\tausnow$ to $0.38$ at $\tnow = 8$ would trigger a maintenance action
+at (absolute) time $8.5$. 
+As $\tausnow$ does not change dramatically, $t^*$,
+the cost-optimal moment of maintenance on the absolute timescale,
+steadily increases, with small drops corresponding to $\tausnow$,
+indicating that as time progresses, accumulated information indicates that maintenance can be postponed.
+Note that $\gnow(\tausnow)$ is the momentary cost rate relating to the expected residual lifetime,
+and not the overall cost rate.
+For the maintenance action triggered at $\tnow = 8$,
+the overall cost rate is $c_p / 8.5 = 0.024$ if the system does not fail until time $8.5$,
+and between $c_u / 8 = 0.125$ and $c_u / 8.5 = 0.118$ if the system fails.}
+\label{fig:tauhistfig1}
+\end{figure}
 
 
 

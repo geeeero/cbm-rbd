@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------- #
-# ASCE-ASME paper - plot definitions
+# cbm systems paper - plot definitions
 # --------------------------------------------------------------------------- #
 
 bottomlegend <- theme(legend.position = 'bottom', legend.direction = 'horizontal', legend.title = element_blank())
