@@ -196,7 +196,9 @@ sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen
   }
   #list(siglist=siglist, ftslist=ftslist, prctypes = presentctypes)
   # now get reliability curves for each tnow
-  res <- data.frame()
+  #res <- data.frame()
+  reslen <- length(tnowvec) * seqlen
+  res <- data.frame(tnow = rep(tnowvec, each = seqlen), t = rep(NA, reslen), rel = rep(NA, reslen))
   for (tnow in tnowvec){
     # index in siglist, ftslist, presentctypes for current (tnow) status
     tnowi <- max(which(ftschron <= tnow))
@@ -206,7 +208,8 @@ sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen
                           sysrelnowhor(survsign = siglist[[tnowi]], n0y0 = n0y0[prctps],
                                        beta = beta[prctps], fts = ftslist[[tnowi]][prctps],
                                        tnow = tnow, hor = hor, seqlen = seqlen, prior = prior))
-    res <- rbind(res, current)
+    #res <- rbind(res, current)
+    res[res$tnow == tnow,] <- current
   }
   return(res)
 }

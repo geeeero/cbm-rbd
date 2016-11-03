@@ -107,7 +107,8 @@ ghistfig1 <- ggplot(brghist1a, aes(x = t, y = value)) + coord_cartesian(ylim = c
   #geom_line(aes(colour = tnow)) + xlab(expression(t)) +
   ylab(expression(paste(g^(t[now]), (t), " and ", R[sys]^(t[now]), (t)))) +
   #theme(legend.position = 'bottom', legend.direction = 'horizontal') +
-  guides(colour=guide_legend(title=expression(t[now])), linetype=guide_legend(title=NULL))
+  guides(colour=guide_legend(title=expression(t[now])), linetype=guide_legend(title=NULL)) +
+  scale_x_continuous(breaks=seq(0, 18, by=2), minor_breaks=0:18)
   #facet_wrap(~variable, nrow=2, scales = "free_y") + guides(colour=guide_legend(title=expression(t[now])))
 pdf("ghistfig1.pdf", width = 6, height = 3)
 ghistfig1
@@ -120,7 +121,8 @@ dev.off()
 brtaus1fine <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, seq(0,8,by=0.1), hor=4, seqlen=401)
 tauhistfig1 <- ggplot(melt(brtaus1fine, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
   geom_line(aes(colour = variable, group = variable)) + ylab(element_blank()) +
-  geom_point(aes(colour = variable, group = variable), size = 0.5) + guides(colour = guide_legend(title=NULL))
+  geom_point(aes(colour = variable, group = variable), size = 0.5) + guides(colour = guide_legend(title=NULL)) +
+  scale_x_continuous(breaks=seq(0, 18, by=2), minor_breaks=0:18)
 pdf("tauhistfig1.pdf", width = 6, height = 3)
 tauhistfig1
 dev.off()
