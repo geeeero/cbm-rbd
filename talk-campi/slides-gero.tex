@@ -149,6 +149,7 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 \begin{scope}[scale=0.75]
 \node[typeA] (A1) at ( 0, 1.2) {A};
 \node[typeA] (A2) at ( 0, 0  ) {A};
+%\uncover<2->{\node[cross] at (0,0) {};}
 \node[typeB] (B1) at ( 0,-1.2) {B};
 \coordinate (start) at (-1  ,0);
 \coordinate (end)   at ( 1  ,0);
@@ -162,6 +163,28 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
               edge[vh path] (A1)
               edge[vh path] (A2)
               edge[vh path] (B1);
+\end{scope}
+\begin{scope}[xshift=4cm,scale=0.75]
+\node[typeA] (A1) at ( 0, 1.2) {A};
+%\node[typeA] (A2) at ( 0, 0  ) {A};
+%\uncover<2->{\node[cross] at (0,0) {};}
+\node[typeB] (B1) at ( 0,-1.2) {B};
+\coordinate (start) at (-1  ,0);
+\coordinate (end)   at ( 1  ,0);
+\coordinate (fork1) at (-0.7,0);
+\coordinate (fork2) at ( 0.7,0);
+\path (fork1) edge[vh path] (start)
+              edge[vh path] (A1)
+%             edge[vh path] (A2)
+              edge[vh path] (B1);
+\path (fork2) edge[vh path] (end)
+              edge[vh path] (A1)
+%              edge[vh path] (A2)
+              edge[vh path] (B1);
+\end{scope}
+\begin{scope}[yshift=-2cm]
+\draw[very thick, -stealth] (-1,0) -- (5,0);
+\foreach \t in {0,4} \draw[very thick] (\t,-0.1) -- (\t, 0.1);
 \end{scope}
 \end{tikzpicture}
 
