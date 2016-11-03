@@ -1,0 +1,170 @@
+\documentclass{beamer}
+
+% opacity bugfix: see http://tug.org/pipermail/pdftex/2007-December/007480.html
+\pdfpageattr {/Group << /S /Transparency /I true /CS /DeviceRGB>>}
+
+\usepackage[utf8]{inputenc}
+\usepackage[OT1]{fontenc}
+
+\usepackage{tikz}
+\usetikzlibrary{%
+   arrows,%
+   calc,%
+   fit,%
+   patterns,%
+   plotmarks,%
+   shapes.geometric,%
+   shapes.misc,%
+   shapes.symbols,%
+   shapes.arrows,%
+   shapes.callouts,%
+   shapes.multipart,%
+   shapes.gates.logic.US,%
+   shapes.gates.logic.IEC,%
+   er,%
+   automata,%
+   backgrounds,%
+   chains,%
+   topaths,%
+   trees,%
+   petri,%
+   mindmap,%
+   matrix,%
+   calendar,%
+   folding,%
+   fadings,%
+   through,%
+   patterns,%
+   positioning,%
+   scopes,%
+   decorations.fractals,%
+   decorations.shapes,%
+   decorations.text,%
+   decorations.pathmorphing,%
+   decorations.pathreplacing,%
+   decorations.footprints,%
+   decorations.markings,%
+   shadows}
+\usepackage{animate}
+\usepackage{amssymb, amsmath, amsfonts, enumerate}
+\usepackage{pifont}
+%\usepackage{bbold}
+\newcommand\hmmax{0}
+\usepackage{bm}
+%\usepackage{dsfont}
+\usepackage{pxfonts}
+\usepackage{xcolor}
+\usepackage{url}
+
+\usepackage[backend=bibtex,style=authoryear,dashed=false]{biblatex}
+\addbibresource{refs.bib}
+%\renewcommand{\bibfont}{\normalfont\scriptsize}
+\setlength{\bibhang}{3ex}
+
+\usepackage{hyperref}
+
+\usetheme[official=false,department=none]{tue2008}
+%\usefonttheme{default}
+
+
+%\usetheme[secheader]{Boadilla}
+%\setbeamercovered{transparent}
+%\setbeamercovered{invisible}
+%\setbeamertemplate{navigation symbols}{}
+%\setbeamertemplate{bibliography item}[text] % numbered references
+%\useoutertheme{infolines}
+%\setbeamertemplate{headline}{}
+%\setbeamertemplate{footline}{\hspace*{5mm}\hfill\insertframenumber\hspace*{5mm}\vspace{3mm}}
+%\setbeamercolor{alerted text}{fg=orange!80!black}
+
+% ------------------------------------------------------------------------------
+
+\newcommand{\vcenterbox}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcommand{\mbf}[1]{\mathbf{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\renewcommand{\vec}[1]{{\bm#1}}
+
+\newcommand{\Tsys}{T_\text{sys}}
+\newcommand{\Rsys}{R_\text{sys}}
+\newcommand{\fsys}{f_\text{sys}}
+\newcommand{\Fsys}{F_\text{sys}}
+
+\def\tnow{t_\text{now}}
+\def\tpnow{t^+_\text{now}}
+
+\newcommand{\Rsysnow}{R^{(t_\text{now})}_\text{sys}}
+\newcommand{\Tsysnow}{T^{(t_\text{now})}_\text{sys}}
+\newcommand{\tsysnow}{t^{(t_\text{now})}_\text{sys}}
+\newcommand{\fsysnow}{f^{(t_\text{now})}_\text{sys}}
+\def\eknow{e_k^{(\tnow)}}
+\def\cknow{c_k^{(\tnow)}}
+\def\vectknow{\vec{t}_k^{(\tnow)}}
+\def\Phinow{\Phi^{(\tnow)}}
+\newcommand{\gnow}{g^{(\tnow)}}
+\newcommand{\tausnow}{\tau_*^{(\tnow)}}
+\newcommand{\tsetup}{\tau_{\text{setup}}}
+
+\newcommand{\cmark}{{\color{tuegreen}\ding{51}}}
+\newcommand{\xmark}{{\color{tuered}\ding{55}}}
+
+\newcommand{\comp}[1]{\raisebox{-1mm}{\tikz{\node[%type1
+rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minimum size=4mm]{#1};}}}
+
+\newcommand{\cyansec}[1]{\textcolor{tuecyan}{\large\bf #1}}
+\newcommand{\cyanalert}[1]{\textcolor{tuecyan}{#1}}
+\newcommand{\bluesec}[1]{\textcolor{tueblue}{\large\bf #1}}
+\newcommand{\bluealert}[1]{\textcolor{tueblue}{#1}}
+
+\setbeamertemplate{itemize item}{\tiny\raise1.5pt\hbox{\color{tueblue}$\blacktriangleright$}}
+
+% ------------------------------------------------------------------------------
+
+
+\title{Dynamic and Adaptive Maintenance Policies\\ for Complex Systems}
+
+\author{Gero Walter, Simme Douwe Flapper}
+\institute{ Eindhoven University of Technology, Eindhoven, NL\\ 
+            \url{g.m.walter@tue.nl} \\[2ex]
+            \includegraphics[height=9mm]{logos/tuelogo} \quad 
+            \includegraphics[height=9mm]{logos/dinalog-hp} }
+\date{CAMPI Slotevent 2016-11-09}
+
+\begin{document}
+
+\frame{
+\titlepage
+}
+
+\addtocounter{framenumber}{-1}
+
+\begin{frame}{}
+
+\begin{tikzpicture}
+[typeA/.style={rectangle,draw,fill=tuepmsgreen!70,very thick,inner sep=0pt,minimum size=6mm},
+ typeB/.style={rectangle,draw,fill=tuepmsgreen!70,very thick,inner sep=0pt,minimum size=6mm},
+ cross/.style={cross out,draw=red,very thick,minimum width=7mm, minimum height=5mm},
+ hv path/.style={very thick, to path={-| (\tikztotarget)}},
+ vh path/.style={very thick, to path={|- (\tikztotarget)}}]
+\begin{scope}[scale=0.75]
+\node[typeA] (A1) at ( 0, 1.2) {A};
+\node[typeA] (A2) at ( 0, 0  ) {A};
+\node[typeB] (B1) at ( 0,-1.2) {B};
+\coordinate (start) at (-1  ,0);
+\coordinate (end)   at ( 1  ,0);
+\coordinate (fork1) at (-0.7,0);
+\coordinate (fork2) at ( 0.7,0);
+\path (fork1) edge[vh path] (start)
+              edge[vh path] (A1)
+              edge[vh path] (A2)
+              edge[vh path] (B1);
+\path (fork2) edge[vh path] (end)
+              edge[vh path] (A1)
+              edge[vh path] (A2)
+              edge[vh path] (B1);
+\end{scope}
+\end{tikzpicture}
+
+\end{frame}
+
+\end{document}
