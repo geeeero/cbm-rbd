@@ -125,6 +125,21 @@ pdf("tauhistfig1.pdf", width = 6, height = 3)
 tauhistfig1
 dev.off()
 
+# failure history plot
+# turn compfts into a data.frame, make this a function
+brftsdf <- t(as.data.frame(brcompfts))
+brftsdf <- data.frame(brftsdf, Components = names(brcompfts))
+names(brftsdf)[1] <- "t"
+brftsdf <- data.frame(brftsdf, cens = is.na(brftsdf$t), id = 1:length(brcompfts))
+brftsdf$t[is.na(brftsdf$t)] <- 8
+
+#qplot(data=brftsdf, x=id, ymin=rep(0,dim(brftsdf)[1]), y=t, ymax=t, label=t, vjust=-0.5,
+#      geom=c("pointrange", "text"), shape=factor(cens)) + coord_flip() + scale_x_reverse() +
+#  scale_shape_manual(values=c(19, 1), label=c("Yes", "No"), name="Failure")
+
+ggplot(brftsdf, aes(x= Components, y=t, ymin=rep(0,dim(brftsdf)[1]), ymax=t)) + geom_linerange() +
+  geom_pointrange(aes(shape=factor(cens)), size=1) + geom_text(aes(label=t, vjust = -1)) + coord_flip() +
+  scale_shape_manual(values=c(19, 1), label=c("Yes", "No"), name="Failure")
 
 
 
