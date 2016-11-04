@@ -138,14 +138,15 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 
 \addtocounter{framenumber}{-1}
 
-\begin{frame}{}
+\begin{frame}{\large Dynamic \& Adaptive Residual Life Distributions}
 
 \begin{tikzpicture}
 [typeA/.style={rectangle,draw,fill=tuepmsgreen!70,very thick,inner sep=0pt,minimum size=6mm},
  typeB/.style={rectangle,draw,fill=tuepmsgreen!70,very thick,inner sep=0pt,minimum size=6mm},
  cross/.style={cross out,draw=red,very thick,minimum width=7mm, minimum height=5mm},
  hv path/.style={very thick, to path={-| (\tikztotarget)}},
- vh path/.style={very thick, to path={|- (\tikztotarget)}}]
+ vh path/.style={very thick, to path={|- (\tikztotarget)}},
+ comparrow/.style={draw,-stealth,tuered,line width=1mm}]
 \begin{scope}[scale=0.75]
 \node[typeA] (A1) at ( 0, 1.2) {A};
 \node[typeA] (A2) at ( 0, 0  ) {A};
@@ -163,8 +164,15 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
               edge[vh path] (A1)
               edge[vh path] (A2)
               edge[vh path] (B1);
+\node (compArel0) at (-3.5, 1.7) {\includegraphics[width=2cm]{compArel0}};
+\node (compBrel0) at (-3.5,-1  ) {\includegraphics[width=2cm]{compBrel0}};
+%\path (compArel0.east) edge[comparrow, bend right] ($(A1.west) + (-0.5,0   )$)
+%                       edge[comparrow, bend right] ($(A2.west) + (-0.5,0.25)$);
+\draw [comparrow]   (compArel0.east)              to [out=-10,in=170] ($(A1.west) + (-0.2, 0.25)$);
+\draw [comparrow] ($(compArel0.east) + (0,-0.2)$) to [out=-10,in=160] ($(A2.west) + (-0.4, 0.35)$);
+\draw [comparrow]   (compBrel0.east)              to [out=-10,in=190] ($(B1.west) + (-0.2,-0.25)$);
 \end{scope}
-\begin{scope}[xshift=4cm,scale=0.75]
+\begin{scope}[xshift=5cm,scale=0.75]
 \node[typeA] (A1) at ( 0, 1.2) {A};
 %\node[typeA] (A2) at ( 0, 0  ) {A};
 %\uncover<2->{\node[cross] at (0,0) {};}
@@ -181,10 +189,14 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
               edge[vh path] (A1)
 %              edge[vh path] (A2)
               edge[vh path] (B1);
+\node (compArel5) at (-3.5, 1.7) {\includegraphics[width=2cm]{compArel5}};
+\node (compBrel5) at (-3.5,-1  ) {\includegraphics[width=2cm]{compBrel5}};
+\draw [comparrow]   (compArel5.east)              to [out=-10,in=170] ($(A1.west) + (-0.2, 0.25)$);
+\draw [comparrow]   (compBrel5.east)              to [out=-10,in=190] ($(B1.west) + (-0.2,-0.25)$);
 \end{scope}
 \begin{scope}[yshift=-2cm]
-\draw[very thick, -stealth] (-1,0) -- (5,0);
-\foreach \t in {0,4} \draw[very thick] (\t,-0.1) -- (\t, 0.1);
+\draw[very thick, -stealth] (-1,0) -- (6,0);
+\foreach \t in {0,5} \draw[very thick] (\t,-0.1) -- (\t, 0.1);
 \end{scope}
 \end{tikzpicture}
 
