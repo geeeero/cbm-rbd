@@ -47,7 +47,7 @@ brtnow8H <- sysrelnowhor(br8Hsysign, brn0y0[-2], brbeta[-2], brfts8[-2], tnow=8,
 qplot(brtnow8H$t, brtnow8H$rel)
 
 # to plot sysrelnow history
-brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = NA, M = NA, P1 = NA, P2 = 3, P3 = 4, P4 = NA)
+#brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = NA, M = NA, P1 = NA, P2 = 3, P3 = 4, P4 = NA)
 brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = 8,  M = NA, P1 = NA, P2 = 3, P3 = 4, P4 = NA)
 
 brhist1 <- sysrelnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,8), hor=10)

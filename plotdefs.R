@@ -8,7 +8,7 @@ nolegend <- guides(linetype="none", fill="none", group="none", colour="none")
 
 minirel <- list(theme(axis.title = element_blank()),
                 coord_cartesian(ylim = c(0, 1)),
-                scale_x_continuous(breaks=c(0, 5, 10, 15)),
+                scale_x_continuous(breaks=c(0, 5, 10, 15, 20)),
                 scale_y_continuous(breaks=c(0, 0.5, 1)))
 minirelsize <- 1.5
 
