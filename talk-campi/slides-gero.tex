@@ -266,7 +266,7 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{\large Inputs}
+\begin{frame}{\large Input \& Output}
 \begin{tikzpicture}
 [typeA/.style={rectangle,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minimum size=4mm},
  typeB/.style={rectangle,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minimum size=4mm},
@@ -282,7 +282,7 @@ Inputs before / at start-up:}
 \item<1-> system layout (reliability block diagram)
 \item<2-> for each component type:
  \begin{itemize}
- \item MTTF from expert
+ \item Weibull shape parameter \& MTTF from expert
  \item expert confidence (how sure about MTTF)
  \item optional: test data
  \end{itemize}
@@ -318,7 +318,7 @@ Output:}
               edge[vh path] (B1);
 \end{scope}}
 \uncover<2->{%
-\draw[decorate,decoration=brace,very thick] (2.3,1.6) -- (2.3,0.4) node[midway, right=0.25cm] {\includegraphics[width=1.5cm]{compArel0}};}
+\draw[decorate,decoration=brace,very thick] (2.9,1.6) -- (2.9,0.4) node[midway, right=0.25cm] {\includegraphics[width=1.5cm]{compArel0}};}
 \end{tikzpicture}
 \end{frame}
 
