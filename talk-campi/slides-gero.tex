@@ -121,7 +121,7 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 % ------------------------------------------------------------------------------
 
 
-\title{Dynamic and Adaptive Maintenance Policies\\ for Complex Systems}
+\title{Dynamic and Adaptive Maintenance Policies\\ for Complex Systems\\ based on Real-Time Data}
 
 \author{Gero Walter, Simme Douwe Flapper}
 \institute{ Eindhoven University of Technology, Eindhoven, NL\\ 
@@ -142,7 +142,7 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 
 \begin{tikzpicture}
 [typeA/.style={rectangle,draw,fill=tuepmsgreen!70,very thick,inner sep=0pt,minimum size=6mm},
- typeB/.style={rectangle,draw,fill=tuepmsgreen!70,very thick,inner sep=0pt,minimum size=6mm},
+ typeB/.style={rectangle,draw,fill=tueyellow!50,very thick,inner sep=0pt,minimum size=6mm},
  cross/.style={cross out,draw=red,very thick,minimum width=7mm, minimum height=5mm},
  hv path/.style={very thick, to path={-| (\tikztotarget)}},
  vh path/.style={very thick, to path={|- (\tikztotarget)}},
@@ -200,7 +200,7 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 \node (compBrel5) at (-3.5,-1  ) {\includegraphics[width=2cm]{compBrel5}};
 \draw [comparrow]   (compArel5.east)              to [out=-10,in=170] ($(A1.west) + (-0.2, 0.25)$);
 \draw [comparrow]   (compBrel5.east)              to [out=-10,in=190] ($(B1.west) + (-0.2,-0.25)$);}
-\uncover<9->{%
+\uncover<7->{%
 \draw [ellistyle] (0,0) ellipse (1.3 and 2.1);}
 \end{scope}
 \begin{scope}[yshift=-2cm]
@@ -210,19 +210,19 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 \uncover<3->{%
 \node (sysABrel0) at (1, -1.7) {\includegraphics[width=3cm]{sysABrel0}};
 \draw [comparrow] (0.5,0.5) to [out=-45,in=90] ($(sysABrel0.north) + (0,-0.1)$);}
-\uncover<9->{%
+\uncover<7->{%
 \node (sysABrel5) at (6, -1.7) {\includegraphics[width=3cm]{sysABrel5}};
 \draw [comparrow] (5.5,0.5) to [out=-45,in=90] ($(sysABrel5.north) + (0,-0.1)$);}
 \end{scope}
-\begin{scope}[xshift=7cm,yshift=-1cm]
-\node at (0,0) {\parbox{0.23\textwidth}{%
-\begin{itemize}
-\item<7-> component ageing
-\item<8-> model update
-\item<10-> system layout
-\end{itemize}
-}};
-\end{scope}
+%\begin{scope}[xshift=7cm,yshift=-1cm]
+%\node at (0,0) {\parbox{0.23\textwidth}{%
+%\begin{itemize}
+%\item<7-> component ageing
+%\item<8-> model update
+%\item<10-> system layout
+%\end{itemize}
+%}};
+%\end{scope}
 \end{tikzpicture}
 \end{frame}
 
@@ -252,17 +252,17 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 \node (sysABrelhist) at ( 0   ,-3) {\includegraphics[width=     \textwidth]{sysABghist5}};}
 \uncover<7>{
 \node (sysABtau)     at (-0.59,-5) {\includegraphics[width=0.838\textwidth]{sysABtau5}};}
-\uncover<8->{%
-\node (sysABtau)     at (-0.59,-5) {\includegraphics[width=0.838\textwidth]{sysABtau5a}};}
+%\uncover<8->{%
+%\node (sysABtau)     at (-0.59,-5) {\includegraphics[width=0.838\textwidth]{sysABtau5a}};}
 \uncover<1->{%
 \node[rotate=90] at (-6.1,0) {reliability};}
 \uncover<2->{%
 \node[rotate=90] at (-6.1,-2.5) {cost rate};}
 \uncover<3->{%
 \node[rotate=90] at (-6.1,-4.8) {\parbox{7ex}{\centering\scriptsize time to\\ maintenance}};}
-\uncover<9>{%
-\draw[<->, very thick] (-4.83,-6.2) -- (-4.0,-6.2) node[right] {set-up time};
-\draw[dashed, thick] (-4.0,-6.1) -- (-4.0,-4);}
+%\uncover<9>{%
+%\draw[<->, very thick] (-4.83,-6.2) -- (-4.0,-6.2) node[right] {set-up time};
+%\draw[dashed, thick] (-4.0,-6.1) -- (-4.0,-4);}
 \end{tikzpicture}
 \end{frame}
 
@@ -277,29 +277,29 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 \node at (0,0) %
 {\parbox{\textwidth}{%
 \uncover<1->{%
-Inputs before / at start-up:}
+Inputs before start-up:}
 \begin{itemize}
-\item<1-> system layout (reliability block diagram)
+\item<1-> system reliability block diagram
 \item<2-> for each component type:
  \begin{itemize}
  \item Weibull shape parameter \& MTTF from expert
  \item expert confidence (how sure about MTTF)
  \item optional: test data
  \end{itemize}
-\item<3-> cost parameters, set-up time \raisebox{0.5ex}{\tikz{\draw[<->, very thick] (0,0) -- (0.7,0);}}
+\item<3-> cost parameters %, preparation time %\raisebox{0.5ex}{\tikz{\draw[<->, very thick] (0,0) -- (0.7,0);}}
 \end{itemize}
 \uncover<4->{%
-Input during run-time:}
+Input during run-time (preferred automatic):}
 \begin{itemize}
-\item<4-> component status (which component fails when)
+\item<4-> which components still work and which not
 \end{itemize}
 \uncover<5->{%
 Output:}
 \begin{itemize}
-\item<5-> for any time during run-time:\\ cost-optimal moment to repair the system (adaptive \& dynamic)
+\item<5-> for any time during run-time:\\ cost-optimal moment to repair the system (dynamic \& adaptive)
 \end{itemize}}};
 \uncover<1->{%
-\begin{scope}[xshift=2.2cm,yshift=2.5cm,scale=0.5]
+\begin{scope}[xshift=1cm,yshift=2.5cm,scale=0.5]
 \node[typeA] (A1) at ( 0, 1.2) {A};
 \node[typeA] (A2) at ( 0, 0  ) {A};
 %\uncover<2->{\node[cross] at (0,0) {};}
