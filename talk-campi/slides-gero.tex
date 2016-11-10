@@ -81,9 +81,89 @@
 
 \newcommand{\vcenterbox}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
 
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\posreals}{\reals_{>0}}
+\newcommand{\posrealszero}{\reals_{\ge 0}}
+\newcommand{\naturals}{\mathbb{N}}
+
+\newcommand{\dd}{\,\mathrm{d}}
+
 \newcommand{\mbf}[1]{\mathbf{#1}}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 \renewcommand{\vec}[1]{{\bm#1}}
+
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\V}{\operatorname{Var}}
+\newcommand{\wei}{\operatorname{Wei}} % Weibull Distribution
+\newcommand{\ig}{\operatorname{IG}}   % Inverse Gamma Distribution
+
+\newcommand{\uz}{^{(0)}} % upper zero
+\newcommand{\un}{^{(n)}} % upper n
+\newcommand{\ui}{^{(i)}} % upper i
+
+\def\yz{y\uz}
+\def\yn{y\un}
+%\def\yi{y\ui}
+\newcommand{\yfun}[1]{y^{({#1})}}
+\newcommand{\yfunl}[1]{\ul{y}^{({#1})}}
+\newcommand{\yfunu}[1]{\ol{y}^{({#1})}}
+
+\def\ykz{y\uz_k}
+\def\ykn{y\un_k}
+
+\def\yzl{\ul{y}\uz}
+\def\yzu{\ol{y}\uz}
+\def\ynl{\ul{y}\un}
+\def\ynu{\ol{y}\un}
+\def\yil{\ul{y}\ui}
+\def\yiu{\ol{y}\ui}
+
+\def\ykzl{\ul{y}\uz_k}
+\def\ykzu{\ol{y}\uz_k}
+\def\yknl{\ul{y}\un_k}
+\def\yknu{\ol{y}\un_k}
+
+\newcommand{\ykzfun}[1]{y\uz_{#1}}
+\newcommand{\ykzlfun}[1]{\ul{y}\uz_{#1}}
+\newcommand{\ykzufun}[1]{\ol{y}\uz_{#1}}
+
+\def\nz{n\uz}
+\def\nn{n\un}
+%\def\ni{n\ui}
+\newcommand{\nfun}[1]{n^{({#1})}}
+\newcommand{\nfunl}[1]{\ul{n}^{({#1})}}
+\newcommand{\nfunu}[1]{\ol{n}^{({#1})}}
+
+\def\nkz{n\uz_k}
+\def\nkn{n\un_k}
+\newcommand{\nkzfun}[1]{n\uz_{#1}}
+\newcommand{\nkzlfun}[1]{\ul{n}\uz_{#1}}
+\newcommand{\nkzufun}[1]{\ol{n}\uz_{#1}}
+
+\def\nzl{\ul{n}\uz}
+\def\nzu{\ol{n}\uz}
+\def\nnl{\ul{n}\un}
+\def\nnu{\ol{n}\un}
+\def\nil{\ul{n}\ui}
+\def\niu{\ol{n}\ui}
+
+\def\nkzl{\ul{n}\uz_k}
+\def\nkzu{\ol{n}\uz_k}
+\def\nknl{\ul{n}\un_k}
+\def\nknu{\ol{n}\un_k}
+
+\def\yknow{y_k^{(\tnow)}}
+\def\nknow{n_k^{(\tnow)}}
+
+\newcommand{\nk}{n_k}
+\newcommand{\nkp}{n_k'}
+\newcommand{\yk}{y_k}
+\newcommand{\ykp}{y_k'}
+
+\def\taut{\tau(\vec{t})}
+\def\ttau{\tilde{\tau}}
+\def\ttaut{\ttau(\vec{t})}
+\def\tautk{\tau(\vec{t}_k)}
 
 \newcommand{\Tsys}{T_\text{sys}}
 \newcommand{\Rsys}{R_\text{sys}}
@@ -269,7 +349,7 @@ rectangle,rounded corners=0mm,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minim
 \begin{frame}{\large Input \& Output}
 \begin{tikzpicture}
 [typeA/.style={rectangle,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minimum size=4mm},
- typeB/.style={rectangle,draw,fill=tuepmsgreen!70,thick,inner sep=0pt,minimum size=4mm},
+ typeB/.style={rectangle,draw,fill=tueyellow!50,thick,inner sep=0pt,minimum size=4mm},
  hv path/.style={thick, to path={-| (\tikztotarget)}},
  vh path/.style={thick, to path={|- (\tikztotarget)}},
  comparrow/.style={draw,-stealth,tuered,line width=1mm},
@@ -321,5 +401,56 @@ Output:}
 \draw[decorate,decoration=brace,very thick] (2.9,1.6) -- (2.9,0.4) node[midway, right=0.25cm] {\includegraphics[width=1.5cm]{compArel0}};}
 \end{tikzpicture}
 \end{frame}
+
+% bonus slides
+
+\begin{frame}{\large System Reliability using the Survival Signature}
+\begin{tikzpicture}
+[cyanbox/.style={rounded corners, text centered, fill=tuecyan!20, inner sep=5mm},
+ cyanrand/.style={rounded corners, text centered, draw=tuecyan!50, inner sep=2mm, very thick, font=\footnotesize},
+ pfeil/.style={-latex', line width=1mm, color=tuered, shorten <=1mm}]
+\node at (1,0) {\parbox{\textwidth}{%
+\begin{itemize}
+\item[$\Tsysnow$] (random) time of system failure given all info.\ at time $\tnow$
+\item[$\Rsysnow(t)$] corresponding reliability function 
+\item[$\cknow$] number of type $k$ components functioning at time $\tnow$
+%\item[$\Phinow$] survival signature at $\tnow$\\
+%$= P(\text{system functions} \mid \{l_k \text{ \comp{k}'s function}\}^{1:K})$
+\item[$K$] number of component types
+\end{itemize}}};
+\node at (0,-2.5) {\parbox{\textwidth}{%
+\begin{align*}
+\Rsysnow(t) &= \sum_{l_1=0}^{c_1^{(\tnow)}} \cdots \sum_{l_K=0}^{c_K^{(\tnow)}} \Phinow(l_1,\ldots,l_K)
+               \prod_{k=1}^K P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)
+\end{align*}}};
+\draw[decorate,decoration=brace,line width=0.8mm] (0.75,-3.1)  -- (-1.7,-3.1) node[cyanrand, below=0.5cm] {\parbox{0.51\textwidth}{\centering%
+survival signature\\
+$= P(\text{system functions} \mid \{l_k \text{ \comp{k}'s function}\}^{1:K})$
+}};
+\draw[decorate,decoration=brace,line width=0.8mm] (5.7,-3.1)  -- (1.6,-3.1) node[cyanrand, midway, below=0.5cm] {\parbox{0.3\textwidth}{%
+Probability that $l_k$ of the $\cknow$ \comp{k}'s function
+}};
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{\large Expected One-cyle Unit Cost Rate}
+\begin{itemize}
+\item[$\tau$] decision variable (when to do maintenance?)
+\item[$\Tsysnow$] (random) time of system failure,\\ with density \structure{$\fsysnow(t)$} and reliability function \structure{$\Rsysnow(t)$}
+\item[$c_p$] cost of planned maintenance action
+\item[$c_u$] cost of unplanned maintenance action
+\end{itemize}
+\begin{align*}
+g(\tau \mid \Tsysnow = t) &=
+\begin{cases}
+c_p / \tau  & \text{if } t \ge \tau \qquad\text{ (cost rate if failure after $\tau$)}\\
+c_u / t     & \text{if } t < \tau   \qquad\text{ (cost rate if failure before $\tau$)}
+\end{cases} \\
+\gnow(\tau) &= \E[g(\tau \mid \Tsysnow)] = \frac{c_p}{\tau} \Rsysnow(\tau) + c_u \int_0^\tau \frac{1}{t} \fsysnow(t) \dd t \\
+\tausnow &:= \arg\min \gnow(\tau)
+\end{align*}
+\end{frame}
+
+\addtocounter{framenumber}{-2}
 
 \end{document}
