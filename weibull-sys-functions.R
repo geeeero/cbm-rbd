@@ -161,7 +161,7 @@ sysrelnowhor <- function(survsign, n0y0, beta, fts, tnow, hor, seqlen=101, prior
 # ctypes   list giving the types of components in the system, same format as
 #          used for setCompTypes(), but needs the same order as in survsign table (!!!)
 # compfts  list with elements named like the vertices in sys, giving the failure
-#          time of this component; can be NULL if component does not fail
+#          time of this component; can be NA if component does not fail
 # n0y0     list of K prior parameter pairs c(n0,y0)
 # beta     vector of K fixed weibull shape parameters
 # tnowvec  vector of times for which to evaluate sysrelnow
@@ -205,6 +205,7 @@ sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen
     prctps <- presentctypes[[tnowi]]
     cat("calculating sysrel for tnow =", tnow, "...\n")
     current <- data.frame(tnow = tnow,
+                          # add nn, ny
                           sysrelnowhor(survsign = siglist[[tnowi]], n0y0 = n0y0[prctps],
                                        beta = beta[prctps], fts = ftslist[[tnowi]][prctps],
                                        tnow = tnow, hor = hor, seqlen = seqlen, prior = prior))
@@ -213,6 +214,50 @@ sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen
   }
   return(res)
 }
+
+# transform failure history argument for sysrelnowhist() into data.frame for plotting the history
+# compfts  list with elements named like the vertices in sys, giving the failure
+#          time of this component; can be NA if component does not fail
+# maxtnow  censoring time for the non-failed components;
+#          equal to last failure time if not given.
+#          If set smaller than last failure time, maxtnow is the censoring time
+#          for all failure times after maxtnow
+compfts2df <- function(compfts, maxtnow = NA){
+  compftsdf <- t(as.data.frame(compfts))
+  compftsdf <- data.frame(compftsdf, Components = names(compfts))
+  names(compftsdf)[1] <- "t"
+  compftsdf <- data.frame(compftsdf, cens = is.na(compftsdf$t), id = 1:length(compfts))
+  if(is.na(maxtnow)){
+    maxtnow <- max(na.omit(compftsdf$t))
+    compftsdf$t[is.na(compftsdf$t)] <- maxtnow
+  } else {
+    if(maxtnow >= max(na.omit(compftsdf$t))){
+      compftsdf$t[is.na(compftsdf$t)] <- maxtnow
+    } else {
+      compftsdf$t[is.na(compftsdf$t)] <- maxtnow
+      compftsdf$cens[compftsdf$t > maxtnow] <- TRUE
+      compftsdf$t[compftsdf$t > maxtnow] <- maxtnow
+    }
+  }
+  return(compftsdf)
+}
+
+# creates a ggplot2 plot object for plotting the failure history.
+# To get the plot use print(obj)
+# compfts  list with elements named like the vertices in sys, giving the failure
+#          time of this component; can be NA if component does not fail
+# maxtnow  censoring time for the non-failed components;
+#          equal to last failure time if not given.
+#          If set smaller than last failure time, maxtnow is the censoring time
+#          for all failure times after maxtnow
+plotfts <- function(compfts, maxtnow = NA, pointsize = 1, tlabelvjust = -1){
+  compftsdf <- compfts2df(compfts = compfts, maxtnow = maxtnow)
+  ggplot(compftsdf, aes(x = Components, y = t, ymin = rep(0, dim(compftsdf)[1]), ymax = t)) + geom_linerange() +
+    geom_pointrange(aes(shape = factor(cens)), size = pointsize) + geom_text(aes(label = t, vjust = tlabelvjust)) + 
+    coord_flip() + scale_shape_manual(values = c(19, 1), label = c("Yes", "No"), name = "Failure")
+}
+
+
 
 # calculate g^(now)(tau) for given vectors of tau, R_sys and f_sys
 # tau      vector of time points (prospective time, needs to start close to 0)
@@ -288,7 +333,7 @@ gnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen = 10
     gnowvec <- c(gnowvec, NA, gnow(tau = taui, rel = reli, f = fi, cu = cu, cp = cp, onecycle = onecycle)$gnow)
   }
   data.frame(sysrels, gnow = gnowvec)
-}  
+}
   
 # calculate optimal moment of maintenance history for given failure history
 # uses gnowhist(), has same arguments
@@ -302,7 +347,8 @@ taustarhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen =
   tstarsi <- tstarsi$gnow + (seqlen - 1) * (0:(length(tnowvec) - 1))
   tstars <- res$t[tstarsi]
   taustars <- tstars - tnowvec
-  data.frame(tnow = tnowvec, taustar = taustars, tstar = tstars, cstar = cstars)
+  ctotal <- (cstars * taustars) / tstars
+  data.frame(tnow = tnowvec, taustar = taustars, tstar = tstars, cstar = cstars, ctotal = ctotal)
 }
 
 

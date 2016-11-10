@@ -88,9 +88,17 @@ ggplot(melt(ocgnow0, id="tau"), aes(x=tau, y=value)) + geom_line(aes(colour = va
 ocgnow5 <- gnowhor(ocsysign, ocn0y0, ocbeta, list(M = NULL), tnow=5, hor=20, seqlen=201)
 ggplot(melt(ocgnow5, id="tau"), aes(x=tau, y=value)) + geom_line(aes(colour = variable))  + coord_cartesian(ylim=c(0,1))
 
+# failure history plot
+# turn compfts into a data.frame
+brfstdf <- compfts2df(brcompfts)
+# plot directly
+plotfts(brcompfts)
+#plotfts(brcompfts,10) 
+#plotfts(brcompfts,6) 
+
 # gnow & sysrelnow histories
-brghist1 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor = 10, seqlen = 201)
-#brghist1 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0:8), hor=10)
+brghist1 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor = 10, seqlen = 1001)
+#brghist2 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,8), hor=4, seqlen = 401)
 brghist1$tnow <- as.factor(brghist1$tnow)
 ghistfig1 <- ggplot(brghist1, aes(x = t)) + coord_cartesian(ylim=c(0,1)) +
   geom_line(aes(group = tnow, colour = tnow, y = gnow), linetype = 1) + xlab(expression(t)) +
@@ -102,7 +110,7 @@ brghist1a <- brghist1
 names(brghist1a)[c(3,4)] <- c("Reliability", "Unit cost rate")
 brghist1a <- melt(brghist1a, c("tnow", "t"))
 brghist1a <- subset(brghist1a, !is.na(value))
-ghistfig1 <- ggplot(brghist1a, aes(x = t, y = value)) + coord_cartesian(ylim = c(0, 2.1)) +
+ghistfig1 <- ggplot(brghist1a, aes(x = t, y = value)) + coord_cartesian(ylim = c(0, 2.9)) +
   geom_line(aes(colour = tnow, linetype = variable)) + xlab(expression(t)) +
   #geom_line(aes(colour = tnow)) + xlab(expression(t)) +
   ylab(expression(paste(g^(t[now]), (t), " and ", R[sys]^(t[now]), (t)))) +
@@ -119,29 +127,43 @@ dev.off()
 #brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor=10, seqlen=501)
 
 brtaus1fine <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, seq(0,8,by=0.1), hor=4, seqlen=401)
+#brtaus1fine$ctotal <- with(brtaus1fine, (cstar * taustar) / tstar)
+
 tauhistfig1 <- ggplot(melt(brtaus1fine, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
   geom_line(aes(colour = variable, group = variable)) + ylab(element_blank()) +
   geom_point(aes(colour = variable, group = variable), size = 0.5) + guides(colour = guide_legend(title=NULL)) +
-  scale_x_continuous(breaks=seq(0, 18, by=2), minor_breaks=0:18)
+  scale_x_continuous(breaks=seq(0, 8, by=2), minor_breaks=0:8)
 pdf("tauhistfig1.pdf", width = 6, height = 3)
 tauhistfig1
 dev.off()
 
-# failure history plot
-# turn compfts into a data.frame, make this a function
-brftsdf <- t(as.data.frame(brcompfts))
-brftsdf <- data.frame(brftsdf, Components = names(brcompfts))
-names(brftsdf)[1] <- "t"
-brftsdf <- data.frame(brftsdf, cens = is.na(brftsdf$t), id = 1:length(brcompfts))
-brftsdf$t[is.na(brftsdf$t)] <- 8
+tauhistfig2 <- ggplot(melt(brtaus1fine, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(colour = variable, group = variable)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
+  geom_point(aes(colour = variable, group = variable), size = 0.15) +
+#  facet_grid(variable ~ ., scales = "free_y")
+  facet_wrap(~ variable, nrow = 2, scales = "free_y")
+#  scale_x_continuous(breaks=seq(0, 8, by=2), minor_breaks=0:8)
+pdf("tauhistfig2.pdf", width = 6, height = 4)
+tauhistfig2
+dev.off()
 
-#qplot(data=brftsdf, x=id, ymin=rep(0,dim(brftsdf)[1]), y=t, ymax=t, label=t, vjust=-0.5,
-#      geom=c("pointrange", "text"), shape=factor(cens)) + coord_flip() + scale_x_reverse() +
-#  scale_shape_manual(values=c(19, 1), label=c("Yes", "No"), name="Failure")
+# compare with prior (just dynamic, not adaptive, i.e. no updating of weibull parameters)
+brtaus1finepr <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, seq(0,8,by=0.1), hor=4, seqlen=401, prior=T)
+brtaus1prpo <- rbind(data.frame(melt(brtaus1fine, "tnow"), variable2 = "update"),
+                     data.frame(melt(brtaus1finepr, "tnow"), variable2 = "no update"))
 
-ggplot(brftsdf, aes(x= Components, y=t, ymin=rep(0,dim(brftsdf)[1]), ymax=t)) + geom_linerange() +
-  geom_pointrange(aes(shape=factor(cens)), size=1) + geom_text(aes(label=t, vjust = -1)) + coord_flip() +
-  scale_shape_manual(values=c(19, 1), label=c("Yes", "No"), name="Failure")
+tauhistfig3 <- ggplot(brtaus1prpo, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(colour = variable2)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
+  geom_point(aes(colour = variable2), size = 0.15) +
+  #  facet_grid(variable ~ ., scales = "free_y")
+  facet_wrap(~ variable, nrow = 2, scales = "free_y")
+pdf("tauhistfig3.pdf", width = 6, height = 4)
+tauhistfig3
+dev.off()
+
+
+
+
 
 
 
