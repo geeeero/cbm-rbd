@@ -1167,15 +1167,15 @@ and $c_u = 1$, $c_p = 0.2$.}
 
 \begin{figure}
 \includegraphics[width=\textwidth]{tauhistfig2}
-\caption{$\tausnow$, $t^* = \tnow + \tausnow$ and $\gnow(\tausnow)$ as functions of $\tnow$
+\caption{$\tausnow$, $t^* = \tnow + \tausnow$, $\gnow(\tausnow)$, and the total cost rate **** as functions of $\tnow$
 for the system depicted in Figure~\ref{fig:brakesys-layout},
 assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$,
 and $c_u = 1$, $c_p = 0.2$.
 $\tausnow$ (top left panel) first decreases slightly, then remains more or less constant during failure-free periods,
-dropping at each component failure.
+dropping significantly at the failures of components $P_2$, $P_3$ and $H$ only.
 If $\tprep = 0.5$, the drop of $\tausnow$ from $0.72$ to $0.38$ at $\tnow = 8$ would trigger a maintenance action
 at (absolute) time $8.5$.
-As $\tausnow$ does not change dramatically most of the time, $t^*$,
+Since $\tausnow$ does not change dramatically most of the time, $t^*$,
 the cost-optimal moment of maintenance on the absolute timescale (top right panel),
 steadily increases, with small drops corresponding to drops in $\tausnow$,
 indicating that as time progresses, accumulated information indicates that maintenance can be postponed.
@@ -1185,7 +1185,7 @@ differing from the overall cost rate (lower right panel).
 %the overall cost rate is $c_p / 8.5 = 0.024$ if the system does not fail until time $8.5$,
 %and between $c_u / 8 = 0.125$ and $c_u / 8.5 = 0.118$ if the system fails.}
 At time $8$, the overall expected cost rate for repair at time $8.38$ is $0.314$,
-up from $0.076$ for repair at time $8.62$, as cost-optimal at time $8$.}
+up from $0.076$ for repair at time $8.62$, as cost-optimal at time $7.9$.}
 \label{fig:tauhistfig2}
 \end{figure}
 
