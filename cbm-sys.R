@@ -100,11 +100,6 @@ plotfts(brcompfts)
 brghist1 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor = 10, seqlen = 1001)
 #brghist2 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,8), hor=4, seqlen = 401)
 brghist1$tnow <- as.factor(brghist1$tnow)
-ghistfig1 <- ggplot(brghist1, aes(x = t)) + coord_cartesian(ylim=c(0,1)) +
-  geom_line(aes(group = tnow, colour = tnow, y = gnow), linetype = 1) + xlab(expression(t)) +
-  geom_line(aes(group = tnow, colour = tnow, y = rel), linetype = 2)  + ylab(expression(paste(R[sys]^(t[now]), (t), " and ",
-                                                                                              g^(t[now]), (t))))
-ghistfig1 + guides(colour=guide_legend(title=expression(t[now])))
 
 brghist1a <- brghist1
 names(brghist1a)[c(3,4)] <- c("Reliability", "Unit cost rate")
@@ -112,14 +107,30 @@ brghist1a <- melt(brghist1a, c("tnow", "t"))
 brghist1a <- subset(brghist1a, !is.na(value))
 ghistfig1 <- ggplot(brghist1a, aes(x = t, y = value)) + coord_cartesian(ylim = c(0, 2.9)) +
   geom_line(aes(colour = tnow, linetype = variable)) + xlab(expression(t)) +
-  #geom_line(aes(colour = tnow)) + xlab(expression(t)) +
+  #geom_line(aes(colour = tnow)) + xlab(expression(t)) + facet_wrap(~variable, nrow=2, scales = "free_y") +
   ylab(expression(paste(g^(t[now]), (t), " and ", R[sys]^(t[now]), (t)))) +
   #theme(legend.position = 'bottom', legend.direction = 'horizontal') +
   guides(colour=guide_legend(title=expression(t[now])), linetype=guide_legend(title=NULL)) +
   scale_x_continuous(breaks=seq(0, 18, by=2), minor_breaks=0:18)
-  #facet_wrap(~variable, nrow=2, scales = "free_y") + guides(colour=guide_legend(title=expression(t[now])))
 pdf("ghistfig1.pdf", width = 6, height = 3)
 ghistfig1
+dev.off()
+
+ghistfig2r <- ggplot(subset(brghist1a, variable == "Reliability"), aes(x = t, y = value)) +
+  geom_line(aes(colour = tnow)) + coord_cartesian(xlim = c(0, 18), ylim = c(0, 1)) +
+  xlab(expression(t)) + ylab(expression(paste(R[sys]^(t[now]), (t)))) + guides(colour = 'none') + 
+  scale_x_continuous(breaks = seq(0, 18, by = 2), minor_breaks = 0:18) +
+  scale_y_continuous(breaks = seq(0, 1, by = 0.2), minor_breaks = seq(0, 1, by = 0.1)) +
+  theme(axis.title.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank())
+ghistfig2g <- ggplot(subset(brghist1a, variable == "Unit cost rate"), aes(x = t, y = value)) +
+  geom_line(aes(colour = tnow)) + coord_cartesian(xlim = c(0, 18), ylim = c(0, 3)) +
+  xlab(expression(t)) + ylab(expression(paste(g[sys]^(t[now]), (t)))) +
+  guides(colour=guide_legend(title=expression(t[now]))) +
+  theme(legend.position = 'bottom', legend.direction = 'horizontal') +
+  scale_x_continuous(breaks = seq(0, 18, by = 2), minor_breaks = 0:18) +
+  scale_y_continuous(breaks = seq(0, 3, by = 0.5), minor_breaks = seq(0, 3, by = 0.25))
+pdf("ghistfig2.pdf", width = 6, height = 4)
+grid.arrange(ghistfig2r, ghistfig2g, nrow = 2, heights = c(1, 1.5))
 dev.off()
 
 #brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor=10)

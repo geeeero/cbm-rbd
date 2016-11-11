@@ -7,6 +7,7 @@ library(actuar) # provides dinvgamma(x, shape, scale) where shape = alpha and sc
 library(ReliabilityTheory)
 library(ggplot2)
 library(reshape2)
+library(gridExtra)
 
 # translate lambda parameter of weibull to expected failure time
 # lambda - scale parameter of weibull
