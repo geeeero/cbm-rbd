@@ -342,13 +342,21 @@ taustarhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen =
                         cu = 1, cp = 0.2, onecycle = TRUE){
   res <- gnowhist(sys = sys, ctypes = ctypes, compfts = compfts, n0y0 = n0y0, beta = beta,
                   tnowvec = tnowvec, hor = hor, seqlen = seqlen, prior = prior, cu = cu, cp = cp, onecycle = onecycle)
-  res <- subset(res, !is.na(res$gnow))
-  cstars <- aggregate(gnow ~ tnow, res, min)$gnow
-  tstarsi <- aggregate(gnow ~ tnow, res, which.min)
+  res2 <- subset(res, !is.na(res$gnow))
+  cstars <- aggregate(gnow ~ tnow, res2, min)$gnow
+  tstarsi <- aggregate(gnow ~ tnow, res2, which.min)
   tstarsi <- tstarsi$gnow + (seqlen - 1) * (0:(length(tnowvec) - 1))
-  tstars <- res$t[tstarsi]
+  tstars <- res2$t[tstarsi]
   taustars <- tstars - tnowvec
-  ctotal <- (cstars * taustars) / tstars
+  cuint <- sapply(tnowvec, function(tnowi){
+    trel <- subset(res, res$tnow == tnowi)
+    f <- -diff(trel$rel)
+    tauvec <- trel$t[-1] # absolute timescale!
+    tau <- trel$t[which.min(trel$gnow)]
+    sum(f[tauvec <= tau] / tauvec[tauvec <= tau])
+  })
+  #cat("cuint =", cuint)
+  ctotal <- cp / tstars * res2$rel[tstarsi] + cu * cuint
   data.frame(tnow = tnowvec, taustar = taustars, tstar = tstars, cstar = cstars, ctotal = ctotal)
 }
 

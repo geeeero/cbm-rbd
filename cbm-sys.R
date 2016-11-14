@@ -14,10 +14,12 @@ brsysign <- computeSystemSurvivalSignature(br)
 
 # tests # order is C H M P
 brbeta <- c(2, 1.2, 2.5, 1.5)
-brn0y0 <- list(C=c(1, failuretolambda(8, brbeta[1])),
-               H=c(1, failuretolambda(2, brbeta[2])),
-               M=c(2, failuretolambda(5, brbeta[3])),
-               P=c(1, failuretolambda(3, brbeta[4])))
+brmttf <- c(8, 2, 5, 3)
+brn0 <- c(1, 1, 2, 1)
+brn0y0 <- list(C=c(brn0[1], failuretolambda(brmttf[1], brbeta[1])),
+               H=c(brn0[2], failuretolambda(brmttf[2], brbeta[2])),
+               M=c(brn0[3], failuretolambda(brmttf[3], brbeta[3])),
+               P=c(brn0[4], failuretolambda(brmttf[4], brbeta[4])))
 # prior
 brfts0 <- list(C=NULL, H=NULL, M=NULL, P=NULL)
 sysrelnow(brsysign, brn0y0, brbeta, brfts0, tnow=0, t=1)
@@ -49,6 +51,13 @@ qplot(brtnow8H$t, brtnow8H$rel)
 # to plot sysrelnow history
 #brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = NA, M = NA, P1 = NA, P2 = 3, P3 = 4, P4 = NA)
 brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = 8,  M = NA, P1 = NA, P2 = 3, P3 = 4, P4 = NA)
+# failure history plot
+# turn compfts into a data.frame
+brfstdf <- compfts2df(brcompfts)
+# plot directly
+plotfts(brcompfts)
+#plotfts(brcompfts,10) 
+#plotfts(brcompfts,6) 
 
 brhist1 <- sysrelnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,8), hor=10)
 #brhist1 <- sysrelnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0:8), hor=10)
@@ -77,6 +86,7 @@ qplot(brgnow0$tau, brgnow0$gnow, geom="line") + coord_cartesian(ylim=c(0,1))
 brgnow8 <- gnowhor(br8sysign, brn0y0, brbeta, brfts8, tnow=8, hor=10, seqlen=201)
 qplot(brgnow8$tau, brgnow8$gnow, geom="line") + coord_cartesian(ylim=c(0,1))
 
+# one component plot
 oc <- graph.formula(s -- M -- t)
 occtypes <- list("M"=c("M"))
 oc <- setCompTypes(oc, occtypes)
@@ -87,14 +97,6 @@ ocgnow0 <- gnowhor(ocsysign, ocn0y0, ocbeta, list(M = NULL), tnow=0, hor=20, seq
 ggplot(melt(ocgnow0, id="tau"), aes(x=tau, y=value)) + geom_line(aes(colour = variable))  + coord_cartesian(ylim=c(0,1))
 ocgnow5 <- gnowhor(ocsysign, ocn0y0, ocbeta, list(M = NULL), tnow=5, hor=20, seqlen=201)
 ggplot(melt(ocgnow5, id="tau"), aes(x=tau, y=value)) + geom_line(aes(colour = variable))  + coord_cartesian(ylim=c(0,1))
-
-# failure history plot
-# turn compfts into a data.frame
-brfstdf <- compfts2df(brcompfts)
-# plot directly
-plotfts(brcompfts)
-#plotfts(brcompfts,10) 
-#plotfts(brcompfts,6) 
 
 # gnow & sysrelnow histories
 brghist1 <- gnowhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor = 10, seqlen = 1001)
@@ -134,12 +136,13 @@ grid.arrange(ghistfig2r, ghistfig2g, nrow = 2, heights = c(1, 1.5))
 dev.off()
 
 #brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor=10)
-#brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor=2)
-#brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,2,4,6,8), hor=10, seqlen=501)
+#brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, c(0,8), hor=2, seqlen=201)
+#brtaus1 <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, seq(0, 8, by=0.25), hor=5, seqlen=501)
+#ggplot(melt(brtaus1, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) + ylab("") +
+#  geom_line(aes(colour = variable, group = variable)) + guides(colour = guide_legend(title=NULL)) +
+#  geom_point(aes(colour = variable, group = variable), size = 0.15) + facet_wrap(~ variable, nrow = 2, scales = "free_y")
 
 brtaus1fine <- taustarhist(br, brctypes, brcompfts, brn0y0, brbeta, seq(0,8,by=0.1), hor=4, seqlen=401)
-#brtaus1fine$ctotal <- with(brtaus1fine, (cstar * taustar) / tstar)
-
 tauhistfig1 <- ggplot(melt(brtaus1fine, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
   geom_line(aes(colour = variable, group = variable)) + ylab(element_blank()) +
   geom_point(aes(colour = variable, group = variable), size = 0.5) + guides(colour = guide_legend(title=NULL)) +
@@ -172,7 +175,100 @@ pdf("tauhistfig3.pdf", width = 6, height = 4)
 tauhistfig3
 dev.off()
 
+# -------------------------------------------------------------------------
 
+# earlier failures
+brcompfts2 <- list(C1 = NA, C2 = 1, C3 = 2, C4 = NA, H = 8,  M = NA, P1 = NA, P2 = 0.5, P3 = 1.5, P4 = NA)
+plotfts(brcompfts2, 8)
+
+# gnow & sysrelnow histories
+brghist2 <- gnowhist(br, brctypes, brcompfts2, brn0y0, brbeta, seq(0, 2, by = 0.5), hor = 10, seqlen = 1001)
+brghist2$tnow <- as.factor(brghist2$tnow)
+brghist2a <- brghist2
+names(brghist2a)[c(3,4)] <- c("Reliability", "Unit cost rate")
+brghist2a <- melt(brghist2a, c("tnow", "t"))
+brghist2a <- subset(brghist2a, !is.na(value))
+ghist2fig1 <- ggplot(brghist2a, aes(x = t, y = value)) + coord_cartesian(ylim = c(0, 1.25)) +
+  geom_line(aes(colour = tnow, linetype = variable)) + xlab(expression(t)) +
+  #geom_line(aes(colour = tnow)) + xlab(expression(t)) + facet_wrap(~variable, nrow=2, scales = "free_y") +
+  ylab(expression(paste(g^(t[now]), (t), " and ", R[sys]^(t[now]), (t)))) +
+  #theme(legend.position = 'bottom', legend.direction = 'horizontal') +
+  guides(colour=guide_legend(title=expression(t[now])), linetype=guide_legend(title=NULL)) +
+  scale_x_continuous(breaks=seq(0, 18, by=2), minor_breaks=0:18)
+pdf("ghist2fig1.pdf", width = 6, height = 3)
+ghist2fig1
+dev.off()
+
+brtaus2fine <- taustarhist(br, brctypes, brcompfts2, brn0y0, brbeta, seq(0, 2, by=0.05), hor=4, seqlen=401)
+tauhist2fig2 <- ggplot(melt(brtaus2fine, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(colour = variable, group = variable)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
+  geom_point(aes(colour = variable, group = variable), size = 0.15) +
+  #  facet_grid(variable ~ ., scales = "free_y")
+  facet_wrap(~ variable, nrow = 2, scales = "free_y")
+#  scale_x_continuous(breaks=seq(0, 8, by=2), minor_breaks=0:8)
+pdf("tauhist2fig2.pdf", width = 6, height = 4)
+tauhist2fig2
+dev.off()
+
+brtaus2finepr <- taustarhist(br, brctypes, brcompfts2, brn0y0, brbeta, seq(0, 2, by=0.05), hor=4, seqlen=401, prior=T)
+brtaus2prpo <- rbind(data.frame(melt(brtaus2fine, "tnow"), variable2 = "update"),
+                     data.frame(melt(brtaus2finepr, "tnow"), variable2 = "no update"))
+tauhist2fig3 <- ggplot(brtaus2prpo, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(colour = variable2)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
+  geom_point(aes(colour = variable2), size = 0.15) +
+  #  facet_grid(variable ~ ., scales = "free_y")
+  facet_wrap(~ variable, nrow = 2, scales = "free_y")
+pdf("tauhist2fig3.pdf", width = 6, height = 4)
+tauhist2fig3
+dev.off()
+
+
+# -------------------------------------------------------------------------
+
+# later failures
+brcompfts3 <- list(C1 = NA, C2 = 10, C3 = 12, C4 = NA, H = 14,  M = NA, P1 = NA, P2 = 8, P3 = 9, P4 = NA)
+plotfts(brcompfts3, 14)
+
+# gnow & sysrelnow histories
+brghist3 <- gnowhist(br, brctypes, brcompfts3, brn0y0, brbeta, seq(0, 14, by = 2), hor = 10, seqlen = 1001)
+brghist3$tnow <- as.factor(brghist3$tnow)
+brghist3a <- brghist3
+names(brghist3a)[c(3,4)] <- c("Reliability", "Unit cost rate")
+brghist3a <- melt(brghist3a, c("tnow", "t"))
+brghist3a <- subset(brghist3a, !is.na(value))
+ghist3fig1 <- ggplot(brghist3a, aes(x = t, y = value)) + coord_cartesian(ylim = c(0, 2.5)) +
+  geom_line(aes(colour = tnow, linetype = variable)) + xlab(expression(t)) +
+  #geom_line(aes(colour = tnow)) + xlab(expression(t)) + facet_wrap(~variable, nrow=2, scales = "free_y") +
+  ylab(expression(paste(g^(t[now]), (t), " and ", R[sys]^(t[now]), (t)))) +
+  #theme(legend.position = 'bottom', legend.direction = 'horizontal') +
+  guides(colour=guide_legend(title=expression(t[now])), linetype=guide_legend(title=NULL)) +
+  scale_x_continuous(breaks=seq(0, 24, by=2), minor_breaks=0:24)
+pdf("ghist3fig1.pdf", width = 6, height = 3)
+ghist3fig1
+dev.off()
+
+brtaus3fine <- taustarhist(br, brctypes, brcompfts3, brn0y0, brbeta, seq(0, 14, by=0.2), hor=4, seqlen=401)
+tauhist3fig2 <- ggplot(melt(brtaus3fine, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(colour = variable, group = variable)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
+  geom_point(aes(colour = variable, group = variable), size = 0.15) +
+  #  facet_grid(variable ~ ., scales = "free_y")
+  facet_wrap(~ variable, nrow = 2, scales = "free_y")
+#  scale_x_continuous(breaks=seq(0, 8, by=2), minor_breaks=0:8)
+pdf("tauhist3fig2.pdf", width = 6, height = 4)
+tauhist3fig2
+dev.off()
+
+brtaus3finepr <- taustarhist(br, brctypes, brcompfts3, brn0y0, brbeta, seq(0, 14, by=0.2), hor=4, seqlen=401, prior=T)
+brtaus3prpo <- rbind(data.frame(melt(brtaus3fine, "tnow"), variable2 = "update"),
+                     data.frame(melt(brtaus3finepr, "tnow"), variable2 = "no update"))
+tauhist3fig3 <- ggplot(brtaus3prpo, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(colour = variable2)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
+  geom_point(aes(colour = variable2), size = 0.15) +
+  #  facet_grid(variable ~ ., scales = "free_y")
+  facet_wrap(~ variable, nrow = 2, scales = "free_y")
+pdf("tauhist3fig3.pdf", width = 6, height = 4)
+tauhist3fig3
+dev.off()
 
 
 
