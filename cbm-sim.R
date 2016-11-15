@@ -27,29 +27,33 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, fts, tnowstep, hor, tpre
   tnow <- 0
   sysnow <- sys
   signnow <- computeSystemSurvivalSignature(sysnow)
-  wctnow <- 1:K # which component types are now present in the system?
+  wctnow <- 1:K       # which component types are now present in the system?
   ftsnow <- as.list(rep(list(NULL), K))
-  gotonext = TRUE # indicator that loop should go on
-  failed = FALSE # indicator whether the system has failed
-  repschedfor = Inf # for which time is repair scheduled?
-  # initialize results data frame
-  res <- data.frame()
+  gotonext = TRUE     # indicator that loop should go on
+  failed = FALSE      # indicator whether the system has failed
+  repschedfor = Inf   # for which time is repair scheduled?
+  res <- data.frame() # initialize results data frame
   while(gotonext){
-    if (!failed & repschedfor == Inf){ # not failed and no repair scheduled yet !!!still need to check if system fails if repair scheduled!!!
-      if (all(signnow$Probability == 0)){ # system has failed, schedule repair for tnow + tprep
+    if (!failed){ # if not failed already in previous loop, check...
+      if (all(signnow$Probability == 0)){ # system has failed now, schedule repair for tnow + tprep if not scheduled already
         failed <- TRUE
         taustarnow <- NA
-        repschedfor <- tnow + tprep
-      } else { # system has not failed
-        # calculate current taustar
-        gnowvec <- gnowhor(signnow, n0y0[wctnow], beta[wctnow], ftsnow[wctnow], tnow, hor = hor,
-                           seqlen = seqlen, prior = prior, cu = cu, cp = cp, onecycle = onecycle)
-        taustarnow <- gnowvec$tau[which.min(gnowvec$gnow)]
-        if (taustarnow <= tprep){ # schedule repair for tnow + tprep
+        if (repschedfor == Inf)
           repschedfor <- tnow + tprep
-        } # else do nothing & go on to next loop (repschedfor is +Inf)
-      }
-    } else { # system was either in failed state already at start of loop or has repair already scheduled !!!!!
+      } else { # system has not failed this time
+        if (repschedfor == Inf){ # no repair scheduled yet
+          # calculate current taustar
+          gnowvec <- gnowhor(signnow, n0y0[wctnow], beta[wctnow], ftsnow[wctnow], tnow, hor = hor,
+                             seqlen = seqlen, prior = prior, cu = cu, cp = cp, onecycle = onecycle)
+          taustarnow <- gnowvec$tau[which.min(gnowvec$gnow)]
+          if (taustarnow <= tprep){ # schedule repair for tnow + tprep if not scheduled already
+            repschedfor <- tnow + tprep
+          } # else do nothing & go on to next loop (repschedfor is still Inf)
+        } else { # repair already scheduled: do nothing
+          taustarnow <- NA
+        }
+      } # end "system has not failed this time"
+    } else { # system was in failed state already at start of loop 
       taustarnow <- NA
     }
     # now we know if failed or not, if and when repair scheduled
@@ -74,11 +78,11 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, fts, tnowstep, hor, tpre
         ftsnow[[k]] <- failedcompsnow[ftsnowindex == k]
       # which component types are now present? (subset of 1:K)
       wctnow <- which(names(ctypes) %in% names(signnow))
-    }
+    } # end update if not failed
   } # end while loop
-  # update Weibull parameters (all component types!) for next operational cycle
+  # update Weibull parameters (all component types!) for next operational cycle using nnynlist() (to be defined)
   # return res and all, tend = last.tnow + trepa, unit cost rate = (cp or cu) / last.tnow
-  return(res)
+  return(res) # TODO: return the other stuff as well
 }  
 
 
