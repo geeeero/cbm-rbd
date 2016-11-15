@@ -374,7 +374,9 @@ yn <- function(n0, y0, fts, cts, beta)
   (n0*y0 + sum(fts^beta) + sum(cts^beta)) / (n0 + length(fts))
 nnyn <- function(n0y0, fts, cts, beta)
   c(nn(n0y0[1], fts), yn(n0y0[1], n0y0[2], fts, cts, beta))
-
+nnynlist <- function(n0y0list, beta){
+  
+}
 
 
 
