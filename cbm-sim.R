@@ -26,20 +26,18 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
   # initializing: initial arguments for gnowhor
   tnow <- 0
   sysnow <- sys
-  signnow <- computeSystemSurvivalSignature(sysnow)
+  signnow <- sign <- computeSystemSurvivalSignature(sysnow)
   wctnow <- 1:K       # which component types are now present in the system?
   ftsnow <- as.list(rep(list(NULL), K))
   gotonext <- TRUE     # indicator that loop should go on
   failed <- FALSE      # indicator whether the system has failed
   repschedfor <- Inf   # for which time is repair scheduled?
-  censtime <- Inf
   res <- data.frame() # initialize results data frame
   while(gotonext){
     cat("tnow =", tnow,"\n")
     if (!failed){ # if not failed already in previous loop, check...
       if (all(signnow$Probability == 0)){ # system has failed now, schedule repair for tnow + tprep if not scheduled already
         failed <- TRUE
-        censtime <- tnow
         taustarnow <- NA
         if (repschedfor == Inf)
           repschedfor <- tnow + tprep
@@ -51,7 +49,6 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
           taustarnow <- gnowvec$tau[which.min(gnowvec$gnow)] - tnow
           if (taustarnow <= tprep){ # schedule repair for tnow + tprep if not scheduled already
             repschedfor <- tnow + tprep
-            censtime <- tnow + tprep
           } # else do nothing & go on to next loop (repschedfor is still Inf)
         } else { # repair already scheduled: do nothing
           taustarnow <- NA
@@ -66,7 +63,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
       gotonext <- FALSE
     }
     # write all current things in results data frame
-    resnow <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow, repschedfor = repschedfor, censtime = censtime)
+    resnow <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow, repschedfor = repschedfor)
     res <- rbind(res, resnow)
     # now prepare for next loop
     tnow <- tnow + tnowstep
@@ -92,9 +89,39 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
       }
     } # end update if system not failed
   } # end while loop
-  # update Weibull parameters (all component types!) for next operational cycle using nnynlist() (to be defined)
-  # return res and all, tend = last.tnow + trepa, unit cost rate = (cp or cu) / last.tnow
-  return(res) # TODO: return the other stuff as well
+  # update Weibull parameters (all component types!) for next operational cycle
+  # get failure times from compftslist until time of repair repschedfor
+  ftslist <- as.list(rep(list(NULL), K))
+  ftsfinal <- ftschron[ftschron <= repschedfor]
+  ftsindex <- sapply(ctypes, function(ctypesl) names(ftsfinal) %in% ctypesl)
+  if (length(ftsfinal) == 1)
+    ftsindex <- which(ftsindex)
+  else
+    ftsindex <- apply(ftsindex, 1, which)
+  for (k in 1:K)
+    ftslist[[k]] <- ftsfinal[ftsindex == k]
+  # censoring time is last repschedfor, number of censored components from
+  censlist <- as.list(rep(list(NULL), K))
+  ek <- sapply(ftslist, length)
+  Nk <- apply(sign, 2, max)
+  Nk <- Nk[-length(Nk)]
+  ck <- Nk - ek
+  for (k in 1:K)
+    censlist[[k]] <- rep(repschedfor, ck[k])
+  #print(ftslist); print(censlist)
+  nnyn <- nnynlist(n0y0, ftslist, censlist, beta) # updated parameters at end of cycle
+  # time the whole cycle took
+  tend <- repschedfor + trepa
+  # downtime and unit cost rate
+  if (failed){
+    downtime <- repschedfor - min(res$tnow[res$failed]) # only in tnowstep resolution!
+    costrate <- cu / tend
+  } else {
+    downtime <- 0
+    costrate <- cp / tend
+  }
+  # return res and all
+  list(res = res, nnyn = nnyn, tend = tend, downtime = downtime, costrate = costrate)
 }  
 
 

@@ -92,7 +92,7 @@ sysrelnow <- function(survsign, n0y0, beta, fts, tnow, t, prior = FALSE, table =
   ck <- apply(survsign, 2, max)
   ck <- ck[-length(ck)]
   # e_k from fts (number of failed components per type)
-  ek <- unlist(lapply(fts, length))
+  ek <- sapply(fts, length)
   Nk <- ck + ek
   if(length(fts) != K | length(beta) != K | length(Nk) != K)
     stop("Check the length of arguments n0y0, beta, fts.\n
