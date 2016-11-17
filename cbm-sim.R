@@ -29,15 +29,17 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
   signnow <- computeSystemSurvivalSignature(sysnow)
   wctnow <- 1:K       # which component types are now present in the system?
   ftsnow <- as.list(rep(list(NULL), K))
-  gotonext = TRUE     # indicator that loop should go on
-  failed = FALSE      # indicator whether the system has failed
-  repschedfor = Inf   # for which time is repair scheduled?
+  gotonext <- TRUE     # indicator that loop should go on
+  failed <- FALSE      # indicator whether the system has failed
+  repschedfor <- Inf   # for which time is repair scheduled?
+  censtime <- Inf
   res <- data.frame() # initialize results data frame
   while(gotonext){
     cat("tnow =", tnow,"\n")
     if (!failed){ # if not failed already in previous loop, check...
       if (all(signnow$Probability == 0)){ # system has failed now, schedule repair for tnow + tprep if not scheduled already
         failed <- TRUE
+        censtime <- tnow
         taustarnow <- NA
         if (repschedfor == Inf)
           repschedfor <- tnow + tprep
@@ -49,6 +51,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
           taustarnow <- gnowvec$tau[which.min(gnowvec$gnow)] - tnow
           if (taustarnow <= tprep){ # schedule repair for tnow + tprep if not scheduled already
             repschedfor <- tnow + tprep
+            censtime <- tnow + tprep
           } # else do nothing & go on to next loop (repschedfor is still Inf)
         } else { # repair already scheduled: do nothing
           taustarnow <- NA
@@ -63,7 +66,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
       gotonext <- FALSE
     }
     # write all current things in results data frame
-    resnow <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow, repschedfor = repschedfor)
+    resnow <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow, repschedfor = repschedfor, censtime = censtime)
     res <- rbind(res, resnow)
     # now prepare for next loop
     tnow <- tnow + tnowstep

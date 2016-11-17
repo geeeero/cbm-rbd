@@ -368,6 +368,7 @@ taustarhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen =
 # can be used to include test data and to update after an operational cycle ends
 # fts   vector of observed failure times
 # cts   vector of censoring times
+# beta  Weibull shape parameter
 nn <- function(n0, fts)
   n0 + length(fts)
 yn <- function(n0, y0, fts, cts, beta)
@@ -375,8 +376,13 @@ yn <- function(n0, y0, fts, cts, beta)
 nnyn <- function(n0y0, fts, cts, beta)
   c(nn(n0y0[1], fts), yn(n0y0[1], n0y0[2], fts, cts, beta))
 # update n0y0 list: 
-#nnynlist <- function(n0y0list, beta){
-  
+nnynlist <- function(n0y0list, ftslist, ctslist, beta){
+  K <- length(n0y0list)
+  res <- as.list(1:K)
+  for (k in 1:K){
+    res[[k]] <- nnyn(n0y0list[[k]], ftslist[[k]], ctslist[[k]], beta[k])
+  }
+  res
 }
 
 

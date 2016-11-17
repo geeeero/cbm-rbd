@@ -277,7 +277,9 @@ dev.off()
 brcompftssim <- list(C1 = 10, C2 = 6, C3 = 7, C4 = 10, H = 8,  M = 12, P1 = 10, P2 = 3, P3 = 4, P4 = 10)
 
 brsim1 <- sim1cycle(sys = br, ctypes = brctypes, compfts = brcompftssim, n0y0 = brn0y0, beta = brbeta,
-                    tnowstep = 0.5, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = FALSE)
+                    tnowstep = 1, hor = 4, tprep = 0.1, trepa = 0, seqlen = 401, prior = FALSE)
+brsim1pr <- sim1cycle(sys = br, ctypes = brctypes, compfts = brcompftssim, n0y0 = brn0y0, beta = brbeta,
+                      tnowstep = 0.5, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = TRUE)
 
 
 
