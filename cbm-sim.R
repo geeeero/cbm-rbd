@@ -19,8 +19,9 @@
 # cu       cost of unplanned (corrective) repair action
 # cp       cost of planned (preventive) repair action, cp < cu
 # onecycle whether to use the one-cycle criterion or the renewal-based one
+# timeround to how many digits to round the time points
 sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, trepa = 0,
-                      seqlen = 101, prior = FALSE, cu = 1, cp = 0.2, onecycle = TRUE){
+                      seqlen = 101, prior = FALSE, cu = 1, cp = 0.2, onecycle = TRUE, timeround = 5){
   K <- length(ctypes)
   ftschron <- sort(unlist(compfts)) # when something fails
   # initializing: initial arguments for gnowhor
@@ -29,12 +30,13 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
   signnow <- sign <- computeSystemSurvivalSignature(sysnow)
   wctnow <- 1:K       # which component types are now present in the system?
   ftsnow <- as.list(rep(list(NULL), K))
+  failedcompsnow <- numeric(0)
   gotonext <- TRUE     # indicator that loop should go on
   failed <- FALSE      # indicator whether the system has failed
   repschedfor <- Inf   # for which time is repair scheduled?
   res <- data.frame() # initialize results data frame
   while(gotonext){
-    cat("tnow =", tnow,"\n")
+    cat("tnow =", tnow, "failedcompsnow =", failedcompsnow, "\n")
     if (!failed){ # if not failed already in previous loop, check...
       if (all(signnow$Probability == 0)){ # system has failed now, schedule repair for tnow + tprep if not scheduled already
         failed <- TRUE
@@ -66,7 +68,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
     resnow <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow, repschedfor = repschedfor)
     res <- rbind(res, resnow)
     # now prepare for next loop
-    tnow <- tnow + tnowstep
+    tnow <- round(tnow + tnowstep, timeround)
     # update stuff if system not failed (otherwise not needed except tnow update!)
     if (!failed){
       failedcompsnow <- ftschron[ftschron <= tnow]

@@ -274,14 +274,15 @@ dev.off()
 # -------------------------------------------------------------------------
 
 # simulate one operational cycle
+# new compfts with failure times for all components such that sim1cycle definitively terminates
 brcompftssim <- list(C1 = 10, C2 = 6, C3 = 7, C4 = 10, H = 8,  M = 12, P1 = 10, P2 = 3, P3 = 4, P4 = 10)
 
 brsim1 <- sim1cycle(sys = br, ctypes = brctypes, compfts = brcompftssim, n0y0 = brn0y0, beta = brbeta,
-                    tnowstep = 0.5, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = FALSE)
+                    tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = FALSE)
 brsim1pr <- sim1cycle(sys = br, ctypes = brctypes, compfts = brcompftssim, n0y0 = brn0y0, beta = brbeta,
-                      tnowstep = 0.5, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = TRUE)
+                      tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = TRUE)
 
-# example where system fails at time 3.7
+# quick sexample where system fails at time 3.7
 brcompftssim0 <- list(C1 = 10, C2 = 6, C3 = 7, C4 = 10, H = 3.6,  M = 3.7, P1 = 10, P2 = 3, P3 = 4, P4 = 10)
 brsim0 <- sim1cycle(sys = br, ctypes = brctypes, compfts = brcompftssim0, n0y0 = brn0y0, beta = brbeta,
                     tnowstep = 0.25, hor = 4, tprep = 1, trepa = 0, seqlen = 401, prior = FALSE)
