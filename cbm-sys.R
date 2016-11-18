@@ -329,43 +329,44 @@ brsim2pr <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim2, n0y0
 brsim2pr <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim2, n0y0 = brn0y0, beta = brbeta,
                       tnowstep = 0.5, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = TRUE, cycleupdate = FALSE)
 
+# -------------------------------------------------------------------------
+
 # simulate Weibull failure times according to prior parameter choices (note different parametrization!)
 set.seed(1328)
-ncycles <- 5
-C1sim1 <- rweibull(ncycles, shape = brbeta[1], scale = (failuretolambda(brmttf[1], brbeta[1]))^(1/brbeta[1]))
-C2sim1 <- rweibull(ncycles, shape = brbeta[1], scale = (failuretolambda(brmttf[1], brbeta[1]))^(1/brbeta[1]))
-C3sim1 <- rweibull(ncycles, shape = brbeta[1], scale = (failuretolambda(brmttf[1], brbeta[1]))^(1/brbeta[1]))
-C4sim1 <- rweibull(ncycles, shape = brbeta[1], scale = (failuretolambda(brmttf[1], brbeta[1]))^(1/brbeta[1]))
-Hsim1  <- rweibull(ncycles, shape = brbeta[2], scale = (failuretolambda(brmttf[2], brbeta[2]))^(1/brbeta[2]))
-Msim1  <- rweibull(ncycles, shape = brbeta[3], scale = (failuretolambda(brmttf[3], brbeta[3]))^(1/brbeta[3]))
-P1sim1 <- rweibull(ncycles, shape = brbeta[4], scale = (failuretolambda(brmttf[4], brbeta[4]))^(1/brbeta[4]))
-P2sim1 <- rweibull(ncycles, shape = brbeta[4], scale = (failuretolambda(brmttf[4], brbeta[4]))^(1/brbeta[4]))
-P3sim1 <- rweibull(ncycles, shape = brbeta[4], scale = (failuretolambda(brmttf[4], brbeta[4]))^(1/brbeta[4]))
-P4sim1 <- rweibull(ncycles, shape = brbeta[4], scale = (failuretolambda(brmttf[4], brbeta[4]))^(1/brbeta[4]))
-brcompftssim1 <- list(C1 = C1sim1, C2 = C2sim1, C3 = C3sim1, C4 = C4sim1, H = Hsim1,
-                      M = Msim1, P1 = P1sim1, P2 = P2sim1, P3 = P3sim1, P4 = P4sim1)
-brsimN5 <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim1, n0y0 = brn0y0, beta = brbeta,
-                     tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
-sapply(brsimN5, function(res) res$tend)
-sapply(brsimN5, function(res) res$downtime)
-sapply(brsimN5, function(res) res$costrate)
+brcompftssim1 <- brWeibullData(5, brbeta, brmttf)
+brcompftssim2 <- brWeibullData(5, brbeta, brmttf)
+brsimN51 <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim1, n0y0 = brn0y0, beta = brbeta,
+                      tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
 # overall costrate
-weighted.mean(sapply(brsimN5, function(res) res$costrate), sapply(brsimN5, function(res) res$tend))
-brsimN5taudf <- rbind(data.frame(cycle = 1, brsimN5[[1]]$res),
-                      data.frame(cycle = 2, brsimN5[[2]]$res),
-                      data.frame(cycle = 3, brsimN5[[3]]$res),
-                      data.frame(cycle = 4, brsimN5[[4]]$res),
-                      data.frame(cycle = 5, brsimN5[[5]]$res))
-brsimN5taudf$cycle <- as.factor(brsimN5taudf$cycle)
-brsimN5fig1 <- ggplot(brsimN5taudf, aes(x = tnow, y = taustar)) + geom_line(aes(colour = cycle, group = cycle)) +
+weighted.mean(brsimN51$costrate, brsimN51$tend)
+brsimN51fig1 <- ggplot(brsimN51$res, aes(x = tnow, y = taustar)) + 
+  geom_line(aes(colour = cycle, group = cycle)) + geom_point(aes(colour = cycle, group = cycle)) +
   xlab(expression(t[now])) + ylab(expression(paste(tau["*"]^(t[now]), (t[now])))) +
-  guides(colour = guide_legend(title="Cycle"))
-pdf("brsimN5fig1.pdf", width = 5, height = 3)
-brsimN5fig1
+  guides(colour = guide_legend(title="Cycle")) + scale_y_continuous(breaks=seq(0, 2, by=0.5), minor_breaks=seq(0, 2, by=0.25))
+pdf("brsimN51fig1.pdf", width = 5, height = 3)
+brsimN51fig1
 dev.off()
+# failure times for cycle 1
+sort(sapply(brcompftssim1, function(x) x[1]))
+
+brsimN52 <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim2, n0y0 = brn0y0, beta = brbeta,
+                      tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
+brsimN52$downtime; brsimN52$tend; brsimN52$costrate
+weighted.mean(brsimN52$costrate, brsimN52$tend)
+brsimN52fig1 <- ggplot(brsimN52$res, aes(x = tnow, y = taustar)) + 
+  geom_line(aes(colour = cycle, group = cycle)) + geom_point(aes(colour = cycle, group = cycle)) +
+  xlab(expression(t[now])) + ylab(expression(paste(tau["*"]^(t[now]), (t[now])))) +
+  guides(colour = guide_legend(title="Cycle")) + scale_y_continuous(breaks=seq(0, 2, by=0.5), minor_breaks=seq(0, 2, by=0.25))
+pdf("brsimN52fig1.pdf", width = 5, height = 3)
+brsimN52fig1
+dev.off()
+
 
 # -------------------------------------------------------------------------
 
+# simulate Weibull failure times according to prior parameter choices (note different parametrization!)
+set.seed(1328)
+ncycles <- 5
 
 
 

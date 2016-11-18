@@ -151,23 +151,43 @@ simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
     stop("each element of compfts must contain the same number of failure times")
   compftsi <- lapply(compfts, function(x) x[1])
   n0y0i <- n0y0
-  res <- list()
+  res <- res2 <- nnyn <- list()
   for (i in 1:N){
     cat("Operational cycle", i, "\n")
     res[[i]] <- sim1cycle(sys = sys, ctypes = ctypes, compfts = compftsi, n0y0 = n0y0i, beta = beta,
                           tnowstep = tnowstep, hor = hor, tprep = tprep, trepa = trepa, seqlen = seqlen,
                           prior = prior, cu = cu, cp = cp, onecycle = onecycle, timeround = timeround)
+    res2 <- rbind(res2, data.frame(cycle = i, res[[i]]$res))
+    nnynlist <- list(nnyn, res[[i]]$nnyn)
     if (i < N){ # update stuff for next cycle
       compftsi <- lapply(compfts, function(x) x[i + 1])
       if (cycleupdate)
         n0y0i <- res[[i]]$nnyn
     }
   }
-  return(res) # or concatenate res dfs, list of nnnyn's, vector of tend, downtime, costrate?
+  res2$cycle <- as.factor(res2$cycle)
+  tendvec <- sapply(res, function(resi) resi$tend)
+  downtimevec <- sapply(res, function(resi) resi$downtime)
+  costratevec <- sapply(res, function(resi) resi$costrate)
+  return(list(res = res2, nnyn = nnynlist, tend = tendvec, downtime = downtimevec, costrate = costratevec))
 }
 
-
-
+# function to simulate Weibull failure times according to prior parameter choices (note different parametrization!)
+# ncycles  how many failure times to simulate for each component
+brWeibullData <- function(ncycles, beta, mttf){
+  C1sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
+  C2sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
+  C3sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
+  C4sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
+  Hsim1  <- rweibull(ncycles, shape = beta[2], scale = (failuretolambda(mttf[2], beta[2]))^(1/beta[2]))
+  Msim1  <- rweibull(ncycles, shape = beta[3], scale = (failuretolambda(mttf[3], beta[3]))^(1/beta[3]))
+  P1sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
+  P2sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
+  P3sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
+  P4sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
+  list(C1 = C1sim1, C2 = C2sim1, C3 = C3sim1, C4 = C4sim1, H = Hsim1,
+       M = Msim1, P1 = P1sim1, P2 = P2sim1, P3 = P3sim1, P4 = P4sim1)  
+}
 
 
 #
