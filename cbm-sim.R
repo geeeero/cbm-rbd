@@ -36,7 +36,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
   repschedfor <- Inf   # for which time is repair scheduled?
   res <- data.frame() # initialize results data frame
   while(gotonext){
-    cat("tnow =", tnow, "failedcompsnow =", failedcompsnow, "\n")
+    cat("tnow =", tnow, ": ") #"failedcompsnow =", failedcompsnow, "\n")
     if (!failed){ # if not failed already in previous loop, check...
       if (all(signnow$Probability == 0)){ # system has failed now, schedule repair for tnow + tprep if not scheduled already
         failed <- TRUE
@@ -110,7 +110,6 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
   ck <- Nk - ek
   for (k in 1:K)
     censlist[[k]] <- rep(repschedfor, ck[k])
-  #print(ftslist); print(censlist)
   nnyn <- nnynlist(n0y0, ftslist, censlist, beta) # updated parameters at end of cycle
   # time the whole cycle took
   tend <- repschedfor + trepa
@@ -127,7 +126,45 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
 }  
 
 
-
+# function to simulate N operational cycles for one machine,
+# i.e. updated parameters from one cycle are used as prior parameters in next cycle
+# sys      system reliability block diagram at t = 0
+# ctypes   list giving the types of components in the system, same format as
+#          used for setCompTypes(), but needs the same order as in survsign table (!!!)
+# compfts  list with elements named like the vertices in sys, giving the N (simulated)
+#          failure times of this component -- assumed that no failure times == 0
+# n0y0     list of K prior parameter pairs c(n0,y0)
+# beta     vector of K fixed weibull shape parameters
+# tnowstep time interval after which current system reliability is re-evaluated
+# hor      how many time units from tnow into the future to calculate sysrelnow
+# tprep    preparation time to do preventive maintenance
+# trepa    time needed to repair the system
+# seqlen   at how many points to evaluate sysrelnow
+# cu       cost of unplanned (corrective) repair action
+# cp       cost of planned (preventive) repair action, cp < cu
+# onecycle whether to use the one-cycle criterion or the renewal-based one
+# timeround to how many digits to round the time points
+simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, trepa = 0, seqlen = 101,
+                      prior = FALSE, cycleupdate = TRUE, cu = 1, cp = 0.2, onecycle = TRUE, timeround = 5){
+  N <- length(compfts[[1]])
+  if (any(sapply(compfts, length) != N))
+    stop("each element of compfts must contain the same number of failure times")
+  compftsi <- lapply(compfts, function(x) x[1])
+  n0y0i <- n0y0
+  res <- list()
+  for (i in 1:N){
+    cat("Operational cycle", i, "\n")
+    res[[i]] <- sim1cycle(sys = sys, ctypes = ctypes, compfts = compftsi, n0y0 = n0y0i, beta = beta,
+                          tnowstep = tnowstep, hor = hor, tprep = tprep, trepa = trepa, seqlen = seqlen,
+                          prior = prior, cu = cu, cp = cp, onecycle = onecycle, timeround = timeround)
+    if (i < N){ # update stuff for next cycle
+      compftsi <- lapply(compfts, function(x) x[i + 1])
+      if (cycleupdate)
+        n0y0i <- res[[i]]$nnyn
+    }
+  }
+  return(res) # or concatenate res dfs, list of nnnyn's, vector of tend, downtime, costrate?
+}
 
 
 
