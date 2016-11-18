@@ -1122,7 +1122,12 @@ Taking the expectation over $\Tsysnow$ in \eqref{eq:gtau} leads to the expected 
 \gnow(\tau) &= \E[g(\tau \mid \Tsysnow)] = \frac{c_p}{\tau} \Rsysnow(\tau) + c_u \int_0^\tau \frac{1}{t} \fsysnow(\tnow + t) \dd t\,,
 \label{eq:gtnowtau}
 \end{align}
-again incorporating all that is known at time $\tnow$.
+and $\tausnow = \arg\min \gnow(\tau)$.
+$\tausnow$, the optimal moment of maintenance as of $\tnow$,
+incorporates thus all that is known at current time $\tnow$.
+%The lower index $\tnow$ of $\tausnow$ emphasizes that
+%depends on $\tnow$, and also on the history of the system.
+Figure~\ref{fig:ghistfig2} illustrates this procedure for a number of current times $\tnow$.
 
 Note that for the integral in \eqref{eq:gtnowtau} to exist, $\E[1/\Tsysnow \mid \Tsysnow > \tnow]$ must exist,
 which is a condition for $\fsysnow(\tnow + t)$ for values of $t$ close to $0$ \citep{2006:coolen-schrijner-coolen}.
@@ -1133,9 +1138,8 @@ as we use a discrete approximation of $\Rsysnow(t)$ and $\fsysnow(t)$, respectiv
 
 Minimizing $\gnow(\tau)$ leads to $\tausnow$,
 the optimal moment of maintenance on a prospective time scale.
-(Our procedure is illustrated for a number of current times $\tnow$ in Figure~\ref{fig:ghistfig2}.)
 The prospective unit cost rate $\cstarnow = \gnow(\tausnow)$ corresponding to $\tausnow$
-thus is the lowest unit cost rate attainable for the remaining lifetime of the system,
+thus is the lowest unit cost rate attainable for the span of the remaining lifetime of the system,
 i.e., for what happens beyond current time $\tnow$.
 Also of interest is the total cost rate at $\tnow$, denoted by $\ctotalnow$.
 This gives the expected unit cost rate calculated over the full time since system start-up,
@@ -1154,20 +1158,21 @@ for our choice of component model.
 \subsection{Numerical optimization of the expected unit cycle cost rate}
 \label{sec:optim}
 
-%*** not possible / *** to minimize $\gnow(\tau)$ analytically.
-***we calculate $\Rsysnow(t)$ on discrete grid from $\tnow$ until some horizon time $\tnow + t_h$.
-$t_h$ can be determined by practical considerations,
-but generally should reach into the tail of $\Rsysnow(t)$
-such that one can be sure to find $\tausnow$.
+Since $\Rsysnow(t)$ is not tractable analytically,
+we calculate $\Rsysnow(t)$ for values of $t$ on a dense grid spanning from $\tnow$ to some horizon time $\tnow + t_h$.
+(The choice of $h_t$ is discussed in more detail below.)
 We calculate $\gnow(\tau)$ on the same grid,
-and determine $\tausnow$ as the minimum over this grid.
+and determine $\tausnow$ by minimizing over this grid.
+Here, we approximate the integral in \eqref{eq:gtnowtau} numerically by a sum,
+where $\fsysnow(t)$ is calculated via differences of $\Rsysnow(t)$ values on the grid.
+%$\gnow(\tau)$ is likewise evaluated on a dense grid,
+%and $\tausnow = \arg\min \gnow(\tau)$ is determined as the minimum over the grid.
 
-We approximate the integral in \eqref{eq:gtnowtau} numerically by a sum,
-where $\fsysnow(t)$ is calculated via differences of $\Rsysnow(t)$ values on a dense grid.
-$\gnow(\tau)$ is likewise evaluated on a dense grid,
-and $\tausnow = \arg\min \gnow(\tau)$ is determined as the minimum over the grid.
-%The lower index $\tnow$ of the optimal moment of maintenance serves to remind that
-%$\tau^*$ depends on $\tnow$, and also on the history of the system.
+The horizon span $t_h$ can be determined by practical considerations,
+but generally should reach far enough into the tail of $\Rsysnow(t)$
+such that $\gnow(\tau)$ is not cut off before it reaches its minimum. %one can be sure to find $\tausnow$.
+Note that from \eqref{eq:gtnowtau} it is clear that one needs only ****
+
 
 ***calculations in \textsf{R} can be vectorized and are thus fast.
 
@@ -1181,10 +1186,55 @@ and $\tausnow = \arg\min \gnow(\tau)$ is determined as the minimum over the grid
 \begin{figure}
 \includegraphics[width=\textwidth]{ghistfig2}
 \caption{System reliability and unit cost rate functions for $\tnow = 0,2,4,6,8$
-for the system depicted in Figure~\ref{fig:brakesys-layout},
+for the system depicted in Figure~\ref{fig:brakesys-layout}
+and prior component models as given in Table~\ref{tab:priorparams},
 assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$,
-and $c_u = 1$, $c_p = 0.2$.}
+and costs $c_u = 1$, $c_p = 0.2$.}
 \label{fig:ghistfig2}
+\end{figure}
+
+
+\section{***numerical examples for complex system layout}
+\label{sec:examples}
+
+***use simplified brake system from ASCE-ASME paper,
+different example histories (when do components fail?)
+
+***In current graphs,
+prior component model parameters are taken as in Table~\ref{tab:priorparams},
+and $c_u = 1$, $c_p = 0.2$. *** plot prior predictive distributions?***
+
+***example figures are with very weak prior info
+(see Table~\ref{tab:priorparams}: $\nkz = 1$ or $2$),
+things could look different for stronger expert information!
+
+***also example where remaining component type is (close to) exponential,
+such that corrective maintenance becomes optimal!
+
+\begin{table}
+\centering
+\begin{tabular}{crrrrrrr}
+  \toprule
+$k$ & $\beta_k$ & $\E[T_i^k]$ & $\ykz$ & $\nkz$ \\
+  \midrule
+M & $2.5$ & $5$\rule{1.5ex}{0ex} & $75.4$ & $2$\rule{1ex}{0ex} \\
+H & $1.2$ & $2$\rule{1.5ex}{0ex} & $ 2.5$ & $1$\rule{1ex}{0ex} \\
+C & $2  $ & $8$\rule{1.5ex}{0ex} & $81.5$ & $1$\rule{1ex}{0ex} \\
+P & $1.5$ & $3$\rule{1.5ex}{0ex} & $ 6.1$ & $1$\rule{1ex}{0ex} \\
+  \bottomrule
+\end{tabular}
+\caption{Prior parameters for the four component types as used in subsequent numerical examples.
+The corresponding expected failure behaviour is visualized in Figure~\ref{fig:comppriorfig1}.}
+\label{tab:priorparams}
+\end{table}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{comppriorfig1}
+\caption{Prior predictive reliability functions corresponding to the values from Table~\ref{tab:priorparams},
+%for the four component types of the system depicted in Figure~\ref{fig:brakesys-layout},
+showing the expected failure behaviour according to this choice of parameters.}
+\label{fig:comppriorfig1}
 \end{figure}
 
 \begin{figure}
@@ -1235,39 +1285,6 @@ leading to lower current (lower left panel) and total (lower right panels) unit 
 \caption{***very late failures: $C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$}
 \label{fig:tauhist3fig3}
 \end{figure}
-
-\section{***numerical examples for complex system layout}
-\label{sec:examples}
-
-***use simplified brake system from ASCE-ASME paper,
-different example histories (when do components fail?)
-
-***In current graphs,
-prior component model parameters are taken as in Table~\ref{tab:priorparams},
-and $c_u = 1$, $c_p = 0.2$. *** plot prior predictive distributions?***
-
-***example figures are with very weak prior info
-(see Table~\ref{tab:priorparams}: $\nkz = 1$ or $2$),
-things could look different for stronger expert information!
-
-***also example where remaining component type is (close to) exponential,
-such that corrective maintenance becomes optimal!
-
-\begin{table}
-\centering
-\begin{tabular}{crrrrrrr}
-  \toprule
-$k$ & $\beta_k$ & $\E[T_i^k]$ & $\ykz$ & $\nkz$ \\
-  \midrule
-M & $2.5$ & $5$\rule{1.5ex}{0ex} & $75.4$ & $2$\rule{1ex}{0ex} \\
-H & $1.2$ & $2$\rule{1.5ex}{0ex} & $ 2.5$ & $1$\rule{1ex}{0ex} \\
-C & $2  $ & $8$\rule{1.5ex}{0ex} & $81.5$ & $1$\rule{1ex}{0ex} \\
-P & $1.5$ & $3$\rule{1.5ex}{0ex} & $ 6.1$ & $1$\rule{1ex}{0ex} \\
-  \bottomrule
-\end{tabular}
-\caption{Prior parameters for the four component types as used in the numeric examples.}
-\label{tab:priorparams}
-\end{table}
 
 
 ***larger simulation study?

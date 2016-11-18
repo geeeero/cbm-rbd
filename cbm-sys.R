@@ -20,7 +20,7 @@ brn0y0 <- list(C=c(brn0[1], failuretolambda(brmttf[1], brbeta[1])),
                H=c(brn0[2], failuretolambda(brmttf[2], brbeta[2])),
                M=c(brn0[3], failuretolambda(brmttf[3], brbeta[3])),
                P=c(brn0[4], failuretolambda(brmttf[4], brbeta[4])))
-# prior
+# system (prior) predictive at tnow = 0
 brfts0 <- list(C=NULL, H=NULL, M=NULL, P=NULL)
 sysrelnow(brsysign, brn0y0, brbeta, brfts0, tnow=0, t=1)
 sysrelnowvec(brsysign, brn0y0, brbeta, brfts0, tnow=0, tvec=1:20)
@@ -47,6 +47,41 @@ sysrelnowvec(br8Hsysign, brn0y0[-2], brbeta[-2], brfts8H[-2], tnow=8, tvec=8:20)
 sysrelnowhor(br8Hsysign, brn0y0[-2], brbeta[-2], brfts8H[-2], tnow=8, hor=10, seqlen=5)
 brtnow8H <- sysrelnowhor(br8Hsysign, brn0y0[-2], brbeta[-2], brfts8[-2], tnow=8, hor=10)
 qplot(brtnow8H$t, brtnow8H$rel)
+
+# component prior predictive reliability functions to visualize prior assumptions
+comphor <- 10; complen <- 201
+onecomp <- graph.formula(s -- 1 -- t)
+Ccomp <- setCompTypes(onecomp, list(C = "1"))
+Hcomp <- setCompTypes(onecomp, list(H = "1"))
+Mcomp <- setCompTypes(onecomp, list(M = "1"))
+Pcomp <- setCompTypes(onecomp, list(P = "1"))
+Crel <- sysrelnowhor(computeSystemSurvivalSignature(Ccomp), brn0y0[1], brbeta[1], brfts0[1],
+                     tnow = 0, hor = comphor, seqlen = complen)
+Hrel <- sysrelnowhor(computeSystemSurvivalSignature(Hcomp), brn0y0[2], brbeta[2], brfts0[2],
+                     tnow = 0, hor = comphor, seqlen = complen)
+Mrel <- sysrelnowhor(computeSystemSurvivalSignature(Mcomp), brn0y0[3], brbeta[3], brfts0[3],
+                     tnow = 0, hor = comphor, seqlen = complen)
+Prel <- sysrelnowhor(computeSystemSurvivalSignature(Pcomp), brn0y0[4], brbeta[4], brfts0[4],
+                     tnow = 0, hor = comphor, seqlen = complen)
+compdf <- rbind(data.frame(Crel, comp = "C"), data.frame(Hrel, comp = "H"),
+                data.frame(Mrel, comp = "M"), data.frame(Prel, comp = "P"))
+# in different facets
+comppriorfig1 <- ggplot(compdf, aes(x = t, y = rel)) + geom_line(aes(group = comp)) + 
+  ylab("Reliability") + scale_x_continuous(breaks=seq(0, 10, by=2), minor_breaks=0:10) +
+  facet_wrap(~ comp, nrow = 2, scales = "free_y") + coord_cartesian(ylim = c(0, 1))
+pdf("comppriorfig1.pdf", width = 6, height = 4)
+comppriorfig1
+dev.off()
+# as different linetypes
+comppriorfig2 <- ggplot(compdf, aes(x = t, y = rel)) + geom_line(aes(linetype = comp)) + 
+  ylab("Reliability") + scale_x_continuous(breaks=seq(0, 10, by=2), minor_breaks=0:10) +
+  guides(linetype = guide_legend(title=NULL)) + coord_cartesian(ylim = c(0, 1))
+pdf("comppriorfig2.pdf", width = 6, height = 4)
+comppriorfig2
+dev.off()
+
+
+
 
 # to plot sysrelnow history
 #brcompfts <- list(C1 = NA, C2 = 6, C3 = 7, C4 = NA, H = NA, M = NA, P1 = NA, P2 = 3, P3 = 4, P4 = NA)
