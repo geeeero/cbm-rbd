@@ -1171,8 +1171,14 @@ where $\fsysnow(t)$ is calculated via differences of $\Rsysnow(t)$ values on the
 The horizon span $t_h$ can be determined by practical considerations,
 but generally should reach far enough into the tail of $\Rsysnow(t)$
 such that $\gnow(\tau)$ is not cut off before it reaches its minimum. %one can be sure to find $\tausnow$.
-Note that from \eqref{eq:gtnowtau} it is clear that one needs only ****
+Note that \eqref{eq:gtnowtau} indicates that values for $\Rsysnow(t)$ and $\fsysnow(t)$ 
+only for $t \leq \tau$ are needed to calculate $\gnow(\tau)$.
 
+We use \textsf{R} \citep{R} for our calculations,
+using the package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
+to calculate survival signatures.
+As the parameter update step is closed-form,
+$\tausnow$ 
 
 ***calculations in \textsf{R} can be vectorized and are thus fast.
 

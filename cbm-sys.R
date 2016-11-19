@@ -335,10 +335,15 @@ brsim2pr <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim2, n0y0
 set.seed(1328)
 brcompftssim1 <- brWeibullData(5, brbeta, brmttf)
 brcompftssim2 <- brWeibullData(5, brbeta, brmttf)
+brcompftssim3 <- brWeibullData(5, brbeta, brmttf)
 brsimN51 <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim1, n0y0 = brn0y0, beta = brbeta,
                       tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
+brsimN51$downtime; brsimN51$tend; brsimN51$costrate
 # overall costrate
 weighted.mean(brsimN51$costrate, brsimN51$tend)
+# to compare: initial taustar is 1.27 with expected cost rate 0.2207986
+# for this data (no system failure before 1.27), we get cost rate 0.2/1.27 = 0.1574803
+# but with 5 replacements over time 5 * 1.27 = 6.35, while we get 15.5 lifetime
 brsimN51fig1 <- ggplot(brsimN51$res, aes(x = tnow, y = taustar)) + 
   geom_line(aes(colour = cycle, group = cycle)) + geom_point(aes(colour = cycle, group = cycle)) +
   xlab(expression(t[now])) + ylab(expression(paste(tau["*"]^(t[now]), (t[now])))) +
@@ -361,12 +366,23 @@ pdf("brsimN52fig1.pdf", width = 5, height = 3)
 brsimN52fig1
 dev.off()
 
+brsimN53 <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim3, n0y0 = brn0y0, beta = brbeta,
+                      tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
+brsimN53$downtime; brsimN53$tend; brsimN53$costrate
+weighted.mean(brsimN53$costrate, brsimN53$tend)
+brsimN53fig1 <- ggplot(brsimN53$res, aes(x = tnow, y = taustar)) + 
+  geom_line(aes(colour = cycle, group = cycle)) + geom_point(aes(colour = cycle, group = cycle)) +
+  xlab(expression(t[now])) + ylab(expression(paste(tau["*"]^(t[now]), (t[now])))) +
+  guides(colour = guide_legend(title="Cycle")) + scale_y_continuous(breaks=seq(0, 2, by=0.5), minor_breaks=seq(0, 2, by=0.25))
+pdf("brsimN53fig1.pdf", width = 5, height = 3)
+brsimN53fig1
+dev.off()
+
+
+
 
 # -------------------------------------------------------------------------
 
-# simulate Weibull failure times according to prior parameter choices (note different parametrization!)
-set.seed(1328)
-ncycles <- 5
 
 
 
