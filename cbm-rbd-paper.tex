@@ -1127,7 +1127,7 @@ $\tausnow$, the optimal moment of maintenance as of $\tnow$,
 incorporates thus all that is known at current time $\tnow$.
 %The lower index $\tnow$ of $\tausnow$ emphasizes that
 %depends on $\tnow$, and also on the history of the system.
-Figure~\ref{fig:ghistfig2} illustrates this procedure for a number of current times $\tnow$.
+Figure~\ref{fig:ghist1fig2} illustrates this procedure for a number of current times $\tnow$.
 
 Note that for the integral in \eqref{eq:gtnowtau} to exist, $\E[1/\Tsysnow \mid \Tsysnow > \tnow]$ must exist,
 which is a condition for $\fsysnow(\tnow + t)$ for values of $t$ close to $0$ \citep{2006:coolen-schrijner-coolen}.
@@ -1147,7 +1147,7 @@ under the assumption that maintenance is scheduled for $\tstarnow = \tnow + \tau
 $\ctotalnow$ generally decreases with $\tnow$ since for larger $\tnow$, maintenance costs are spread over a longer time.
 However, when many (or few but critical) components fail, $\ctotalnow$ may increase,
 since then, system failure becomes much more likely, leading to a higher $\cstarnow$.
-These relations are depicted in Figure~\ref{fig:tauhistfig2}. %for a numerical example, 
+These relations are depicted in Figure~\ref{fig:tauhist1fig2}. %for a numerical example, 
 
 We will describe next how we numerically evaluate \eqref{eq:gtnowtau} and find $\tausnow$
 for our choice of component model.
@@ -1190,13 +1190,13 @@ $\tausnow$
 
 
 \begin{figure}
-\includegraphics[width=\textwidth]{ghistfig2}
+\includegraphics[width=\textwidth]{ghist1fig2}
 \caption{System reliability and unit cost rate functions for $\tnow = 0,2,4,6,8$
 for the system depicted in Figure~\ref{fig:brakesys-layout}
 and prior component models as given in Table~\ref{tab:priorparams},
 assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$,
 and costs $c_u = 1$, $c_p = 0.2$.}
-\label{fig:ghistfig2}
+\label{fig:ghist1fig2}
 \end{figure}
 
 
@@ -1211,7 +1211,7 @@ prior component model parameters are taken as in Table~\ref{tab:priorparams},
 and $c_u = 1$, $c_p = 0.2$. *** plot prior predictive distributions?***
 
 ***example figures are with very weak prior info
-(see Table~\ref{tab:priorparams}: $\nkz = 1$ or $2$),
+(see Table~\ref{tab:priorparams}: $\nkz = 1$ for all $k$),
 things could look different for stronger expert information!
 
 ***also example where remaining component type is (close to) exponential,
@@ -1223,38 +1223,45 @@ such that corrective maintenance becomes optimal!
   \toprule
 $k$ & $\beta_k$ & $\E[T_i^k]$ & $\ykz$ & $\nkz$ \\
   \midrule
-M & $2.5$ & $5$\rule{1.5ex}{0ex} & $75.4$ & $2$\rule{1ex}{0ex} \\
-H & $1.2$ & $2$\rule{1.5ex}{0ex} & $ 2.5$ & $1$\rule{1ex}{0ex} \\
-C & $2  $ & $8$\rule{1.5ex}{0ex} & $81.5$ & $1$\rule{1ex}{0ex} \\
-P & $1.5$ & $3$\rule{1.5ex}{0ex} & $ 6.1$ & $1$\rule{1ex}{0ex} \\
+% test prior
+%M & $2.5$ & $5$\rule{1.5ex}{0ex} & $75.4$ & $2$\rule{1ex}{0ex} \\
+%H & $1.2$ & $2$\rule{1.5ex}{0ex} & $ 2.5$ & $1$\rule{1ex}{0ex} \\
+%C & $2  $ & $8$\rule{1.5ex}{0ex} & $81.5$ & $1$\rule{1ex}{0ex} \\
+%P & $1.5$ & $3$\rule{1.5ex}{0ex} & $ 6.1$ & $1$\rule{1ex}{0ex} \\
+% prior 1
+M & $2.5$ & $ 5$\rule{1.5ex}{0ex} & $244.1$ & $1$\rule{1ex}{0ex} \\
+H & $1  $ & $10$\rule{1.5ex}{0ex} & $ 10.0$ & $1$\rule{1ex}{0ex} \\
+C & $2  $ & $ 8$\rule{1.5ex}{0ex} & $ 11.5$ & $1$\rule{1ex}{0ex} \\
+P & $1.5$ & $ 5$\rule{1.5ex}{0ex} & $ 13.0$ & $1$\rule{1ex}{0ex} \\
   \bottomrule
 \end{tabular}
 \caption{Prior parameters for the four component types as used in subsequent numerical examples.
-The corresponding expected failure behaviour is visualized in Figure~\ref{fig:comppriorfig1}.}
+The corresponding expected failure behaviour is visualized in Figure~\ref{fig:compprior1fig1}.}
 \label{tab:priorparams}
 \end{table}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\textwidth]{comppriorfig1}
+\includegraphics[width=0.8\textwidth]{compprior1fig1}
 \caption{Prior predictive reliability functions corresponding to the values from Table~\ref{tab:priorparams},
 %for the four component types of the system depicted in Figure~\ref{fig:brakesys-layout},
 showing the expected failure behaviour according to this choice of parameters.}
-\label{fig:comppriorfig1}
+\label{fig:compprior1fig1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=\textwidth]{tauhistfig2}
+\includegraphics[width=\textwidth]{tauhist1fig2}
 \caption{$\tausnow$, $\tstarnow = \tnow + \tausnow$, $\cstarnow = \gnow(\tausnow)$,
 and the total unit cost rate $\ctotalnow$ as functions of $\tnow$
 for the system depicted in Figure~\ref{fig:brakesys-layout},
 assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$,
 and $c_u = 1$, $c_p = 0.2$.
-$\tausnow$ (top left panel) first decreases slightly, then remains more or less constant during failure-free periods,
+%$\tausnow$ (top left panel) first decreases slightly, then remains more or less constant during failure-free periods,
+$\tausnow$ (top left panel) first decreases, then starts to increase during failure-free periods,
 dropping significantly at the failures of components $P_2$, $P_3$ and $H$ only.
-If $\tprep = 0.5$, the drop of $\tausnow$ from $0.72$ to $0.38$ at $\tnow = 8$ would trigger a maintenance action
-at (absolute) time $8.5$.
-Since $\tausnow$ does not change dramatically most of the time, $t^*$,
+If $\tprep = 1$, the drop of $\tausnow$ from $1.43$ to $0.91$ at $\tnow = 4$ would trigger a maintenance action
+at (absolute) time $5$.
+Since $\tausnow$ does not change dramatically most of the time, $\tstarnow$,
 the cost-optimal moment of maintenance on the absolute timescale (top right panel),
 steadily increases, with small drops corresponding to drops in $\tausnow$,
 indicating that as time progresses, accumulated information indicates that maintenance can be postponed.
@@ -1263,22 +1270,23 @@ differing from the overall cost rate $\ctotalnow$ (lower right panel).
 %For the maintenance action triggered at $\tnow = 8$,
 %the overall cost rate is $c_p / 8.5 = 0.024$ if the system does not fail until time $8.5$,
 %and between $c_u / 8 = 0.125$ and $c_u / 8.5 = 0.118$ if the system fails.}
-At time $8$, the overall expected cost rate for repair scheduled at time $8.38$ is $0.044$,
-up from $0.036$ for repair scheduled at time $8.62$, as cost-optimal at time $7.9$.}
-\label{fig:tauhistfig2}
+At time $4$, the overall expected cost rate for repair scheduled at time $4.91$ is $0.064$,
+up from $0.055$ for repair scheduled at time $5.33$, as cost-optimal at time $3.9$.}
+\label{fig:tauhist1fig2}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=\textwidth]{tauhistfig3}
+\includegraphics[width=\textwidth]{tauhist1fig3}
 \caption{Illustration of the gains due to the parameter update
 assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$.
 $\tausnow$ (top left panel) is consistently lower for the non-adaptive algorithm,
-same with $t^*$ (top right panel).
+same with $\tstarnow$ (top right panel).
 The adaptive algorithm recongnizes the higher reliability of system components,
 leading to lower current (lower left panel) and total (lower right panels) unit cost rates.}
-\label{fig:tauhistfig3}
+\label{fig:tauhist1fig3}
 \end{figure}
 
+%****************************
 
 \begin{figure}
 \includegraphics[width=\textwidth]{tauhist2fig3}
@@ -1293,7 +1301,9 @@ leading to lower current (lower left panel) and total (lower right panels) unit 
 \end{figure}
 
 
-***larger simulation study?
+%*******************************
+
+larger simulation study?
 
 
 \section{Outlook}
