@@ -113,16 +113,18 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
   nnyn <- nnynlist(n0y0, ftslist, censlist, beta) # updated parameters at end of cycle
   # time the whole cycle took
   tend <- repschedfor + trepa
+  # time the system functioned
+  tfunc <- max(res$tnow[!(res$failed)])
   # downtime and unit cost rate
   if (failed){
     downtime <- repschedfor - min(res$tnow[res$failed]) # only in tnowstep resolution!
-    costrate <- cu / tend
+    costrate <- cu / tend # *** or / tfunc? or penalty cost for downtime?
   } else {
     downtime <- 0
-    costrate <- cp / tend
+    costrate <- cp / tend # *** or / tfunc? or penalty cost for downtime?
   }
   # return res and all
-  list(res = res, nnyn = nnyn, tend = tend, downtime = downtime, costrate = costrate)
+  list(res = res, nnyn = nnyn, tend = tend, tfunc = tfunc, downtime = downtime, costrate = costrate)
 }  
 
 
@@ -167,9 +169,20 @@ simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, tr
   }
   res2$cycle <- as.factor(res2$cycle)
   tendvec <- sapply(res, function(resi) resi$tend)
+  tfuncvec <- sapply(res, function(resi) resi$tfunc)
   downtimevec <- sapply(res, function(resi) resi$downtime)
   costratevec <- sapply(res, function(resi) resi$costrate)
-  return(list(res = res2, nnyn = nnynlist, tend = tendvec, downtime = downtimevec, costrate = costratevec))
+  return(list(res = res2, nnyn = nnynlist, tend = tendvec, tfunc = tfuncvec, downtime = downtimevec, costrate = costratevec))
+}
+
+# function to calculate tend, tfunc, downtime, costrate for age-based policy from simNcycle object
+simNcycleAgebased <- function(simNcycleobj, tprep = 0.5, trepa = 0, cu = 1, cp = 0.2){
+  
+}
+
+# function to calculate tend, tfunc, downtime, costrate for corrective policy from simNcycle object
+simNcycleCorrective <- function(simNcycleobj, tprep = 0.5, trepa = 0, cu = 1, cp = 0.2){
+  
 }
 
 # function to simulate Weibull failure times according to prior parameter choices (note different parametrization!)
