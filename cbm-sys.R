@@ -378,12 +378,27 @@ pdf("brsimN53fig1.pdf", width = 5, height = 3)
 brsimN53fig1
 dev.off()
 
-
-
-
 # -------------------------------------------------------------------------
 
+# simulate 20 5-cycle machines with priors as given
+set.seed(2211)
+brsim5cycle20data <- list()
+for (i in 1:20){
+  brsim5cycle20data[[i]] <- brWeibullData(5, brbeta, brmttf)
+}
+brsim5cycle20 <- list()
+for (i in 1:20){
+  brsim5cycle20[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = brsim5cycle20data[[i]], n0y0 = brn0y0,
+                                  beta = brbeta, tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
+}
 
+brsim5cycle20summary <- data.frame(id = 1:20,
+                                   downtime = sapply(brsim5cycle20, function(res) sum(res$downtime)),
+                                   meantend = sapply(brsim5cycle20, function(res) mean(res$tend)),
+                                   meancostrate = sapply(brsim5cycle20, function(res) weighted.mean(res$costrate, res$tend)))
 
+brsim5cycle20fig1 <- ggplot(melt(brsim5cycle20summary, "id"), aes(x = id, y = value)) + 
+  geom_line(aes(colour = variable, group = variable)) + geom_point(aes(colour = variable, group = variable))
+brsim5cycle20fig1
 
 #
