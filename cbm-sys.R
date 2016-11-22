@@ -409,4 +409,16 @@ asdf <- induced_subgraph(asdf, vids=V(asdf)[!(name %in% "A")])
 computeSystemSurvivalSignature(asdf)
 distances(asdf, "s", "t")
 
+# -------------------------------------------------------------------------
+
+# changing labels for facets, etc.
+br1taus1finelabs <- as_labeller(c(taustar = "taustar",
+                                  tstar = "tstar",
+                                  cstar = "gstar",
+                                  ctotal = "gtotal"))
+tauhist1fig2 <- ggplot(melt(br1taus1fine, "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(group = variable)) + ylab("") + geom_point(aes(group = variable), size = 0.15) +
+  facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = br1taus1finelabs)
+
+
 #

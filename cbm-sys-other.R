@@ -55,6 +55,9 @@ pdf("compprior1fig2.pdf", width = 6, height = 4)
 compprior1fig2
 dev.off()
 
-
+Crel1[which.min(abs(Crel1$rel - 0.5)),]
+Hrel1[which.min(abs(Hrel1$rel - 0.5)),]
+Mrel1[which.min(abs(Mrel1$rel - 0.5)),]
+Prel1[which.min(abs(Prel1$rel - 0.5)),]
 
 #
