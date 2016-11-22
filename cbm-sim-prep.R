@@ -13,14 +13,15 @@
 # beta     vector of K fixed weibull shape parameters
 # tnowstep time interval after which current system reliability is re-evaluated
 # hor      how many time units from tnow into the future to calculate sysrelnow
-# thresh   threshold time below which to do preventive maintenance
+# tprep    preparation time to do preventive maintenance
+# trepa    time needed to repair the system
 # seqlen   at how many points to evaluate sysrelnow
 # cu       cost of unplanned (corrective) repair action
 # cp       cost of planned (preventive) repair action, cp < cu
 # onecycle whether to use the one-cycle criterion or the renewal-based one
 # timeround to how many digits to round the time points
-sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, seqlen = 101,
-                      prior = FALSE, cu = 1, cp = 0.2, onecycle = TRUE, timeround = 5){
+sim1cycleprep <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, trepa = 0,
+                          seqlen = 101, prior = FALSE, cu = 1, cp = 0.2, onecycle = TRUE, timeround = 5){
   K <- length(ctypes)
   ftschron <- sort(unlist(compfts)) # when something fails
   # initializing: initial arguments for gnowhor
@@ -32,40 +33,50 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
   failedcompsnow <- numeric(0)
   gotonext <- TRUE     # indicator that loop should go on
   failed <- FALSE      # indicator whether the system has failed
+  repschedfor <- Inf   # for which time is repair scheduled?
   res <- data.frame() # initialize results data frame
   while(gotonext){
-    cat("tnow =", tnow, ": ") #"failedcompsnow =", failedcompsnow, "\n")
-    if (all(signnow$Probability == 0)){ # system has failed now, repair with cost cu
-      failed <- TRUE
-      cost <- cu
+    cat("tnow =", tnow, ":") #"failedcompsnow =", failedcompsnow, "\n")
+    if (!failed){ # if not failed already in previous loop, check...
+      if (all(signnow$Probability == 0)){ # system has failed now, schedule repair for tnow + tprep if not scheduled already
+        failed <- TRUE
+        taustarnow <- NA
+        if (repschedfor == Inf)
+          repschedfor <- tnow + tprep
+      } else { # system has not failed this time
+        if (repschedfor == Inf){ # no repair scheduled yet
+          # calculate current taustar
+          gnowvec <- gnowhor(signnow, n0y0[wctnow], beta[wctnow], ftsnow[wctnow], tnow, hor = hor,
+                             seqlen = seqlen, prior = prior, cu = cu, cp = cp, onecycle = onecycle)
+          taustarnow <- gnowvec$tau[which.min(gnowvec$gnow)] - tnow
+          if (taustarnow <= tprep){ # schedule repair for tnow + tprep if not scheduled already
+            repschedfor <- tnow + tprep
+          } # else do nothing & go on to next loop (repschedfor is still Inf)
+        } else { # repair already scheduled: do nothing
+          taustarnow <- NA
+        }
+      } # end "system has not failed this time"
+    } else { # system was in failed state already at start of loop 
       taustarnow <- NA
+    }
+    # now we know if failed or not, if and when repair scheduled
+    cat("failed =", failed, "taustar =", taustarnow, "repschedfor =", repschedfor, "\n")
+    if (tnow >= repschedfor){ # time for repair has come, operational cycle ends
       gotonext <- FALSE
-    } else { # system has not failed: calculate taustarnow and check whether to repair preventively
-      gnowvec <- gnowhor(signnow, n0y0[wctnow], beta[wctnow], ftsnow[wctnow], tnow, hor = hor,
-                         seqlen = seqlen, prior = prior, cu = cu, cp = cp, onecycle = onecycle)
-      taustarnow <- gnowvec$tau[which.min(gnowvec$gnow)] - tnow
-      if (taustarnow <= thresh){ # repair preventively if taustar below theshold
-        cost <- cp
-        gotonext <- FALSE
-      } # else do nothing & go on to next loop      
-    } # end "system has not failed this time"
-    # now we know if failed or not, if repair done
-    cat("failed =", failed, "taustar =", taustarnow, "\n")
+    }
     # write all current things in results data frame
-    resnow <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow)
+    resnow <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow, repschedfor = repschedfor)
     res <- rbind(res, resnow)
-    # now prepare for next loop: update stuff only if needed
-    if (gotonext){
-      tnow <- round(tnow + tnowstep, timeround)
+    # now prepare for next loop
+    tnow <- round(tnow + tnowstep, timeround)
+    # update stuff if system not failed (otherwise not needed except tnow update!)
+    if (!failed){
       failedcompsnow <- ftschron[ftschron <= tnow]
       if (length(failedcompsnow) > 0){ # update stuff only when the first component has failed
         # recalculates everything from scratch (do this in a more clever way?)
         sysnow <- induced_subgraph(sys, vids=V(sys)[!(name %in% names(failedcompsnow))])
-        # catch error when sysnow now contains vertices s and t only (suddenly all components fail)
-        if(distances(sysnow, "s", "t") < Inf)
-          signnow <- computeSystemSurvivalSignature(sysnow)
-        else
-          signnow <- data.frame(Probability = 0)
+        # TODO: catch error when sysnow now contains vertices s and t only (suddenly all components fail) 
+        signnow <- computeSystemSurvivalSignature(sysnow)
         # to which fts list element do the failure times in failedcompsnow belong?
         ftsnowindex <- sapply(ctypes, function(ctypesl) names(failedcompsnow) %in% ctypesl)
         if (length(failedcompsnow) == 1)
@@ -78,12 +89,12 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
         # which component types are now present? (subset of 1:K)
         wctnow <- which(names(ctypes) %in% names(signnow))
       }
-    } # end update if gotonext = TRUE
+    } # end update if system not failed
   } # end while loop
   # update Weibull parameters (all component types!) for next operational cycle
-  # get failure times from compftslist until tnow (time of planned / unplanned repair)
+  # get failure times from compftslist until time of repair repschedfor
   ftslist <- as.list(rep(list(NULL), K))
-  ftsfinal <- ftschron[ftschron <= tnow]
+  ftsfinal <- ftschron[ftschron <= repschedfor]
   ftsindex <- sapply(ctypes, function(ctypesl) names(ftsfinal) %in% ctypesl)
   if (length(ftsfinal) == 1)
     ftsindex <- which(ftsindex)
@@ -91,21 +102,29 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
     ftsindex <- apply(ftsindex, 1, which)
   for (k in 1:K)
     ftslist[[k]] <- ftsfinal[ftsindex == k]
-  # censoring time is last tnow, number of censored components from
+  # censoring time is last repschedfor, number of censored components from
   censlist <- as.list(rep(list(NULL), K))
   ek <- sapply(ftslist, length)
   Nk <- apply(sign, 2, max)
   Nk <- Nk[-length(Nk)]
   ck <- Nk - ek
   for (k in 1:K)
-    censlist[[k]] <- rep(tnow, ck[k])
+    censlist[[k]] <- rep(repschedfor, ck[k])
   nnyn <- nnynlist(n0y0, ftslist, censlist, beta) # updated parameters at end of cycle
-  # time the system functioned ( = last tnow where not failed)
+  # time the whole cycle took
+  tend <- repschedfor + trepa
+  # time the system functioned
   tfunc <- max(res$tnow[!(res$failed)])
-  # realized unit cost rate
-  costrate <- cost / tnow
+  # downtime and unit cost rate
+  if (failed){
+    downtime <- repschedfor - min(res$tnow[res$failed]) # only in tnowstep resolution!
+    costrate <- cu / tend # *** or / tfunc? or penalty cost for downtime?
+  } else {
+    downtime <- 0
+    costrate <- cp / tend # *** or / tfunc? or penalty cost for downtime?
+  }
   # return res and all
-  list(res = res, nnyn = nnyn, tfunc = tfunc, tend = tnow, costrate = costrate)
+  list(res = res, nnyn = nnyn, tend = tend, tfunc = tfunc, downtime = downtime, costrate = costrate)
 }  
 
 
@@ -120,14 +139,15 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
 # beta     vector of K fixed weibull shape parameters
 # tnowstep time interval after which current system reliability is re-evaluated
 # hor      how many time units from tnow into the future to calculate sysrelnow
-# thresh   threshold time below which to do preventive maintenance
+# tprep    preparation time to do preventive maintenance
+# trepa    time needed to repair the system
 # seqlen   at how many points to evaluate sysrelnow
 # cu       cost of unplanned (corrective) repair action
 # cp       cost of planned (preventive) repair action, cp < cu
 # onecycle whether to use the one-cycle criterion or the renewal-based one
 # timeround to how many digits to round the time points
-simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, seqlen = 101,
-                      prior = FALSE, cycleupdate = TRUE, cu = 1, cp = 0.2, onecycle = TRUE, timeround = 5){
+simNcycleprep <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, tprep, trepa = 0, seqlen = 101,
+                          prior = FALSE, cycleupdate = TRUE, cu = 1, cp = 0.2, onecycle = TRUE, timeround = 5){
   N <- length(compfts[[1]])
   if (any(sapply(compfts, length) != N))
     stop("each element of compfts must contain the same number of failure times")
@@ -136,9 +156,9 @@ simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
   res <- res2 <- nnyn <- list()
   for (i in 1:N){
     cat("Operational cycle", i, "\n")
-    res[[i]] <- sim1cycle(sys = sys, ctypes = ctypes, compfts = compftsi, n0y0 = n0y0i, beta = beta,
-                          tnowstep = tnowstep, hor = hor, thresh = thresh, seqlen = seqlen, prior = prior,
-                          cu = cu, cp = cp, onecycle = onecycle, timeround = timeround)
+    res[[i]] <- sim1cycleprep(sys = sys, ctypes = ctypes, compfts = compftsi, n0y0 = n0y0i, beta = beta,
+                              tnowstep = tnowstep, hor = hor, tprep = tprep, trepa = trepa, seqlen = seqlen,
+                          prior = prior, cu = cu, cp = cp, onecycle = onecycle, timeround = timeround)
     res2 <- rbind(res2, data.frame(cycle = i, res[[i]]$res))
     nnynlist <- list(nnyn, res[[i]]$nnyn)
     if (i < N){ # update stuff for next cycle
@@ -148,37 +168,11 @@ simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
     }
   }
   res2$cycle <- as.factor(res2$cycle)
-  tfuncvec <- sapply(res, function(resi) resi$tfunc)
   tendvec <- sapply(res, function(resi) resi$tend)
+  tfuncvec <- sapply(res, function(resi) resi$tfunc)
+  downtimevec <- sapply(res, function(resi) resi$downtime)
   costratevec <- sapply(res, function(resi) resi$costrate)
-  return(list(res = res2, nnyn = nnynlist, tfunc = tfuncvec, tend = tendvec, costrate = costratevec))
-}
-
-# function to calculate tend, tfunc, costrate for age-based policy from simNcycle object
-#simNcycleAgebased <- function(simNcycleobj, tprep = 0.5, trepa = 0, cu = 1, cp = 0.2){
-#  
-#}
-
-# function to calculate tend, tfunc, costrate for corrective policy from simNcycle object
-#simNcycleCorrective <- function(simNcycleobj, tprep = 0.5, trepa = 0, cu = 1, cp = 0.2){
-#  
-#}
-
-# function to simulate Weibull failure times according to prior parameter choices (note different parametrization!)
-# ncycles  how many failure times to simulate for each component
-brWeibullData <- function(ncycles, beta, mttf){
-  C1sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
-  C2sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
-  C3sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
-  C4sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
-  Hsim1  <- rweibull(ncycles, shape = beta[2], scale = (failuretolambda(mttf[2], beta[2]))^(1/beta[2]))
-  Msim1  <- rweibull(ncycles, shape = beta[3], scale = (failuretolambda(mttf[3], beta[3]))^(1/beta[3]))
-  P1sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
-  P2sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
-  P3sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
-  P4sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
-  list(C1 = C1sim1, C2 = C2sim1, C3 = C3sim1, C4 = C4sim1, H = Hsim1,
-       M = Msim1, P1 = P1sim1, P2 = P2sim1, P3 = P3sim1, P4 = P4sim1)  
+  return(list(res = res2, nnyn = nnynlist, tend = tendvec, tfunc = tfuncvec, downtime = downtimevec, costrate = costratevec))
 }
 
 

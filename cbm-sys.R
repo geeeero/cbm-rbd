@@ -312,22 +312,22 @@ dev.off()
 brcompftssim <- list(C1 = 10, C2 = 6, C3 = 7, C4 = 10, H = 8,  M = 12, P1 = 10, P2 = 3, P3 = 4, P4 = 10)
 
 brsim1 <- sim1cycle(sys = br, ctypes = brctypes, compfts = brcompftssim, n0y0 = brn0y0, beta = brbeta,
-                    tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = FALSE)
+                    tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401, prior = FALSE)
 brsim1pr <- sim1cycle(sys = br, ctypes = brctypes, compfts = brcompftssim, n0y0 = brn0y0, beta = brbeta,
-                      tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = TRUE)
+                      tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401, prior = TRUE)
 
 # quick sexample where system fails at time 3.7
 brcompftssim0 <- list(C1 = 10, C2 = 6, C3 = 7, C4 = 10, H = 3.6,  M = 3.7, P1 = 10, P2 = 3, P3 = 4, P4 = 10)
 brsim0 <- sim1cycle(sys = br, ctypes = brctypes, compfts = brcompftssim0, n0y0 = brn0y0, beta = brbeta,
-                    tnowstep = 0.25, hor = 4, tprep = 1, trepa = 0, seqlen = 401, prior = FALSE)
+                    tnowstep = 0.25, hor = 4, thresh = 1, seqlen = 401, prior = FALSE)
 
 # simulate several operational cycles
 brcompftssim2 <- list(C1 = c(10, 10), C2 = c(6, 6), C3 = c(7, 7), C4 = c(10, 10), H = c(8, 8),
                       M = c(12, 12), P1 = c(10, 10), P2 = c(3, 3), P3 = c(4, 4), P4 = c(10, 10))
 brsim2pr <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim2, n0y0 = brn0y0, beta = brbeta,
-                      tnowstep = 0.5, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = TRUE)
-brsim2pr <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim2, n0y0 = brn0y0, beta = brbeta,
-                      tnowstep = 0.5, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401, prior = TRUE, cycleupdate = FALSE)
+                      tnowstep = 0.5, hor = 4, thresh = 0.5, seqlen = 401, prior = TRUE)
+brsim2prpr <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim2, n0y0 = brn0y0, beta = brbeta,
+                        tnowstep = 0.5, hor = 4, thresh = 0.5, seqlen = 401, prior = TRUE, cycleupdate = FALSE)
 
 # -------------------------------------------------------------------------
 
@@ -337,13 +337,13 @@ brcompftssim1 <- brWeibullData(5, brbeta, brmttf)
 brcompftssim2 <- brWeibullData(5, brbeta, brmttf)
 brcompftssim3 <- brWeibullData(5, brbeta, brmttf)
 brsimN51 <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim1, n0y0 = brn0y0, beta = brbeta,
-                      tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
-brsimN51$downtime; brsimN51$tend; brsimN51$costrate
+                      tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401)
+brsimN51$tend; brsimN51$costrate
 # overall costrate
 weighted.mean(brsimN51$costrate, brsimN51$tend)
 # to compare: initial taustar is 1.27 with expected cost rate 0.2207986
 # for this data (no system failure before 1.27), we get cost rate 0.2/1.27 = 0.1574803
-# but with 5 replacements over time 5 * 1.27 = 6.35, while we get 15.5 lifetime
+# but with 5 replacements over time 5 * 1.27 = 6.35, while we get 13 lifetime
 brsimN51fig1 <- ggplot(brsimN51$res, aes(x = tnow, y = taustar)) + 
   geom_line(aes(colour = cycle, group = cycle)) + geom_point(aes(colour = cycle, group = cycle)) +
   xlab(expression(t[now])) + ylab(expression(paste(tau["*"]^(t[now]), (t[now])))) +
@@ -355,8 +355,8 @@ dev.off()
 sort(sapply(brcompftssim1, function(x) x[1]))
 
 brsimN52 <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim2, n0y0 = brn0y0, beta = brbeta,
-                      tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
-brsimN52$downtime; brsimN52$tend; brsimN52$costrate
+                      tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401)
+brsimN52$tend; brsimN52$costrate
 weighted.mean(brsimN52$costrate, brsimN52$tend)
 brsimN52fig1 <- ggplot(brsimN52$res, aes(x = tnow, y = taustar)) + 
   geom_line(aes(colour = cycle, group = cycle)) + geom_point(aes(colour = cycle, group = cycle)) +
@@ -367,8 +367,8 @@ brsimN52fig1
 dev.off()
 
 brsimN53 <- simNcycle(sys = br, ctypes = brctypes, compfts = brcompftssim3, n0y0 = brn0y0, beta = brbeta,
-                      tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
-brsimN53$downtime; brsimN53$tend; brsimN53$costrate
+                      tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401)
+brsimN53$tend; brsimN53$costrate
 weighted.mean(brsimN53$costrate, brsimN53$tend)
 brsimN53fig1 <- ggplot(brsimN53$res, aes(x = tnow, y = taustar)) + 
   geom_line(aes(colour = cycle, group = cycle)) + geom_point(aes(colour = cycle, group = cycle)) +
@@ -389,16 +389,24 @@ for (i in 1:20){
 brsim5cycle20 <- list()
 for (i in 1:20){
   brsim5cycle20[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = brsim5cycle20data[[i]], n0y0 = brn0y0,
-                                  beta = brbeta, tnowstep = 0.1, hor = 4, tprep = 0.5, trepa = 0, seqlen = 401)
+                                  beta = brbeta, tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401)
 }
 
 brsim5cycle20summary <- data.frame(id = 1:20,
-                                   downtime = sapply(brsim5cycle20, function(res) sum(res$downtime)),
                                    meantend = sapply(brsim5cycle20, function(res) mean(res$tend)),
                                    meancostrate = sapply(brsim5cycle20, function(res) weighted.mean(res$costrate, res$tend)))
 
 brsim5cycle20fig1 <- ggplot(melt(brsim5cycle20summary, "id"), aes(x = id, y = value)) + 
   geom_line(aes(colour = variable, group = variable)) + geom_point(aes(colour = variable, group = variable))
 brsim5cycle20fig1
+
+# -------------------------------------------------------------------------
+
+# catch error when no connection between s and t in graph
+asdf <- graph.formula(s -- A -- t)
+asdf <- setCompTypes(asdf, list("A" = "A"))
+asdf <- induced_subgraph(asdf, vids=V(asdf)[!(name %in% "A")])
+computeSystemSurvivalSignature(asdf)
+distances(asdf, "s", "t")
 
 #
