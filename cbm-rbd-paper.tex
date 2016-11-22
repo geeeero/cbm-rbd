@@ -195,6 +195,7 @@
 \newcommand{\gnow}{g^{(\tnow)}}
 \newcommand{\tausnow}{\tau_*^{(\tnow)}}
 \newcommand{\tprep}{\tau_{\text{prep}}}
+\newcommand{\tthresh}{\tau_{\text{thresh}}}
 \newcommand{\tstarnow}{t_*^{(\tnow)}}
 \newcommand{\cstarnow}{c_*^{(\tnow)}}
 \newcommand{\ctotalnow}{c_\text{total}^{(\tnow)}}
@@ -981,7 +982,8 @@ the adaptive and dynamic timespan $\tausnow$ which gives the time from $\tnow$ u
 Close to system startup, $\tausnow$ will be large;
 but as components in the system age and some indeed fail over time,
 $\tausnow$ will typically decrease.
-Let $\tprep$ be the timespan needed to prepare maintenance work.
+%Let $\tprep$ be the timespan needed to prepare maintenance work.
+Let $\tthresh$ be
 As soon as $\tausnow$ decreases below $\tprep$,
 a preventive maintenance action is initiated.
 This operational procedure is described in more detail in Section~\ref{sec:operationalprocedure}.
