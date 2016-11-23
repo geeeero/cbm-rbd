@@ -1013,11 +1013,40 @@ and shows how $\tausnow$ is determined in this situation.
 Numerical examples comparing results for three exemplary failure histories are given in Section~\ref{sec:examples},
 and a small simulation study is discussed in Section~\ref{sec:sim}.
 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+[node distance=10mm,
+ font=\footnotesize,
+ box/.style={draw, rectangle, thick, minimum height=6mm, minimum width=26mm, rounded corners=2mm},
+ pfeil/.style={-latex', very thick}]
+\node (startup) [box]                       {\parbox{20ex}{\centering system start-up\\ (all comp.\ new)}};
+\node (sysfail) [box, right=of startup]     {system failed?};
+\node (tauchck) [box, below=6mm of sysfail] {$\tausnow < \tthresh$?};
+\node (gotonxt) [box, below=6mm of tauchck] {\parbox{15ex}{\centering continue to\\ next $\tnow$}};
+\draw [thick, dashed, rounded corners=2mm] ($(gotonxt.south east) + (2mm,-1mm)$) rectangle ($(sysfail.north west) + (-5mm,1mm)$) node[above left=0mm and -14mm] {each $\tnow$};
+\node [above left=0mm and -8mm of startup] {$t=0$};
+\node (correct) [box, right=of sysfail, minimum width=18mm] {\parbox{14ex}{\centering corrective\\ maintenance\\ (cost $c_u$)}};
+\node (prevent) [box, right=of tauchck, minimum width=18mm] {\parbox{14ex}{\centering preventive\\ maintenance\\ (cost $c_p$)}};
+\node (update) [box, below right=10mm and -4mm of prevent, minimum width=10mm] {\parbox{12ex}{\centering update parameters}};
+\draw[pfeil] (startup) -- (sysfail);
+\draw[pfeil] (sysfail) -- (tauchck) node[midway, right] {no};
+\draw[pfeil] (tauchck) -- (gotonxt) node[midway, right] {no};
+\draw[very thick] (gotonxt.west) -| ($(sysfail.west) + (-3mm,0mm)$);
+\draw[pfeil] (sysfail) -- (correct) node[midway, above] {yes};
+\draw[pfeil] (tauchck) -- (prevent) node[midway, above] {yes};
+\draw[pfeil] (correct) -| (update);
+\draw[pfeil] (prevent) -| (update);
+\draw[pfeil] (update) -| (startup) node[midway, below right] {start new cycle};
+\end{tikzpicture}
+\caption{***operational procedure}
+\label{fig:procedure}
+\end{figure}
 
 \subsection{Operational Procedure}
 \label{sec:operationalprocedure}
 
-***illustrative figure?
+***illustrative figure~\ref{fig:procedure}
 
 Each operational cycle starts with system startup.
 At this point in time, the system is in an (as good as) new state,
@@ -1323,12 +1352,11 @@ than under a predictive maintenance schedule.
 
 We illustrate our procedure*** under three different failure time histories.
 
-The first failure history was underlying the illustrations
-in Figures~\ref{fig:ghist1fig2} and \ref{fig:tauhist1fig2}.
-Here, we observe
+In the first failure history, we observe
 $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$ and $H = 8$,
 and in following the system until $\tnow = 8$,
 all other failure times are right-censored.
+This is failure history used for Figures~\ref{fig:ghist1fig2} and \ref{fig:tauhist1fig2}.
 Failures observed for type $C$ are thus considerably later than expected,
 while for type $P$, the two observed failures are close to the assumed MTTF. 
 Both failure at time $8$ for $H$ and non-failure by time $8$ for $M$ are nothing unusual.
