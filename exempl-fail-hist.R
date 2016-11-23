@@ -52,13 +52,18 @@ tauhist1fig2
 dev.off()
 br1taus1fine[40:41,]
 br1taus1finepr <- taustarhist(br, brctypes, brcompfts, br1n0y0, br1beta, seq(0,8,by=0.1), hor=4, seqlen=401, prior=T)
-br1taus1prpo <- rbind(data.frame(melt(br1taus1fine, "tnow"), variable2 = "update"),
-                      data.frame(melt(br1taus1finepr, "tnow"), variable2 = "no update"))
+names(br1taus1finepr)[2:5] <- c(taustar = expression(tau['*']^(t[now])),
+                                tstar = expression(t['*']^(t[now])),
+                                cstar = expression(g['*']^(t[now])),
+                                ctotal = expression(g[total]^(t[now])))
+br1taus1prpo <- rbind(data.frame(melt(br1taus1fine, "tnow"), variable2 = "Parameter update"),
+                      data.frame(melt(br1taus1finepr, "tnow"), variable2 = "No parameter update"))
 tauhist1fig3 <- ggplot(br1taus1prpo, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
-  geom_line(aes(colour = variable2)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
+  geom_line(aes(colour = variable2)) + guides(colour = guide_legend(title=NULL)) +
   geom_point(aes(colour = variable2), size = 0.15) +
-  facet_wrap(~ variable, nrow = 2, scales = "free_y")
-pdf("tauhist1fig3.pdf", width = 6, height = 4)
+  facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
+  theme(axis.title.y = element_blank()) + bottomlegend
+pdf("tauhist1fig3.pdf", width = 6, height = 4.5)
 tauhist1fig3
 dev.off()
 
@@ -68,33 +73,51 @@ dev.off()
 brcompfts2 <- list(C1 = NA, C2 = 1, C3 = 2, C4 = NA, H = 8,  M = NA, P1 = NA, P2 = 0.5, P3 = 1.5, P4 = NA)
 plotfts(brcompfts2, 2)
 br1taus2fine <- taustarhist(br, brctypes, brcompfts2, br1n0y0, br1beta, seq(0, 2, by=0.05), hor=4, seqlen=401)
+names(br1taus2fine)[2:5] <- c(taustar = expression(tau['*']^(t[now])),
+                              tstar = expression(t['*']^(t[now])),
+                              cstar = expression(g['*']^(t[now])),
+                              ctotal = expression(g[total]^(t[now])))
 br1taus2finepr <- taustarhist(br, brctypes, brcompfts2, br1n0y0, br1beta, seq(0, 2, by=0.05), hor=4, seqlen=401, prior=T)
-br1taus2prpo <- rbind(data.frame(melt(br1taus2fine, "tnow"), variable2 = "update"),
-                      data.frame(melt(br1taus2finepr, "tnow"), variable2 = "no update"))
+names(br1taus2finepr)[2:5] <- c(taustar = expression(tau['*']^(t[now])),
+                                tstar = expression(t['*']^(t[now])),
+                                cstar = expression(g['*']^(t[now])),
+                                ctotal = expression(g[total]^(t[now])))
+br1taus2prpo <- rbind(data.frame(melt(br1taus2fine, "tnow"), variable2 = "Parameter update"),
+                      data.frame(melt(br1taus2finepr, "tnow"), variable2 = "No parameter update"))
 tauhist2fig3 <- ggplot(br1taus2prpo, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
-  geom_line(aes(colour = variable2)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
+  geom_line(aes(colour = variable2)) + guides(colour = guide_legend(title=NULL)) +
   geom_point(aes(colour = variable2), size = 0.15) +
-  facet_wrap(~ variable, nrow = 2, scales = "free_y")
-pdf("tauhist2fig3.pdf", width = 6, height = 4)
+  facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
+  theme(axis.title.y = element_blank()) + bottomlegend
+pdf("tauhist2fig3.pdf", width = 6, height = 4.5)
 tauhist2fig3
 dev.off()
 
-# later failures
+# later failures *** do extremely early failures instead???
 brcompfts3 <- list(C1 = NA, C2 = 10, C3 = 12, C4 = NA, H = 14,  M = NA, P1 = NA, P2 = 8, P3 = 9, P4 = NA)
 plotfts(brcompfts3, 14)
 br1taus3fine <- taustarhist(br, brctypes, brcompfts3, br1n0y0, br1beta, seq(0, 14, by=0.2), hor=4, seqlen=401)
+names(br1taus3fine)[2:5] <- c(taustar = expression(tau['*']^(t[now])),
+                              tstar = expression(t['*']^(t[now])),
+                              cstar = expression(g['*']^(t[now])),
+                              ctotal = expression(g[total]^(t[now])))
 br1taus3finepr <- taustarhist(br, brctypes, brcompfts3, br1n0y0, br1beta, seq(0, 14, by=0.2), hor=4, seqlen=401, prior=T)
-br1taus3prpo <- rbind(data.frame(melt(br1taus3fine, "tnow"), variable2 = "update"),
-                      data.frame(melt(br1taus3finepr, "tnow"), variable2 = "no update"))
+names(br1taus3finepr)[2:5] <- c(taustar = expression(tau['*']^(t[now])),
+                                tstar = expression(t['*']^(t[now])),
+                                cstar = expression(g['*']^(t[now])),
+                                ctotal = expression(g[total]^(t[now])))
+br1taus3prpo <- rbind(data.frame(melt(br1taus3fine, "tnow"), variable2 = "Parameter update"),
+                      data.frame(melt(br1taus3finepr, "tnow"), variable2 = "No parameter update"))
 tauhist3fig3 <- ggplot(br1taus3prpo, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
-  geom_line(aes(colour = variable2)) + ylab("") + guides(colour = guide_legend(title=NULL)) +
-  geom_point(aes(colour = variable2), size = 0.15) +
-  facet_wrap(~ variable, nrow = 2, scales = "free_y")
-pdf("tauhist3fig3.pdf", width = 6, height = 4)
+  geom_line(aes(colour = variable2)) + geom_point(aes(colour = variable2), size = 0.15) +
+  scale_x_continuous(breaks = seq(0, 14, by = 4), minor_breaks = seq(0, 14, by = 2)) +
+  facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
+  theme(axis.title.y = element_blank()) + bottomlegend
+pdf("tauhist3fig3.pdf", width = 6, height = 4.5)
 tauhist3fig3
 dev.off()
 
-
+br1taus3finepr[(br1taus3finepr$tnow > 8.2) & (br1taus3finepr$tnow < 9.2),]
 
 
 #
