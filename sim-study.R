@@ -75,7 +75,7 @@ br1sim1fig3 <- ggplot(melt(br1sim1prprsummary, "id"), aes(x = id, y = value)) +
   geom_line(aes(colour = variable, group = variable)) + geom_point(aes(colour = variable, group = variable))
 br1sim1fig3
 
-br1sim1summaryall <- rbind(data.frame(sim = "Full update", br1sim1summary),
+br1sim1summaryall <- rbind(data.frame(sim = "Continuous update", br1sim1summary),
                            data.frame(sim = "Cycle end update", br1sim1prsummary),
                            data.frame(sim = "No update", br1sim1prprsummary))
 
@@ -127,7 +127,7 @@ br1sim2fig3 <- ggplot(melt(br1sim2prprsummary, "id"), aes(x = id, y = value)) +
   geom_line(aes(colour = variable, group = variable)) + geom_point(aes(colour = variable, group = variable))
 br1sim2fig3
 
-br1sim2summaryall <- rbind(data.frame(sim = "Full update", br1sim2summary),
+br1sim2summaryall <- rbind(data.frame(sim = "Continuous update", br1sim2summary),
                            data.frame(sim = "Cycle end update", br1sim2prsummary),
                            data.frame(sim = "No update", br1sim2prprsummary))
 
