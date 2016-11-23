@@ -14,6 +14,12 @@ simsummary <- function(simlist){
 simlabeller <- as_labeller(c(nfails = "Number of system failures",
                              meantend = "Average cycle length",
                              meancostrate = "Average unit cost rate"))
+simlabeller2 <- as_labeller(c(nfails = "Number of system failures",
+                              meantend = "Average cycle length",
+                              meancostrate = "Average unit cost rate",
+                              "Full update" = "Full update",
+                              "Cycle end update" = "Cycle end update",
+                              "No update" = "No update"))
 
 # sim 1: data fits to priors
 # --------------------------
@@ -69,9 +75,9 @@ br1sim1fig3 <- ggplot(melt(br1sim1prprsummary, "id"), aes(x = id, y = value)) +
   geom_line(aes(colour = variable, group = variable)) + geom_point(aes(colour = variable, group = variable))
 br1sim1fig3
 
-br1sim1summaryall <- rbind(data.frame(sim = "full update", br1sim1summary),
-                           data.frame(sim = "cycle end update", br1sim1prsummary),
-                           data.frame(sim = "no update", br1sim1prprsummary))
+br1sim1summaryall <- rbind(data.frame(sim = "Full update", br1sim1summary),
+                           data.frame(sim = "Cycle end update", br1sim1prsummary),
+                           data.frame(sim = "No update", br1sim1prprsummary))
 
 br1sim1fig4 <- ggplot(melt(br1sim1summaryall, c("id", "sim")), aes(x = id, y = value)) +
   geom_line(aes(linetype = sim, group = sim)) + geom_point(aes(shape = sim, group = sim)) +
@@ -105,8 +111,43 @@ for (i in 1:20){
                                 beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401, prior = TRUE, cycleupdate = FALSE)
 }
 
+br1sim2summary <- simsummary(br1sim2)
+br1sim2prsummary <- simsummary(br1sim2pr)
+br1sim2prprsummary <- simsummary(br1sim2prpr)
 
-# sim 2: failures later than expected
+br1sim2fig1 <- ggplot(melt(br1sim2summary, "id"), aes(x = id, y = value)) + 
+  geom_line(aes(colour = variable, group = variable)) + geom_point(aes(colour = variable, group = variable))
+br1sim2fig1
+
+br1sim2fig2 <- ggplot(melt(br1sim2prsummary, "id"), aes(x = id, y = value)) + 
+  geom_line(aes(group = variable)) + geom_point(aes(group = variable)) + facet_wrap(~ variable, nrow = 1, scales = "free_y")
+br1sim2fig2
+
+br1sim2fig3 <- ggplot(melt(br1sim2prprsummary, "id"), aes(x = id, y = value)) + 
+  geom_line(aes(colour = variable, group = variable)) + geom_point(aes(colour = variable, group = variable))
+br1sim2fig3
+
+br1sim2summaryall <- rbind(data.frame(sim = "Full update", br1sim2summary),
+                           data.frame(sim = "Cycle end update", br1sim2prsummary),
+                           data.frame(sim = "No update", br1sim2prprsummary))
+
+br1sim2fig4 <- ggplot(melt(br1sim2summaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(linetype = sim, group = sim)) + geom_point(aes(shape = sim, group = sim)) +
+  facet_wrap(~ variable, nrow = 1, scales = "free_y", labeller = simlabeller) +
+  bottomlegend
+pdf("br1sim2fig4.pdf", width = 7, height = 3)
+br1sim2fig4
+dev.off()
+
+br1sim2fig5 <- ggplot(melt(br1sim2summaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(group = sim)) + geom_point(aes(group = sim)) +
+  facet_grid(variable ~ sim, scales = "free_y", labeller = simlabeller2) +
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("br1sim2fig5.pdf", width = 6, height = 6)
+br1sim2fig5
+dev.off()
+
+# sim 3: failures later than expected
 # -----------------------------------
 
 
