@@ -60,9 +60,9 @@ br1taus1prpo <- rbind(data.frame(melt(br1taus1fine, "tnow"), variable2 = "Parame
                       data.frame(melt(br1taus1finepr, "tnow"), variable2 = "No parameter update"))
 tauhist1fig3 <- ggplot(br1taus1prpo, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
   geom_line(aes(colour = variable2)) + guides(colour = guide_legend(title=NULL)) +
-  geom_point(aes(colour = variable2), size = 0.15) +
+  geom_point(aes(colour = variable2), size = 0.15) + #theme_bw() +
   facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
-  theme(axis.title.y = element_blank()) + bottomlegend
+  theme(axis.title.y = element_blank()) + bottomlegend + ijarcol
 pdf("tauhist1fig3.pdf", width = 6, height = 4.5)
 tauhist1fig3
 dev.off()
@@ -88,7 +88,7 @@ tauhist2fig3 <- ggplot(br1taus2prpo, aes(x = tnow, y = value)) + xlab(expression
   geom_line(aes(colour = variable2)) + guides(colour = guide_legend(title=NULL)) +
   geom_point(aes(colour = variable2), size = 0.15) +
   facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
-  theme(axis.title.y = element_blank()) + bottomlegend
+  theme(axis.title.y = element_blank()) + bottomlegend+ ijarcol
 pdf("tauhist2fig3.pdf", width = 6, height = 4.5)
 tauhist2fig3
 dev.off()
@@ -112,7 +112,7 @@ tauhist3fig3 <- ggplot(br1taus3prpo, aes(x = tnow, y = value)) + xlab(expression
   geom_line(aes(colour = variable2)) + geom_point(aes(colour = variable2), size = 0.15) +
   scale_x_continuous(breaks = seq(0, 14, by = 4), minor_breaks = seq(0, 14, by = 2)) +
   facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
-  theme(axis.title.y = element_blank()) + bottomlegend
+  theme(axis.title.y = element_blank()) + bottomlegend + ijarcol
 pdf("tauhist3fig3.pdf", width = 6, height = 4.5)
 tauhist3fig3
 dev.off()
