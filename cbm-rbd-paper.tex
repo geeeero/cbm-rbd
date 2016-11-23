@@ -1026,13 +1026,13 @@ and a small simulation study is discussed in Section~\ref{sec:sim}.
 \node (gotonxt) [box, below=6mm of tauchck] {\parbox{15ex}{\centering continue to\\ next $\tnow$}};
 \draw [thick, dashed, rounded corners=2mm] ($(gotonxt.south east) + (2mm,-1mm)$) rectangle ($(sysfail.north west) + (-5mm,1mm)$) node[above left=0mm and -14mm] {each $\tnow$};
 \node [above left=0mm and -8mm of startup] {$t=0$};
-\node (correct) [box, right=of sysfail, minimum width=18mm] {\parbox{14ex}{\centering corrective\\ maintenance\\ cost $c_u$}};
-\node (prevent) [box, right=of tauchck, minimum width=18mm] {\parbox{14ex}{\centering preventive\\ maintenance\\ cost $c_p$}};
+\node (correct) [box, right=of sysfail, minimum width=18mm] {\parbox{14ex}{\centering corrective\\ maintenance\\ (cost $c_u$)}};
+\node (prevent) [box, right=of tauchck, minimum width=18mm] {\parbox{14ex}{\centering preventive\\ maintenance\\ (cost $c_p$)}};
 \node (update) [box, below right=10mm and -4mm of prevent, minimum width=10mm] {\parbox{12ex}{\centering update parameters}};
 \draw[pfeil] (startup) -- (sysfail);
 \draw[pfeil] (sysfail) -- (tauchck) node[midway, right] {no};
 \draw[pfeil] (tauchck) -- (gotonxt) node[midway, right] {no};
-\draw[very thick] (gotonxt.west) -- ++(-3mm,0mm) -- ($(sysfail.west) + (-3mm,0mm)$);
+\draw[very thick] (gotonxt.west) -| ($(sysfail.west) + (-3mm,0mm)$);
 \draw[pfeil] (sysfail) -- (correct) node[midway, above] {yes};
 \draw[pfeil] (tauchck) -- (prevent) node[midway, above] {yes};
 \draw[pfeil] (correct) -| (update);
@@ -1046,7 +1046,7 @@ and a small simulation study is discussed in Section~\ref{sec:sim}.
 \subsection{Operational Procedure}
 \label{sec:operationalprocedure}
 
-***illustrative figure?
+***illustrative figure~\ref{fig:procedure}
 
 Each operational cycle starts with system startup.
 At this point in time, the system is in an (as good as) new state,
