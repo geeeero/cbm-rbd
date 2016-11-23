@@ -45,14 +45,14 @@ compprior1fig1 <- ggplot(compdf1, aes(x = t, y = rel)) + geom_line(aes(group = c
   ylab("Reliability") + scale_x_continuous(breaks=seq(0, 10, by=2), minor_breaks=0:10) +
   facet_wrap(~ comp, nrow = 2, scales = "free_y") + coord_cartesian(ylim = c(0, 1))
 pdf("compprior1fig1.pdf", width = 6, height = 4)
-compprior1fig1
+print(compprior1fig1)
 dev.off()
 # as different linetypes
 compprior1fig2 <- ggplot(compdf1, aes(x = t, y = rel)) + geom_line(aes(linetype = comp)) + 
   ylab("Reliability") + scale_x_continuous(breaks=seq(0, 10, by=2), minor_breaks=0:10) +
   guides(linetype = guide_legend(title=NULL)) + coord_cartesian(ylim = c(0, 1))
 pdf("compprior1fig2.pdf", width = 6, height = 4)
-compprior1fig2
+print(compprior1fig2)
 dev.off()
 
 Crel1[which.min(abs(Crel1$rel - 0.5)),]
