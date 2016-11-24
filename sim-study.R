@@ -17,7 +17,7 @@ simlabeller <- as_labeller(c(nfails = "Number of system failures",
 simlabeller2 <- as_labeller(c(nfails = "Number of system failures",
                               meantend = "Average cycle length",
                               meancostrate = "Average unit cost rate",
-                              "Full update" = "Full update",
+                              "Continuous update" = "Continuous update",
                               "Cycle end update" = "Cycle end update",
                               "No update" = "No update"))
 
@@ -84,6 +84,13 @@ br1sim1fig4 <- ggplot(melt(br1sim1summaryall, c("id", "sim")), aes(x = id, y = v
   facet_wrap(~ variable, nrow = 1, scales = "free_y", labeller = simlabeller)
 br1sim1fig4
 
+br1sim1fig5 <- ggplot(melt(br1sim1summaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(group = sim)) + geom_point(aes(group = sim)) +
+  facet_grid(variable ~ sim, scales = "free_y", labeller = simlabeller2) +
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("br1sim1fig5.pdf", width = 6, height = 6)
+br1sim1fig5
+dev.off()
 
 # sim 2: failures earlier than expected
 # -------------------------------------

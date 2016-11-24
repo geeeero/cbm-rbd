@@ -155,12 +155,12 @@ simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
 }
 
 # function to calculate tend, tfunc, costrate for age-based policy from simNcycle object
-#simNcycleAgebased <- function(simNcycleobj, tprep = 0.5, trepa = 0, cu = 1, cp = 0.2){
+#simNcycleAgebased <- function(simNcycleobj, thresh, cu = 1, cp = 0.2){
 #  
 #}
 
-# function to calculate tend, tfunc, costrate for corrective policy from simNcycle object
-#simNcycleCorrective <- function(simNcycleobj, tprep = 0.5, trepa = 0, cu = 1, cp = 0.2){
+# function to calculate tend, tfunc, costrate for corrective policy 
+#simNcycleCorrective <- function(sys, ctypes, compfts, thresh, cu = 1, cp = 0.2){
 #  
 #}
 
