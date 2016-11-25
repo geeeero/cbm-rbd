@@ -185,11 +185,14 @@ br1sim3summary <- simsummary(br1sim3)
 br1sim3prsummary <- simsummary(br1sim3pr)
 br1sim3prprsummary <- simsummary(br1sim3prpr)
 
+br1sim3summaryall <- rbind(data.frame(sim = "Continuous update", br1sim3summary),
+                           data.frame(sim = "Cycle end update", br1sim3prsummary),
+                           data.frame(sim = "No update", br1sim3prprsummary))
+
 br1sim3fig5 <- ggplot(melt(br1sim3summaryall, c("id", "sim")), aes(x = id, y = value)) +
   geom_line(aes(group = sim)) + geom_point(aes(group = sim)) + 
   facet_grid(variable ~ sim, scales = "free_y", labeller = simlabeller2) +
-  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank()) +
-  geom_hline(yintercept = median(value))
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
 pdf("br1sim3fig5.pdf", width = 6, height = 6)
 br1sim3fig5
 dev.off()

@@ -267,15 +267,21 @@ plotfts <- function(compfts, maxtnow = NA, pointsize = 1, tlabelvjust = -1){
 # cu       cost of unplanned (corrective) repair action
 # cp       cost of planned (preventive) repair action, cp < cu
 # onecycle whether to use the one-cycle criterion or the renewal-based one
-gnow <- function(tau, rel, f, cu = 1, cp = 0.2, onecycle = TRUE){
+# tnow     one-cycle total cost criterion needs current tnow
+gnow <- function(tau, rel, f, cu = 1, cp = 0.2, onecycle = TRUE, tnow = 0){
   if (onecycle){
     gnow <- (cp / tau) * rel + cu * sapply(tau, function(ctau){
       sum(f[tau <= ctau] / tau[tau <= ctau])
     })
   } else {
-    gnow <- (cp * rel + cu * (1 - rel)) / ( tau * rel + sapply(tau, function(ctau){
-      sum(rel[tau <= ctau])
-    }))
+    # one-cycle total cost criterion 
+    gnow <- (cp / (tau + tnow)) * rel + cu * sapply(tau, function(ctau){
+      sum(f[tau <= ctau] / (tau[tau <= ctau] + tnow))
+    })
+    # renewal reward criterion
+    #gnow <- (cp * rel + cu * (1 - rel)) / ( tau * rel + sapply(tau, function(ctau){
+    #  sum(rel[tau <= ctau])
+    #}))
   }
   data.frame(tau = tau, rel = rel, gnow = gnow)  
 }
@@ -295,7 +301,7 @@ gnowhor <- function(survsign, n0y0, beta, fts, tnow, hor, seqlen=101, prior = FA
   f <- -diff(trel$rel)
   tau <- trel$t[-1] - tnow # shift to start directly after 0
   rel <- trel$rel[-1]
-  res <- gnow(tau = tau, rel = rel, f = f, cu = cu, cp = cp, onecycle = onecycle)
+  res <- gnow(tau = tau, rel = rel, f = f, cu = cu, cp = cp, onecycle = onecycle, tnow = tnow)
   res$tau <- tau + tnow
   return(res)
 }
@@ -331,7 +337,8 @@ gnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen = 10
     fi <- -diff(trel$rel)
     taui <- trel$t[-1] - tnowi # shift to start directly after 0
     reli <- trel$rel[-1]
-    gnowvec <- c(gnowvec, NA, gnow(tau = taui, rel = reli, f = fi, cu = cu, cp = cp, onecycle = onecycle)$gnow)
+    gnowvec <- c(gnowvec, NA, gnow(tau = taui, rel = reli, f = fi, cu = cu, cp = cp,
+                                    onecycle = onecycle, tnow = tnowi)$gnow)
   }
   data.frame(sysrels, gnow = gnowvec)
 }

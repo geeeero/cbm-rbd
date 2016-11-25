@@ -36,6 +36,7 @@ pdf("ghist1fig2.pdf", width = 6, height = 4)
 grid.arrange(ghist1fig2r, ghist1fig2g, nrow = 2, heights = c(1, 1.5))
 dev.off()
 
+
 # -------------------------------------------------------------------------------------------------
 
 br1taus1fine <- taustarhist(br, brctypes, brcompfts, br1n0y0, br1beta, seq(0,8,by=0.1), hor=4, seqlen=401)
@@ -66,6 +67,7 @@ tauhist1fig3 <- ggplot(br1taus1prpo, aes(x = tnow, y = value)) + xlab(expression
 pdf("tauhist1fig3.pdf", width = 6, height = 4.5)
 tauhist1fig3
 dev.off()
+
 
 # -------------------------------------------------------------------------
 
