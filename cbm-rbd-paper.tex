@@ -1460,10 +1460,17 @@ containing very late failures for all component types ($C_2 = 10$, $C_3 = 12$, $
 \section{Small simulation study}
 \label{sec:sim}
 
-small simulation study
+We now present a small simulation study
 
 Case 1: failure behaviour as expected,
 failure times simulated using Weibull scale parameters $\lambda_k = \ykz$ from Table~\ref{tab:priorparams}.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{br1sim1fig5}
+\caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
+where failure times are simulated according to prior parameters.}
+\label{fig:br1sim1fig5}
+\end{figure}
 
 Case 2: failures earlier than expected,
 failure times simulated using $\lambda_k = 0.5 \ykz$ from Table~\ref{tab:priorparams}.
@@ -1471,12 +1478,19 @@ failure times simulated using $\lambda_k = 0.5 \ykz$ from Table~\ref{tab:priorpa
 \begin{figure}
 \includegraphics[width=\textwidth]{br1sim2fig5}
 \caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
-where failure times are earlier than expected.}
+where failure times are simulated as being earlier than expected.}
 \label{fig:br1sim2fig5}
 \end{figure}
 
 Case 3: failures later than expected,
 failure times simulated using $\lambda_k = 2 \ykz$ from Table~\ref{tab:priorparams}.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{br1sim3fig5}
+\caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
+where failure times are simulated as being later than expected.}
+\label{fig:br1sim3fig5}
+\end{figure}
 
 ***do boxplot comparison of all
 
