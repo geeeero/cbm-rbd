@@ -85,12 +85,15 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
   ftslist <- as.list(rep(list(NULL), K))
   ftsfinal <- ftschron[ftschron <= tnow]
   ftsindex <- sapply(ctypes, function(ctypesl) names(ftsfinal) %in% ctypesl)
-  if (length(ftsfinal) == 1)
-    ftsindex <- which(ftsindex)
-  else
-    ftsindex <- apply(ftsindex, 1, which)
-  for (k in 1:K)
-    ftslist[[k]] <- ftsfinal[ftsindex == k]
+  if (length(ftsfinal) >= 1){
+    if (length(ftsfinal) == 1){
+      ftsindex <- which(ftsindex)
+    } else {
+      ftsindex <- apply(ftsindex, 1, which)
+    }
+    for (k in 1:K)
+      ftslist[[k]] <- ftsfinal[ftsindex == k]
+  }
   # censoring time is last tnow, number of censored components from
   censlist <- as.list(rep(list(NULL), K))
   ek <- sapply(ftslist, length)
