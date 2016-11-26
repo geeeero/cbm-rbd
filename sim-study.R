@@ -197,4 +197,31 @@ pdf("br1sim3fig5.pdf", width = 6, height = 6)
 br1sim3fig5
 dev.off()
 
+# sim 4: failures much earlier than expected
+# ------------------------------------------
+
+# simulate 20 5-cycle machines
+set.seed(2611)
+br1sim5cycle20data4 <- list()
+for (i in 1:20){
+  br1sim5cycle20data4[[i]] <- brWeibullData(5, br1beta, 0.2*br1mttf)
+}
+
+br1sim4 <- list()     # our model
+br1sim4pr <- list()   # do not update params during cycle, but at end of cycle 
+br1sim4prpr <- list() # never update params
+
+for (i in 1:20){
+  cat("Repetition", i, ": full update\n")
+  br1sim4[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data4[[i]], n0y0 = br1n0y0,
+                            beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401)
+  cat("Repetition", i, ": end of cycle update only\n")
+  br1sim4pr[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data4[[i]], n0y0 = br1n0y0,
+                              beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401, prior = TRUE)
+  cat("Repetition", i, ": no update\n")
+  br1sim4prpr[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data4[[i]], n0y0 = br1n0y0,
+                                beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.5, seqlen = 401, prior = TRUE, cycleupdate = FALSE)
+}
+
+
 #
