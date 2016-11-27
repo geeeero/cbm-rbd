@@ -118,19 +118,82 @@ pdf("br1sim2fig5T.pdf", width = 6, height = 6)
 br1sim2fig5T
 dev.off()
 
+# figure with boxplot instead of means
 br1sim2Tsummary2 <- simsummary2(br1sim2T)
 br1sim2prTsummary2 <- simsummary2(br1sim2prT)
 br1sim2prprTsummary2 <- simsummary2(br1sim2prprT)
-
 br1sim2Tsummary2all <- rbind(data.frame(sim = "Continuous update", br1sim2Tsummary2),
                              data.frame(sim = "Cycle end update", br1sim2prTsummary2),
                              data.frame(sim = "No update", br1sim2prprTsummary2))
-
 br1sim2fig2Ta <- ggplot(melt(br1sim2Tsummary2all, c("repid", "cycid", "sim")), aes(x = repid, y = value)) + 
   stat_boxplot(aes(group = repid)) +
   #geom_point(aes(group = variable, colour = cycid)) +
   facet_grid(variable ~ sim, scales = "free_y")
 br1sim2fig2Ta
+
+# earlier failures with lower threshold
+
+# thresh = 0.1
+br1sim2Tt01 <- list()     # our model
+br1sim2prTt01 <- list()   # do not update params during cycle, but at end of cycle 
+br1sim2prprTt01 <- list() # never update params
+
+for (i in 1:20){
+  cat("Repetition", i, ": full update\n")
+  br1sim2Tt01[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], n0y0 = br1n0y0,
+                                beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.1, seqlen = 401, onecycle = FALSE)
+  cat("Repetition", i, ": end of cycle update only\n")
+  br1sim2prTt01[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], n0y0 = br1n0y0,
+                                  beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.1, seqlen = 401, prior = TRUE, onecycle = FALSE)
+  cat("Repetition", i, ": no update\n")
+  br1sim2prprTt01[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], n0y0 = br1n0y0,
+                                    beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.1, seqlen = 401, prior = TRUE, cycleupdate = FALSE, onecycle = FALSE)
+}
+
+br1sim2Tt01summary <- simsummary(br1sim2Tt01)
+br1sim2prTt01summary <- simsummary(br1sim2prTt01)
+br1sim2prprTt01summary <- simsummary(br1sim2prprTt01)
+br1sim2Tt01summaryall <- rbind(data.frame(sim = "Continuous update", br1sim2Tt01summary),
+                               data.frame(sim = "Cycle end update", br1sim2prTt01summary),
+                               data.frame(sim = "No update", br1sim2prprTt01summary))
+br1sim2fig5Tt01 <- ggplot(melt(br1sim2Tt01summaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(group = sim)) + geom_point(aes(group = sim)) + 
+  facet_grid(variable ~ sim, scales = "free_y", labeller = simlabeller2) +
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("br1sim2fig5Tt01.pdf", width = 6, height = 6)
+br1sim2fig5Tt01
+dev.off()
+
+# thresh = 0.2
+br1sim2Tt02 <- list()     # our model
+br1sim2prTt02 <- list()   # do not update params during cycle, but at end of cycle 
+br1sim2prprTt02 <- list() # never update params
+
+for (i in 1:20){
+  cat("Repetition", i, ": full update\n")
+  br1sim2Tt02[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], n0y0 = br1n0y0,
+                                beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.2, seqlen = 401, onecycle = FALSE)
+  cat("Repetition", i, ": end of cycle update only\n")
+  br1sim2prTt02[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], n0y0 = br1n0y0,
+                                  beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.2, seqlen = 401, prior = TRUE, onecycle = FALSE)
+  cat("Repetition", i, ": no update\n")
+  br1sim2prprTt02[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], n0y0 = br1n0y0,
+                                    beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.2, seqlen = 401, prior = TRUE, cycleupdate = FALSE, onecycle = FALSE)
+}
+
+br1sim2Tt02summary <- simsummary(br1sim2Tt02)
+br1sim2prTt02summary <- simsummary(br1sim2prTt02)
+br1sim2prprTt02summary <- simsummary(br1sim2prprTt02)
+br1sim2Tt02summaryall <- rbind(data.frame(sim = "Continuous update", br1sim2Tt02summary),
+                               data.frame(sim = "Cycle end update", br1sim2prTt02summary),
+                               data.frame(sim = "No update", br1sim2prprTt02summary))
+br1sim2fig5Tt02 <- ggplot(melt(br1sim2Tt02summaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(group = sim)) + geom_point(aes(group = sim)) + 
+  facet_grid(variable ~ sim, scales = "free_y", labeller = simlabeller2) +
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("br1sim2fig5Tt02.pdf", width = 6, height = 6)
+br1sim2fig5Tt02
+dev.off()
 
 # sim 3: failures later than expected
 # -------------------------------------
