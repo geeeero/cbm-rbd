@@ -355,6 +355,7 @@ taustarhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen =
   tstarsi <- tstarsi$gnow + (seqlen - 1) * (0:(length(tnowvec) - 1))
   tstars <- res2$t[tstarsi]
   taustars <- tstars - tnowvec
+  relstars <- res2$rel[tstarsi]
   cuint <- sapply(tnowvec, function(tnowi){
     trel <- subset(res, res$tnow == tnowi)
     f <- -diff(trel$rel)
@@ -364,7 +365,7 @@ taustarhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen =
   })
   #cat("cuint =", cuint)
   ctotal <- cp / tstars * res2$rel[tstarsi] + cu * cuint
-  data.frame(tnow = tnowvec, taustar = taustars, tstar = tstars, cstar = cstars, ctotal = ctotal)
+  data.frame(tnow = tnowvec, taustar = taustars, tstar = tstars, cstar = cstars, ctotal = ctotal, relstar = relstars)
 }
 
 

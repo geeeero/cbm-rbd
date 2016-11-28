@@ -934,7 +934,7 @@ We thus have, for $l_k \in \{0,1,\ldots,\cknow\}$,
 %\end{align}
 
 
-\subsection{System reliability function at $\tnow$}
+\subsection{Conditional system reliability function at $\tnow$}
 \label{sec:sysreltnow}
 
 Now that we can calulate the component posterior predictive distributions at $\tnow$,
@@ -947,6 +947,8 @@ taking into account all information available at $\tnow$:
                \prod_{k=1}^K P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)\,.
 \label{eq:sysrel-tnow}
 \end{align}
+Since this is the system reliability distribution conditional on the system surviving until $\tnow$,
+we have that $\Rsysnow(\tnow) = 1$.
 Note that if one or several components have failed by $\tnow$,
 the system layout changes, and with it the survival signature $\Phi(l_1,\ldots,l_K)$,
 so we denote the updated survival signature by $\Phinow(l_1,\ldots,l_K)$.
@@ -1161,7 +1163,7 @@ Conditional on the realization $\tsysnow > \tnow$ of $\Tsysnow$, the unit cost r
 g(\tau \mid \Tsysnow = \tsysnow) &=
 \begin{cases}
 c_p / \tau               & \text{if } \tsysnow \ge \tnow + \tau \\
-c_u / (\tsysnow - \tnow) & \text{if } \tsysnow  <  \tnow + \tau \,.
+c_u / (\tsysnow - \tnow) & \text{if } \tnow < \tsysnow  <  \tnow + \tau \,.
 \end{cases}
 \label{eq:gtau}
 \end{align}
@@ -1172,7 +1174,7 @@ where $0$ corresponds to the time of system start-up.
 Taking the expectation over $\Tsysnow$ in \eqref{eq:gtau} leads to the expected unit cost rate being
 \begin{align}
 \gnow(\tau) &= \E[g(\tau \mid \Tsysnow)] \nonumber\\ 
-            &= \frac{c_p}{\tau} \Rsysnow(\tnow + \tau) + c_u \int_0^\tau \frac{1}{t} \fsysnow(\tnow + t) \dd t\,,
+            &= \frac{c_p}{\tau} \Rsysnow(\tnow + \tau) + c_u \int_0^\tau \frac{1}{\theta} \fsysnow(\tnow + \theta) \dd \theta\,,
 \label{eq:gtnowtau}
 \end{align}
 and $\tausnow = \arg\min \gnow(\tau)$.
@@ -1197,7 +1199,7 @@ and costs $c_u = 1$, $c_p = 0.2$.}
 Note that for the integral in \eqref{eq:gtnowtau} to exist,
 %$\E[1/\Tsysnow \mid \Tsysnow > \tnow]$ must exist,
 $\E[1/(\Tsysnow - \tnow)]$ must exist,
-which is a condition for $\fsysnow(\tnow + t)$ for values of $t$ close to $0$ \citep{2006:coolen-schrijner-coolen}.
+which is a condition for $\fsysnow(\tnow + \theta)$ for values of $\theta$ close to $0$ \citep{2006:coolen-schrijner-coolen}.
 This restriction probably plays a role in the CBM literature's reluctance to adopt the one-cycle criterion.
 For our approach, however, this condition is not relevant,
 as we use a discrete approximation of $\Rsysnow(t)$ and $\fsysnow(t)$, respectively
@@ -1261,7 +1263,7 @@ covering the time span from $\tnow$ to some horizon time $\tnow + t_h$.
 We calculate $\gnow(\tau)$ on the same grid,
 and determine $\tausnow$ by minimizing over this grid.
 Here, we approximate the integral in \eqref{eq:gtnowtau} numerically by a sum,
-where evaluations of $\fsysnow(\tnow + t)$ are calculated via differences of $\Rsysnow(\tnow + t)$ evaluations.
+where evaluations of $\fsysnow(t)$ are calculated via differences of $\Rsysnow(t)$ evaluations.
 %$\gnow(\tau)$ is likewise evaluated on a dense grid,
 %and $\tausnow = \arg\min \gnow(\tau)$ is determined as the minimum over the grid.
 
@@ -1270,13 +1272,13 @@ but generally should reach far enough into the tail of $\Rsysnow(t)$
 such that $\gnow(\tau)$ is not cut off before it reaches its minimum. %one can be sure to find $\tausnow$.
 Note that according to \eqref{eq:gtnowtau},
 the calculation of $\gnow(\tau)$ requires
-evaluations of $\Rsysnow(\tnow + t)$ and $\fsysnow(\tnow + t)$ only for $t \leq \tau$.
+evaluations of $\Rsysnow(t)$ and $\fsysnow(t)$ only for $\tnow < t \le \tnow + \tau$.
 
 We have implememted our method in \textsf{R} \citep{R},
 using the package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
 to calculate survival signatures.
 As the parameter update step is closed-form,
-recalculation of $\tausnow$ is a matter of seconds,
+recalculation of $\tausnow$ is a matter of one or two seconds,
 allowing for a near real-time update.
 
 
