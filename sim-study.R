@@ -257,15 +257,21 @@ br1sim5prpr <- list() # never update params
 for (i in 1:20){
   cat("Repetition", i, ": full update\n")
   br1sim5[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data5[[i]], n0y0 = br1n0y0,
-                            beta = br1beta, tnowstep = 0.1, hor = 8, thresh = 0.5, seqlen = 801)
-  cat("Repetition", i, ": end of cycle update only\n")
-  br1sim5pr[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data5[[i]], n0y0 = br1n0y0,
-                              beta = br1beta, tnowstep = 0.1, hor = 8, thresh = 0.5, seqlen = 801, prior = TRUE)
-  cat("Repetition", i, ": no update\n")
-  br1sim5prpr[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data5[[i]], n0y0 = br1n0y0,
-                                beta = br1beta, tnowstep = 0.1, hor = 8, thresh = 0.5, seqlen = 801, prior = TRUE, cycleupdate = FALSE)
+                            beta = br1beta, tnowstep = 0.2, hor = 6, thresh = 0.5, seqlen = 601)
+#  cat("Repetition", i, ": end of cycle update only\n")
+#  br1sim5pr[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data5[[i]], n0y0 = br1n0y0,
+#                              beta = br1beta, tnowstep = 0.2, hor = 6, thresh = 0.5, seqlen = 601, prior = TRUE)
+#  cat("Repetition", i, ": no update\n")
+#  br1sim5prpr[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data5[[i]], n0y0 = br1n0y0,
+#                                beta = br1beta, tnowstep = 0.2, hor = 6, thresh = 0.5, seqlen = 601, prior = TRUE, cycleupdate = FALSE)
 }
 
+br1sim5summary <- simsummary(br1sim5)
+#br1sim5prsummary <- simsummary(br1sim5pr)
+#br1sim5prprsummary <- simsummary(br1sim5prpr)
 
+br1sim5fig2 <- ggplot(melt(br1sim5summary, "id"), aes(x = id, y = value)) + 
+  geom_line(aes(group = variable)) + geom_point(aes(group = variable)) + facet_wrap(~ variable, nrow = 1, scales = "free_y")
+br1sim5fig2
 
 #
