@@ -1473,13 +1473,22 @@ where failure times are simulated according to prior parameters.}
 \end{figure}
 
 Case 2: failures earlier than expected,
-failure times simulated using $\lambda_k = 0.5 \ykz$ from Table~\ref{tab:priorparams}.
+failure times simulated using
+$\lambda_k = 0.5 \ykz$ (Figure~\ref{fig:br1sim2fig5}) or
+$\lambda_k = 0.2 \ykz$ (Figure~\ref{fig:br1sim4fig5}).
 
 \begin{figure}
 \includegraphics[width=\textwidth]{br1sim2fig5}
 \caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
-where failure times are simulated as being earlier than expected.}
+where failure times are simulated as being earlier ($0.5 \times$ MTTF) than expected.}
 \label{fig:br1sim2fig5}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{br1sim4fig5}
+\caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
+where failure times are simulated as being much earlier ($0.2 \times$ MTTF) than expected.}
+\label{fig:br1sim4fig5}
 \end{figure}
 
 Case 3: failures later than expected,
@@ -1488,11 +1497,30 @@ failure times simulated using $\lambda_k = 2 \ykz$ from Table~\ref{tab:priorpara
 \begin{figure}
 \includegraphics[width=\textwidth]{br1sim3fig5}
 \caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
-where failure times are simulated as being later than expected.}
+where failure times are simulated as being later ($2 \times$ MTTF) than expected.}
 \label{fig:br1sim3fig5}
 \end{figure}
 
-***do boxplot comparison of all
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{br1sim1fig5T}
+\includegraphics[width=0.5\textwidth]{br1sim2fig5T}
+\includegraphics[width=0.5\textwidth]{br1sim3fig5T}
+\includegraphics[width=0.5\textwidth]{br1sim4fig5T}
+\caption{***Simulation study with ***total costrate criterion***, $\tthresh = 0.5$.
+TL: $\lambda_k =     \ykz$,
+TR: $\lambda_k = 0.5 \ykz$,
+BL: $\lambda_k = 2   \ykz$,
+BR: $\lambda_k = 0.2 \ykz$}
+\label{fig:simtotalcostrate05}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{br1sim2fig5Tt01}
+\includegraphics[width=0.5\textwidth]{br1sim2fig5Tt02}
+\caption{***Simulation study with ***total costrate criterion***, $\tthresh = 0.1$ (left) and $\tthresh = 0.2$ (right).}
+\label{fig:simtotalcostrate0102}
+\end{figure}
 
 \section{Outlook}
 \label{sec:outlook}
