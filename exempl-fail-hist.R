@@ -121,5 +121,31 @@ dev.off()
 
 br1taus3finepr[(br1taus3finepr$tnow > 8.2) & (br1taus3finepr$tnow < 9.2),]
 
+# extremely early failures
+brcompfts4 <- list(C1 = NA, C2 = 0.2, C3 = 0.3, C4 = NA, H = 0.5,  M = NA, P1 = NA, P2 = 0.05, P3 = 0.15, P4 = NA)
+plotfts(brcompfts4, 0.5)
+br1taus4fine <- taustarhist(br, brctypes, brcompfts4, br1n0y0, br1beta, seq(0, 0.5, by=0.01), hor=4, seqlen=401)
+names(br1taus4fine)[2:5] <- c(taustar = expression(tau['*']^(t[now])),
+                              tstar = expression(t['*']^(t[now])),
+                              cstar = expression(g['*']^(t[now])),
+                              ctotal = expression(g[total]^(t[now])))
+br1taus4finepr <- taustarhist(br, brctypes, brcompfts4, br1n0y0, br1beta, seq(0, 0.5, by=0.01), hor=4, seqlen=401, prior=T)
+names(br1taus4finepr)[2:5] <- c(taustar = expression(tau['*']^(t[now])),
+                                tstar = expression(t['*']^(t[now])),
+                                cstar = expression(g['*']^(t[now])),
+                                ctotal = expression(g[total]^(t[now])))
+br1taus4prpo <- rbind(data.frame(melt(br1taus4fine, "tnow"), variable2 = "Parameter update"),
+                      data.frame(melt(br1taus4finepr, "tnow"), variable2 = "No parameter update"))
+tauhist4fig3 <- ggplot(br1taus4prpo, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+  geom_line(aes(colour = variable2)) + geom_point(aes(colour = variable2), size = 0.15) +
+  scale_x_continuous(breaks = seq(0, 0.5, by = 0.1), minor_breaks = seq(0, 0.5, by = 0.05)) +
+  facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
+  theme(axis.title.y = element_blank()) + bottomlegend + ijarcol
+pdf("tauhist4fig3.pdf", width = 6, height = 4.5)
+tauhist4fig3
+dev.off()
+
+
+
 
 #

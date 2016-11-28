@@ -1288,7 +1288,7 @@ allowing for a near real-time update.
 %so in the absolute time scale, the optimal moment of maintenance is at $\tnow + \tau_*^{\tnow}$.
 
 
-\section{Numerical examples for a complex system}
+\section{Further elaboration of the case study}
 \label{sec:examples}
 
 As illustrative example for a system with complex layout,
@@ -1366,7 +1366,7 @@ if one can expect to utilize the system five times longer
 than under a predictive maintenance schedule.
 
 Here, we illustrate our procedure under three different exemplary failure time histories.
-(A systematic simulation study is then presented in Section~\ref{sec:sim}.)
+(A more systematic simulation study is then presented in Section~\ref{sec:sim}.)
 
 In the first failure history, we observe
 $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$ and $H = 8$,
@@ -1434,26 +1434,41 @@ where updating gave considerable gains.}
 \label{fig:tauhist2fig3}
 \end{figure}
 
-The third failure history contains very late failures for all component types
-by assuming $C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$,
-and following the system until $\tnow = 14$.
-The late failure times for type $C$ components are especially surprising,
-with the prior predictive reliability being $0.01$ at time $10$
-(see top left panel of Figure~\ref{fig:compprior1fig1}).
-Here, the situation is more extreme than in the first failure history.
-Figure~\ref{fig:tauhist3fig3} shows that, after a first short dip,
-$\tausnow$ for the continuous update model steadily increases until the first observed failure at $\tnow = 8$.
-For the model without update, $\tausnow$ steadily decreases instead,
-ignoring any information on component behaviour to be gained during the current system run.
-Assuming $\tthresh = 0.5$, the method without parameter update would recommend to maintain the system preventively at $\tnow = 8.4$,
-with only $P_2$ having failed by then, and all other components up and running,
-corresponding to a considerable waste of component lifetime.
+%The third failure history contains very late failures for all component types
+%by assuming $C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$,
+%and following the system until $\tnow = 14$.
+%The late failure times for type $C$ components are especially surprising,
+%with the prior predictive reliability being $0.01$ at time $10$
+%(see top left panel of Figure~\ref{fig:compprior1fig1}).
+%Here, the situation is more extreme than in the first failure history.
+%Figure~\ref{fig:tauhist3fig3} shows that, after a first short dip,
+%$\tausnow$ for the continuous update model steadily increases until the first observed failure at $\tnow = 8$.
+%For the model without update, $\tausnow$ steadily decreases instead,
+%ignoring any information on component behaviour to be gained during the current system run.
+%Assuming $\tthresh = 0.5$, the method without parameter update would recommend to maintain the system preventively at $\tnow = 8.4$,
+%with only $P_2$ having failed by then, and all other components up and running,
+%corresponding to a considerable waste of component lifetime.
+%
+%\begin{figure}
+%\includegraphics[width=\textwidth]{tauhist3fig3}
+%\caption{Effect of the continuous parameter update for the third failure history,
+%containing very late failures for all component types ($C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$).}
+%\label{fig:tauhist3fig3}
+%\end{figure}
+
+The third failure history contains very early failures
+with $C_2 = 0.2$, $C_3 = 0.3$, $H = 0.5$, $P_2 = 0.05$, $P_3 = 0.15$,
+and we follow the system until $\tnow = 0.5$.
+
+***without update consistently higher, adaptive algorithm takes surprisingly early failures into account,
+unlike in other scenarios, overall trend for $\tausnow$ constant because of heavy drops,
+costs are underestimated without update***
 
 \begin{figure}
-\includegraphics[width=\textwidth]{tauhist3fig3}
+\includegraphics[width=\textwidth]{tauhist4fig3}
 \caption{Effect of the continuous parameter update for the third failure history,
-containing very late failures for all component types ($C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$).}
-\label{fig:tauhist3fig3}
+containing very early failures ($C_2 = 0.2$, $C_3 = 0.3$, $H = 0.5$, $P_2 = 0.05$, $P_3 = 0.15$).}
+\label{fig:tauhist4fig3}
 \end{figure}
 
 
@@ -1462,6 +1477,7 @@ containing very late failures for all component types ($C_2 = 10$, $C_3 = 12$, $
 
 We now present a small simulation study
 
+\iffalse
 Case 1: failure behaviour as expected,
 failure times simulated using Weibull scale parameters $\lambda_k = \ykz$ from Table~\ref{tab:priorparams}.
 
@@ -1473,13 +1489,22 @@ where failure times are simulated according to prior parameters.}
 \end{figure}
 
 Case 2: failures earlier than expected,
-failure times simulated using $\lambda_k = 0.5 \ykz$ from Table~\ref{tab:priorparams}.
+failure times simulated using
+$\lambda_k = 0.5 \ykz$ (Figure~\ref{fig:br1sim2fig5}) or
+$\lambda_k = 0.2 \ykz$ (Figure~\ref{fig:br1sim4fig5}).
 
 \begin{figure}
 \includegraphics[width=\textwidth]{br1sim2fig5}
 \caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
-where failure times are simulated as being earlier than expected.}
+where failure times are simulated as being earlier ($0.5 \times$ MTTF) than expected.}
 \label{fig:br1sim2fig5}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{br1sim4fig5}
+\caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
+where failure times are simulated as being much earlier ($0.2 \times$ MTTF) than expected.}
+\label{fig:br1sim4fig5}
 \end{figure}
 
 Case 3: failures later than expected,
@@ -1488,11 +1513,45 @@ failure times simulated using $\lambda_k = 2 \ykz$ from Table~\ref{tab:priorpara
 \begin{figure}
 \includegraphics[width=\textwidth]{br1sim3fig5}
 \caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
-where failure times are simulated as being later than expected.}
+where failure times are simulated as being later ($2 \times$ MTTF) than expected.}
 \label{fig:br1sim3fig5}
 \end{figure}
+\fi
 
-***do boxplot comparison of all
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{br1sim1fig5}
+\includegraphics[width=0.5\textwidth]{br1sim2fig5}
+\includegraphics[width=0.5\textwidth]{br1sim3fig5}
+\includegraphics[width=0.5\textwidth]{br1sim4fig5}
+\caption{***Simulation study with ***prospective costrate criterion***, $\tthresh = 0.5$.
+TL: $\lambda_k =     \ykz$,
+TR: $\lambda_k = 0.5 \ykz$,
+BL: $\lambda_k = 2   \ykz$,
+BR: $\lambda_k = 0.2 \ykz$}
+\label{fig:simprospcostrate05}
+\end{figure}
+
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{br1sim1fig5T}
+\includegraphics[width=0.5\textwidth]{br1sim2fig5T}
+\includegraphics[width=0.5\textwidth]{br1sim3fig5T}
+\includegraphics[width=0.5\textwidth]{br1sim4fig5T}
+\caption{***Simulation study with ***total costrate criterion***, $\tthresh = 0.5$.
+TL: $\lambda_k =     \ykz$,
+TR: $\lambda_k = 0.5 \ykz$,
+BL: $\lambda_k = 2   \ykz$,
+BR: $\lambda_k = 0.2 \ykz$}
+\label{fig:simtotalcostrate05}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{br1sim2fig5Tt01}
+\includegraphics[width=0.5\textwidth]{br1sim2fig5Tt02}
+\caption{***Simulation study with ***total costrate criterion***, early failures ($0.5 \times$ MTTF),
+$\tthresh = 0.1$ (left) and $\tthresh = 0.2$ (right).}
+\label{fig:simtotalcostrate0102}
+\end{figure}
 
 \section{Outlook}
 \label{sec:outlook}
