@@ -1,0 +1,270 @@
+\documentclass[authoryear]{elsarticle}
+
+% ------------ packages -------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[OT1]{fontenc}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+\usepackage{url}
+\usepackage[bookmarks]{hyperref}
+
+%\usetikzlibrary{shapes.misc,fit}
+\usetikzlibrary{%
+   arrows,%
+   calc,%
+   fit,%
+   patterns,%
+   plotmarks,%
+   shapes.geometric,%
+   shapes.misc,%
+   shapes.symbols,%
+   shapes.arrows,%
+   shapes.callouts,%
+   shapes.multipart,%
+   shapes.gates.logic.US,%
+   shapes.gates.logic.IEC,%
+   er,%
+   automata,%
+   backgrounds,%
+   chains,%
+   topaths,%
+   trees,%
+   petri,%
+   mindmap,%
+   matrix,%
+   calendar,%
+   folding,%
+   fadings,%
+   through,%
+   patterns,%
+   positioning,%
+   scopes,%
+   decorations.fractals,%
+   decorations.shapes,%
+   decorations.text,%
+   decorations.pathmorphing,%
+   decorations.pathreplacing,%
+   decorations.footprints,%
+   decorations.markings,%
+   shadows}
+
+%\usepackage{hyperref}
+%\usepackage[bookmarks]{hyperref}
+%\usepackage[colorlinks=true,citecolor=red,linkcolor=black]{hyperref}
+
+% ------------ custom defs -------------
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\posreals}{\reals_{>0}}
+\newcommand{\posrealszero}{\reals_{\ge 0}}
+\newcommand{\naturals}{\mathbb{N}}
+
+\newcommand{\dd}{\,\mathrm{d}}
+
+\newcommand{\mbf}[1]{\mathbf{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\renewcommand{\vec}[1]{{\bm#1}}
+
+\newcommand{\uz}{^{(0)}} % upper zero
+\newcommand{\un}{^{(n)}} % upper n
+\newcommand{\ui}{^{(i)}} % upper i
+
+\newcommand{\ul}[1]{\underline{#1}}
+\newcommand{\ol}[1]{\overline{#1}}
+
+\newcommand{\Tsys}{T_\text{sys}}
+
+\newcommand{\Rsys}{R_\text{sys}}
+\newcommand{\lRsys}{\ul{R}_\text{sys}}
+\newcommand{\uRsys}{\ol{R}_\text{sys}}
+
+\newcommand{\fsys}{f_\text{sys}}
+\newcommand{\Fsys}{F_\text{sys}}
+\newcommand{\lFsys}{\ul{F}_\text{sys}}
+\newcommand{\uFsys}{\ol{F}_\text{sys}}
+
+\newcommand{\lgt}{\ul{g}}
+\newcommand{\ugt}{\ol{g}}
+
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\V}{\operatorname{Var}}
+\newcommand{\wei}{\operatorname{Wei}} % Weibull Distribution
+\newcommand{\ig}{\operatorname{IG}}   % Inverse Gamma Distribution
+
+\newcommand{\El}{\ul{\operatorname{E}}}
+\newcommand{\Eu}{\ol{\operatorname{E}}}
+
+\def\yz{y\uz}
+\def\yn{y\un}
+%\def\yi{y\ui}
+\newcommand{\yfun}[1]{y^{({#1})}}
+\newcommand{\yfunl}[1]{\ul{y}^{({#1})}}
+\newcommand{\yfunu}[1]{\ol{y}^{({#1})}}
+
+\def\ykz{y\uz_k}
+\def\ykn{y\un_k}
+
+\def\yzl{\ul{y}\uz}
+\def\yzu{\ol{y}\uz}
+\def\ynl{\ul{y}\un}
+\def\ynu{\ol{y}\un}
+\def\yil{\ul{y}\ui}
+\def\yiu{\ol{y}\ui}
+
+\def\ykzl{\ul{y}\uz_k}
+\def\ykzu{\ol{y}\uz_k}
+\def\yknl{\ul{y}\un_k}
+\def\yknu{\ol{y}\un_k}
+
+\newcommand{\ykzfun}[1]{y\uz_{#1}}
+\newcommand{\ykzlfun}[1]{\ul{y}\uz_{#1}}
+\newcommand{\ykzufun}[1]{\ol{y}\uz_{#1}}
+
+
+\def\nz{n\uz}
+\def\nn{n\un}
+%\def\ni{n\ui}
+\newcommand{\nfun}[1]{n^{({#1})}}
+\newcommand{\nfunl}[1]{\ul{n}^{({#1})}}
+\newcommand{\nfunu}[1]{\ol{n}^{({#1})}}
+
+\def\nkz{n\uz_k}
+\def\nkn{n\un_k}
+\newcommand{\nkzfun}[1]{n\uz_{#1}}
+\newcommand{\nkzlfun}[1]{\ul{n}\uz_{#1}}
+\newcommand{\nkzufun}[1]{\ol{n}\uz_{#1}}
+
+\def\nzl{\ul{n}\uz}
+\def\nzu{\ol{n}\uz}
+\def\nnl{\ul{n}\un}
+\def\nnu{\ol{n}\un}
+\def\nil{\ul{n}\ui}
+\def\niu{\ol{n}\ui}
+
+\def\nkzl{\ul{n}\uz_k}
+\def\nkzu{\ol{n}\uz_k}
+\def\nknl{\ul{n}\un_k}
+\def\nknu{\ol{n}\un_k}
+
+\def\yknow{y_k^{(\tnow)}}
+\def\nknow{n_k^{(\tnow)}}
+
+\newcommand{\nk}{n_k}
+\newcommand{\nkp}{n_k'}
+\newcommand{\yk}{y_k}
+\newcommand{\ykp}{y_k'}
+
+\def\taut{\tau(\vec{t})}
+\def\ttau{\tilde{\tau}}
+\def\ttaut{\ttau(\vec{t})}
+\def\tautk{\tau(\vec{t}_k)}
+
+\def\MZ{\mathcal{M}\uz}
+\def\MN{\mathcal{M}\un}
+
+\def\MkZ{\mathcal{M}\uz_k}
+\def\MkN{\mathcal{M}\un_k}
+
+\def\PkZ{\Pi\uz_k}
+\def\PkN{\Pi\un_k}
+\newcommand{\PZi}[1]{\Pi\uz_{#1}}
+
+\def\tnow{t_\text{now}}
+\def\tpnow{t^+_\text{now}}
+
+\newcommand{\Rsysnow}{R^{(t_\text{now})}_\text{sys}}
+\newcommand{\Tsysnow}{T^{(t_\text{now})}_\text{sys}}
+\newcommand{\tsysnow}{t^{(t_\text{now})}_\text{sys}}
+\newcommand{\fsysnow}{f^{(t_\text{now})}_\text{sys}}
+\def\eknow{e_k^{(\tnow)}}
+\def\cknow{c_k^{(\tnow)}}
+\def\vectknow{\vec{t}_k^{(\tnow)}}
+\def\Phinow{\Phi^{(\tnow)}}
+\newcommand{\gnow}{g^{(\tnow)}}
+\newcommand{\tausnow}{\tau_*^{(\tnow)}}
+\newcommand{\tprep}{\tau_{\text{prep}}}
+\newcommand{\tthresh}{\tau_{\text{thresh}}}
+\newcommand{\tstarnow}{t_*^{(\tnow)}}
+\newcommand{\gstarnow}{g_*^{(\tnow)}}
+\newcommand{\gtotalnow}{g_\text{total}^{(\tnow)}}
+
+% ------------ options -------------
+
+\allowdisplaybreaks
+
+\journal{RESS}
+
+\begin{document}
+
+%\section{Prospective cost rate}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{tauhist2fig3R}
+\caption{Failure history with failures more or less \textbf{like expected},
+$\tausnow$ based on \textbf{prospective cost rate}.
+Reliability function value at cost-optimal moment of maintenance in lower right panel.
+This decreases from initial value $0.942$;
+over time, we increasingly risk a system failure to get prospective-optimal costs,
+and these costs go up.}
+\label{fig:tauhist2fig3R}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{tauhist2fig3TR}
+\caption{Failure history with failures more or less \textbf{like expected},
+$\tausnow$ based on \textbf{total cost rate}.
+Reliability function value at cost-optimal moment of maintenance in lower right panel,
+incrieasing from intial value;
+with total cost, we risk less and less over time, and $\tausnow$ tends to $0$.}
+\label{fig:tauhist2fig3TR}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{tauhist1fig3R}
+\caption{Failure history with failures \textbf{later than expected},
+$\tausnow$ based on \textbf{prospective cost rate}.
+Reliability function value at cost-optimal moment of maintenance in lower right panel,
+decreasing from initial value $0.942$.
+Zig-zag is probably due to limited resolution for $\tausnow$ (0.01) and $\tnow$ grid (0.1).}
+\label{fig:tauhist1fig3R}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{tauhist1fig3TR}
+\caption{Failure history with failures \textbf{later than expected},
+$\tausnow$ based on \textbf{total cost rate}.
+Reliability function value at cost-optimal moment of maintenance in lower right panel.}
+\label{fig:tauhist1fig3TR}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{tauhist4fig3R}
+\caption{Failure history with failures \textbf{earlier than expected},
+$\tausnow$ based on \textbf{prospective cost rate}.
+Reliability function value at cost-optimal moment of maintenance in lower right panel,
+decreasing from initial value $0.942$.
+Zig-zag is probably due to limited resolution for $\tausnow$ (0.01) and $\tnow$ grid (0.1).}
+\label{fig:tauhist4fig3R}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{tauhist4fig3TR}
+\caption{Failure history with failures \textbf{earlier than expected},
+$\tausnow$ based on \textbf{total cost rate}.
+Reliability function value at cost-optimal moment of maintenance in lower right panel.}
+\label{fig:tauhist4fig3TR}
+\end{figure}
+
+\end{document}
