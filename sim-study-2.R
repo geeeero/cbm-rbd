@@ -1,7 +1,6 @@
 # --------------------------------------------------------------------------- #
 # CBM systems paper - code for example figs - simulation study
-# using total unit cost rate now!
-# choose lower thresh now???
+# using total unit cost rate & thresh = 0.1
 # --------------------------------------------------------------------------- #
 
 source("cbm-sys-other.R")
@@ -31,7 +30,20 @@ simlabeller2 <- as_labeller(c(nfails = "Number of system failures",
                               meancostrate = "Average unit cost rate",
                               "Continuous update" = "Continuous update",
                               "Cycle end update" = "Cycle end update",
-                              "No update" = "No update"))
+                              "No update" = "No update",
+                              "Age-based with update" = "Age-based with update",
+                              "Age-based without update" = "Age-based without update",
+                              "Corrective" = "Corrective"))
+
+simlabeller3 <- as_labeller(c(nfails = expression(n[failures]),
+                              meantend = expression(bar(t)[sys]),
+                              meancostrate = expression(bar(g)),
+                              "Continuous update" = "CBMcpu",
+                              "Cycle end update" = "CBMepu",
+                              "No update" = "CBMnpu",
+                              "Age-based with update" = "ABMepu",
+                              "Age-based without update" = "ABMnpu",
+                              "Corrective" = "CM"))
 
 # sim 1: data fits to priors
 # --------------------------
@@ -105,6 +117,54 @@ br1sim1fig5Tt01 <- ggplot(melt(br1sim1Tt01summaryall, c("id", "sim")), aes(x = i
   xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
 pdf("br1sim1fig5Tt01.pdf", width = 6, height = 6)
 br1sim1fig5Tt01
+dev.off()
+
+# corrective and age based
+
+br1sim1a <- list()   # age-based policy with parameter update
+br1sim1apr <- list() # age-based policy without parameter update
+br1sim1c <- list()   # corrective policy
+
+for (i in 1:20){
+  cat("Repetition", i, ": age-based with update\n")
+  br1sim1a[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data1[[i]], n0y0 = br1n0y0,
+                                     beta = br1beta, tnowstep = 0.1, hor = 4, seqlen = 401)
+  cat("Repetition", i, ": age-based without update\n")
+  br1sim1apr[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data1[[i]], n0y0 = br1n0y0,
+                                       beta = br1beta, tnowstep = 0.1, hor = 4, seqlen = 401, cycleupdate = FALSE)
+  cat("Repetition", i, ": corrective\n")
+  br1sim1c[[i]] <- simNcycleCorrective(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data1[[i]], tnowstep = 0.1)
+}
+
+br1sim1asummary <- simsummary(br1sim1a)
+br1sim1aprsummary <- simsummary(br1sim1apr)
+br1sim1csummary <- simsummary(br1sim1c)
+br1sim1acsummaryall <- rbind(data.frame(sim = "Age-based with update", br1sim1asummary),
+                             data.frame(sim = "Age-based without update", br1sim1aprsummary),
+                             data.frame(sim = "Corrective", br1sim1csummary))
+
+br1sim1fig5ac <- ggplot(melt(br1sim1acsummaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(group = sim)) + geom_point(aes(group = sim)) + 
+  facet_grid(variable ~ sim, scales = "free_y", labeller = simlabeller2) +
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("br1sim1fig5ac.pdf", width = 6, height = 6)
+br1sim1fig5ac
+dev.off()
+
+br1sim1Tt01acsummaryall <- rbind(data.frame(sim = "CBM-cpu", br1sim1Tt01summary),
+                                 data.frame(sim = "CBM-epu", br1sim1prTt01summary),
+                                 data.frame(sim = "CBM-npu", br1sim1prprTt01summary),
+                                 data.frame(sim = "ABM-epu", br1sim1asummary),
+                                 data.frame(sim = "ABM-npu", br1sim1aprsummary),
+                                 data.frame(sim = "CM", br1sim1csummary))
+names(br1sim1Tt01acsummaryall)[3:5] <- c(expression(e[sys]), expression(bar(r)[sys]), expression(bar(g)))
+
+br1sim1fig5Tt01ac <- ggplot(melt(br1sim1Tt01acsummaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(group = sim), size = 0.3) + geom_point(aes(group = sim), size = 0.5) + 
+  facet_grid(variable ~ sim, scales = "free_y", labeller = label_parsed) +
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("br1sim1fig5Tt01ac.pdf", width = 6, height = 3)
+br1sim1fig5Tt01ac
 dev.off()
 
 
@@ -227,6 +287,43 @@ pdf("br1sim2fig5Tt02.pdf", width = 6, height = 6)
 br1sim2fig5Tt02
 dev.off()
 
+# corrective and age based
+
+br1sim2a <- list()   # age-based policy with parameter update
+br1sim2apr <- list() # age-based policy without parameter update
+br1sim2c <- list()   # corrective policy
+
+for (i in 1:20){
+  cat("Repetition", i, ": age-based with update\n")
+  br1sim2a[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], n0y0 = br1n0y0,
+                                     beta = br1beta, tnowstep = 0.1, hor = 4, seqlen = 401)
+  cat("Repetition", i, ": age-based without update\n")
+  br1sim2apr[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], n0y0 = br1n0y0,
+                                       beta = br1beta, tnowstep = 0.1, hor = 4, seqlen = 401, cycleupdate = FALSE)
+  cat("Repetition", i, ": corrective\n")
+  br1sim2c[[i]] <- simNcycleCorrective(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data2[[i]], tnowstep = 0.1)
+}
+
+br1sim2asummary <- simsummary(br1sim2a)
+br1sim2aprsummary <- simsummary(br1sim2apr)
+br1sim2csummary <- simsummary(br1sim2c)
+br1sim2Tt01acsummaryall <- rbind(data.frame(sim = "CBM-cpu", br1sim2Tt01summary),
+                                 data.frame(sim = "CBM-epu", br1sim2prTt01summary),
+                                 data.frame(sim = "CBM-npu", br1sim2prprTt01summary),
+                                 data.frame(sim = "ABM-epu", br1sim2asummary),
+                                 data.frame(sim = "ABM-npu", br1sim2aprsummary),
+                                 data.frame(sim = "CM", br1sim2csummary))
+names(br1sim2Tt01acsummaryall)[3:5] <- c(expression(e[sys]), expression(bar(r)[sys]), expression(bar(g)))
+
+br1sim2fig5Tt01ac <- ggplot(melt(br1sim2Tt01acsummaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(group = sim), size = 0.3) + geom_point(aes(group = sim), size = 0.5) + 
+  facet_grid(variable ~ sim, scales = "free_y", labeller = label_parsed) +
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("br1sim2fig5Tt01ac.pdf", width = 6, height = 3)
+br1sim2fig5Tt01ac
+dev.off()
+
+
 
 # sim 3: failures later than expected
 # -------------------------------------
@@ -302,6 +399,49 @@ br1sim3fig5Tt01 <- ggplot(melt(br1sim3Tt01summaryall, c("id", "sim")), aes(x = i
 pdf("br1sim3fig5Tt01.pdf", width = 6, height = 6)
 br1sim3fig5Tt01
 dev.off()
+
+# corrective and age based
+
+br1sim3a <- list()   # age-based policy with parameter update
+br1sim3apr <- list() # age-based policy without parameter update
+br1sim3c <- list()   # corrective policy
+
+for (i in 1:20){
+  cat("Repetition", i, ": age-based with update\n")
+  br1sim3a[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data3[[i]], n0y0 = br1n0y0,
+                                     beta = br1beta, tnowstep = 0.1, hor = 4, seqlen = 401)
+  cat("Repetition", i, ": age-based without update\n")
+  br1sim3apr[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data3[[i]], n0y0 = br1n0y0,
+                                       beta = br1beta, tnowstep = 0.1, hor = 4, seqlen = 401, cycleupdate = FALSE)
+  cat("Repetition", i, ": corrective\n")
+  br1sim3c[[i]] <- simNcycleCorrective(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data3[[i]], tnowstep = 0.1)
+}
+
+br1sim3asummary <- simsummary(br1sim3a)
+br1sim3aprsummary <- simsummary(br1sim3apr)
+br1sim3csummary <- simsummary(br1sim3c)
+br1sim3Tt01acsummaryall <- rbind(data.frame(sim = "CBM-cpu", br1sim3Tt01summary),
+                                 data.frame(sim = "CBM-epu", br1sim3prTt01summary),
+                                 data.frame(sim = "CBM-npu", br1sim3prprTt01summary),
+                                 data.frame(sim = "ABM-epu", br1sim3asummary),
+                                 data.frame(sim = "ABM-npu", br1sim3aprsummary),
+                                 data.frame(sim = "CM", br1sim3csummary))
+names(br1sim3Tt01acsummaryall)[3:5] <- c(expression(e[sys]), expression(bar(r)[sys]), expression(bar(g)))
+
+br1sim3fig5Tt01ac <- ggplot(melt(br1sim3Tt01acsummaryall, c("id", "sim")), aes(x = id, y = value)) +
+  geom_line(aes(group = sim), size = 0.3) + geom_point(aes(group = sim), size = 0.5) + 
+  facet_grid(variable ~ sim, scales = "free_y", labeller = label_parsed) +
+  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("br1sim3fig5Tt01ac.pdf", width = 6, height = 3)
+br1sim3fig5Tt01ac
+dev.off()
+
+mean(br1sim3Tt01summary$meancostrate); median(br1sim3Tt01summary$meancostrate)
+mean(br1sim3prTt01summary$meancostrate); median(br1sim3prTt01summary$meancostrate)
+mean(br1sim3prprTt01summary$meancostrate); median(br1sim3prprTt01summary$meancostrate)
+mean(br1sim3asummary$meancostrate); median(br1sim3asummary$meancostrate)
+mean(br1sim3aprsummary$meancostrate); median(br1sim3aprsummary$meancostrate)
+mean(br1sim3csummary$meancostrate); median(br1sim3csummary$meancostrate)
 
 
 # sim 4: failures much earlier than expected
