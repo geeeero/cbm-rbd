@@ -43,6 +43,11 @@ pdf("br1simN51fig1.pdf", width = 6, height = 4)
 br1simN51fig1
 dev.off()
 
+# test sim corrective
+#testfts <- lapply(br1sim5cycle20data1[[1]], function(x) x[1])
+#br1simN51c <- sim1cycleCorrective(sys = br, ctypes = brctypes, compfts = testfts, tnowstep = 0.1)
+#br1simN51c <- simNcycleCorrective(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data1[[1]], tnowstep = 0.1)
+
 br1sim1 <- list()     # our model
 br1sim1pr <- list()   # do not update params during cycle, but at end of cycle 
 br1sim1prpr <- list() # never update params
