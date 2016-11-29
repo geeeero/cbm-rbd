@@ -255,10 +255,47 @@ sim1cycleAgebased <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, s
   list(res = res, nnyn = nnyn, tfunc = tfunc, tend = tnow, costrate = costrate)
 }  
 
-# function to calculate tend, tfunc, costrate for age-based policy from simNcycle object
-#simNcycleAgebased <- function(simNcycleobj, thresh, cu = 1, cp = 0.2){
-#  
-#}
+# simulate N operational cycles with age-based maintenance policy
+# i.e. updated parameters from one cycle are used as prior parameters in next cycle
+# sys      system reliability block diagram at t = 0
+# ctypes   list giving the types of components in the system, same format as
+#          used for setCompTypes(), but needs the same order as in survsign table (!!!)
+# compfts  list with elements named like the vertices in sys, giving the N (simulated)
+#          failure times of this component -- assumed that no failure times == 0
+# n0y0     list of K prior parameter pairs c(n0,y0)
+# beta     vector of K fixed weibull shape parameters
+# tnowstep time interval after which current system reliability is re-evaluated
+# hor      how many time units from tnow into the future to calculate sysrelnow
+# seqlen   at how many points to evaluate sysrelnow
+# cu       cost of unplanned (corrective) repair action
+# cp       cost of planned (preventive) repair action, cp < cu
+# onecycle whether to use the one-cycle criterion or the renewal-based one
+simNcycleAgebased <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, seqlen = 101, 
+                              cycleupdate = TRUE, cu = 1, cp = 0.2, onecycle = TRUE){
+  N <- length(compfts[[1]])
+  if (any(sapply(compfts, length) != N))
+    stop("each element of compfts must contain the same number of failure times")
+  compftsi <- lapply(compfts, function(x) x[1])
+  n0y0i <- n0y0
+  res <- res2 <- nnyn <- list()
+  for (i in 1:N){
+    cat("Operational cycle", i, "\n")
+    res[[i]] <- sim1cycleAgebased(sys = sys, ctypes = ctypes, compfts = compftsi, n0y0 = n0y0i, beta = beta,
+                                  tnowstep = tnowstep, hor = hor, seqlen = seqlen, cu = cu, cp = cp, onecycle = onecycle)
+    res2 <- rbind(res2, data.frame(cycle = i, res[[i]]$res))
+    nnynlist <- list(nnyn, res[[i]]$nnyn)
+    if (i < N){ # update stuff for next cycle
+      compftsi <- lapply(compfts, function(x) x[i + 1])
+      if (cycleupdate)
+        n0y0i <- res[[i]]$nnyn
+    }
+  }
+  res2$cycle <- as.factor(res2$cycle)
+  tfuncvec <- sapply(res, function(resi) resi$tfunc)
+  tendvec <- sapply(res, function(resi) resi$tend)
+  costratevec <- sapply(res, function(resi) resi$costrate)
+  return(list(res = res2, nnyn = nnynlist, tfunc = tfuncvec, tend = tendvec, costrate = costratevec))
+}
 
 
 # function to calculate tend, costrate for a single cycle using the corrective policy (cp is ignored)
