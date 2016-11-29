@@ -48,11 +48,11 @@ names(br1taus1fineT)[2:6] <- c(taustar = expression(tau['*']^(t[now])),
                                cstar = expression(g['*']^(t[now])),
                                ctotal = expression(g[total]^(t[now])),
                                relstar = expression(paste(R[sys]^(t[now]),(t['*']^(t[now])))))
-tauhist1fig2T <- ggplot(melt(br1taus1fineT[-6], "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
+tauhist1fig2T <- ggplot(melt(br1taus1fineT[-c(5,6)], "tnow"), aes(x = tnow, y = value)) + xlab(expression(t[now])) +
   geom_line(aes(group = variable))  + geom_point(aes(group = variable), size = 0.15) +
-  facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
+  facet_wrap(~ variable, nrow = 3, scales = "free_y", labeller = label_parsed) +
   theme(axis.title.y = element_blank())
-pdf("tauhist1fig2T.pdf", width = 6, height = 4)
+pdf("tauhist1fig2T.pdf", width = 3.5, height = 7)
 tauhist1fig2T
 dev.off()
 #br1taus1fine[40:41,]
@@ -63,14 +63,14 @@ names(br1taus1fineprT)[2:6] <- c(taustar = expression(tau['*']^(t[now])),
                                  cstar = expression(g['*']^(t[now])),
                                  ctotal = expression(g[total]^(t[now])),
                                  relstar = expression(paste(R[sys]^(t[now]),(t['*']^(t[now])))))
-br1taus1prpoT <- rbind(data.frame(melt(br1taus1fineT[-6], "tnow"), variable2 = "Parameter update"),
-                       data.frame(melt(br1taus1fineprT[-6], "tnow"), variable2 = "No parameter update"))
+br1taus1prpoT <- rbind(data.frame(melt(br1taus1fineT[-c(5,6)], "tnow"), variable2 = "Parameter update"),
+                       data.frame(melt(br1taus1fineprT[-c(5,6)], "tnow"), variable2 = "No parameter update"))
 tauhist1fig3T <- ggplot(br1taus1prpoT, aes(x = tnow, y = value)) + xlab(expression(t[now])) +
   geom_line(aes(colour = variable2)) + guides(colour = guide_legend(title=NULL)) +
   geom_point(aes(colour = variable2), size = 0.15) + #theme_bw() +
-  facet_wrap(~ variable, nrow = 2, scales = "free_y", labeller = label_parsed) +
+  facet_wrap(~ variable, ncol = 3, scales = "free_y", labeller = label_parsed) +
   theme(axis.title.y = element_blank()) + bottomlegend + ijarcol
-pdf("tauhist1fig3T.pdf", width = 6, height = 4.5)
+pdf("tauhist1fig3T.pdf", width = 6, height = 2.75)
 tauhist1fig3T
 dev.off()
 
