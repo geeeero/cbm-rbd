@@ -251,10 +251,10 @@ compfts2df <- function(compfts, maxtnow = NA){
 #          equal to last failure time if not given.
 #          If set smaller than last failure time, maxtnow is the censoring time
 #          for all failure times after maxtnow
-plotfts <- function(compfts, maxtnow = NA, pointsize = 1, tlabelvjust = -1){
+plotfts <- function(compfts, maxtnow = NA, pointsize = 1, tlabelvjust = -1, labelround = 2){
   compftsdf <- compfts2df(compfts = compfts, maxtnow = maxtnow)
   ggplot(compftsdf, aes(x = Components, y = t, ymin = rep(0, dim(compftsdf)[1]), ymax = t)) + geom_linerange() +
-    geom_pointrange(aes(shape = factor(cens)), size = pointsize) + geom_text(aes(label = t, vjust = tlabelvjust)) + 
+    geom_pointrange(aes(shape = factor(cens)), size = pointsize) + geom_text(aes(label = round(t, labelround), vjust = tlabelvjust)) + 
     coord_flip() + scale_shape_manual(values = c(19, 1), label = c("Yes", "No"), name = "Failure")
 }
 

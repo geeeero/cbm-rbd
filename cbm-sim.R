@@ -157,10 +157,109 @@ simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh, s
   return(list(res = res2, nnyn = nnynlist, tfunc = tfuncvec, tend = tendvec, costrate = costratevec))
 }
 
+# simulate one operational cycle with age-based maintenance policy
+# sys      system reliability block diagram at t = 0
+# ctypes   list giving the types of components in the system, same format as
+#          used for setCompTypes(), but needs the same order as in survsign table (!!!)
+# compfts  list with elements named like the vertices in sys, giving the (simulated)
+#          failure time of this component -- assumed that no failure times == 0
+# n0y0     list of K prior parameter pairs c(n0,y0)
+# beta     vector of K fixed weibull shape parameters
+# tnowstep time interval after which system functioning is re-evaluated
+# hor      how many time units from tnow into the future to calculate sysrelnow
+# seqlen   at how many points to evaluate sysrelnow
+# cu       cost of unplanned (corrective) repair action
+# cp       cost of planned (preventive) repair action, cp < cu
+# onecycle whether to use the one-cycle criterion or the renewal-based one
+sim1cycleAgebased <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, seqlen = 101,
+                              cu = 1, cp = 0.2, onecycle = TRUE){
+  K <- length(ctypes)
+  ftschron <- sort(unlist(compfts)) # when something fails
+  ftschroni <- 1
+  # get taustar: initial arguments for gnowhor
+  cat("Calculating maintenance interval ... ")
+  sign <- computeSystemSurvivalSignature(sys)
+  fts0 <- as.list(rep(list(NULL), K))
+  gvec <- gnowhor(sign, n0y0, beta, fts0, tnow = 0, hor = hor, seqlen = seqlen, cu = cu, cp = cp, onecycle = onecycle)
+  taustar <- gvec$tau[which.min(gvec$gnow)]
+  cat("taustar =", taustar, "\n")
+  # set up loop over component failure times: assumes that system is not failed initially (before first component failure)
+  gotonext <- TRUE
+  failed <- FALSE
+  res <- data.frame(tnow = 0, failed = FALSE) # initialize results data frame (assumed that initial system functions)
+  while(gotonext){
+    # when is the next component failure?
+    failedcompsnow <- ftschron[1:ftschroni]
+    tnow <- ceiling(ftschron[ftschroni] / tnowstep) * tnowstep
+    # have any more components failed by this tnow?
+    failedcompsnow <- ftschron[ftschron <= tnow]
+    ftschroni <- length(failedcompsnow)
+    if(taustar < tnow){ # taustar is before next failure: repair preventively
+      tnow <- ceiling(taustar / tnowstep) * tnowstep # moment of repair in tnowstep resolution
+      gotonext <- FALSE
+      cost <- cp
+    } else { # taustar is after next failure: check if system failed, if not go on
+      sysnow <- induced_subgraph(sys, vids=V(sys)[!(name %in% names(failedcompsnow))])
+      # catch error when sysnow now contains vertices s and t only (suddenly all components fail)
+      if(distances(sysnow, "s", "t") < Inf)
+        signnow <- computeSystemSurvivalSignature(sysnow)
+      else
+        signnow <- data.frame(Probability = 0)
+      # now check if system failed
+      if (all(signnow$Probability == 0)){ # system has failed now, repair with cost cu
+        failed <- TRUE
+        gotonext <- FALSE
+        cost <- cu
+      } else { # system has not failed, go to next ftschron entry
+        ftschroni <- ftschroni + 1
+      }      
+    }
+    cat("tnow =", tnow, ": failed =", failed, "\n")
+    # write all current things in results data frame
+    resnow <- data.frame(tnow = tnow, failed = failed)
+    res <- rbind(res, resnow) 
+  } # end while loop
+  # update Weibull parameters (all component types!) for next operational cycle
+  # get failure times from compftslist until tnow (time of planned / unplanned repair)
+  ftslist <- as.list(rep(list(NULL), K))
+  ftsfinal <- ftschron[ftschron <= tnow]
+  ftsindex <- sapply(ctypes, function(ctypesl) names(ftsfinal) %in% ctypesl)
+  if (length(ftsfinal) >= 1){
+    if (length(ftsfinal) == 1){
+      ftsindex <- which(ftsindex)
+    } else {
+      ftsindex <- apply(ftsindex, 1, which)
+    }
+    for (k in 1:K)
+      ftslist[[k]] <- ftsfinal[ftsindex == k]
+  }
+  # censoring time is last tnow, number of censored components from
+  censlist <- as.list(rep(list(NULL), K))
+  ek <- sapply(ftslist, length)
+  Nk <- apply(sign, 2, max)
+  Nk <- Nk[-length(Nk)]
+  ck <- Nk - ek
+  for (k in 1:K)
+    censlist[[k]] <- rep(tnow, ck[k])
+  nnyn <- nnynlist(n0y0, ftslist, censlist, beta) # updated parameters at end of cycle
+  # time the system functioned ( = last tnow where not failed)
+  names(tnow) <- NULL
+  # time the system functioned
+  if (failed) # last tnow minus tnowstep)
+    tfunc <- tnow - tnowstep
+  else # last tnow
+    tfunc <- tnow
+  # realized unit cost rate
+  costrate <- cost / tnow
+  # return res and all
+  list(res = res, nnyn = nnyn, tfunc = tfunc, tend = tnow, costrate = costrate)
+}  
+
 # function to calculate tend, tfunc, costrate for age-based policy from simNcycle object
 #simNcycleAgebased <- function(simNcycleobj, thresh, cu = 1, cp = 0.2){
 #  
 #}
+
 
 # function to calculate tend, costrate for a single cycle using the corrective policy (cp is ignored)
 # sys      system reliability block diagram at t = 0

@@ -48,6 +48,12 @@ dev.off()
 #br1simN51c <- sim1cycleCorrective(sys = br, ctypes = brctypes, compfts = testfts, tnowstep = 0.1)
 #br1simN51c <- simNcycleCorrective(sys = br, ctypes = brctypes, compfts = br1sim5cycle20data1[[1]], tnowstep = 0.1)
 
+# test sim age-based
+testfts <- lapply(br1sim5cycle20data2[[1]], function(x) x[1])
+plotfts(testfts)
+br1simN51a <- sim1cycleAgebased(sys = br, ctypes = brctypes, compfts = testfts, n0y0 = br1n0y0, beta = br1beta,
+                                tnowstep = 0.1, hor = 4, seqlen = 401)
+
 br1sim1 <- list()     # our model
 br1sim1pr <- list()   # do not update params during cycle, but at end of cycle 
 br1sim1prpr <- list() # never update params
