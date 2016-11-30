@@ -1252,7 +1252,7 @@ with discrete jumps at component failure times.
 The size of the jump depends on the relevance of the failed component for the current system reliability.
 Common cause failures, i.e., failures of several components at the same time due to a shared root cause,
 are currently not accounted for in our model, as we assume component failures to be mutually independent
-given the Weibull parameters.
+given the component model parameters.
 Common cause failures will seriously influence the RLD and thus $\tausnow$,
 and we will comment on possible extensions in the Outlook (Section~\ref{sec:outlook}).
 
@@ -1261,9 +1261,9 @@ for our choice of component model.
 %($\beta_k > 1$ $\forall k = 1,\ldots,K$ sufficient **???**)
 %***here, $\Rsysnow(\cdot)$ shifted such that $\tnow = 0$.
 
-\begin{SCfigure}
-\centering
-\includegraphics[width=0.5\textwidth]{tauhist1fig2T}
+\begin{figure}
+%\centering
+\includegraphics[width=\textwidth]{tauhist1fig2T}
 \caption[t]{$\tausnow$, $\tstarnow = \tnow + \tausnow$ and $\gstarnow = \gnow(\tausnow)$
 %and the total unit cost rate $\gtotalnow$ as functions of $\tnow$
 for the system depicted in Figure~\ref{fig:brakesys-layout},
@@ -1290,7 +1290,8 @@ At $\tnow = 6$, the expected unit cost rate is $0.033$,
 and so considerably lower than the expected cost rate of $0.2 / 1.6 = 0.125$
 for an age-based policy not accounting for component information.}
 \label{fig:tauhist1fig2T}
-\end{SCfigure}
+\end{figure}
+
 
 \subsection{Numerical optimization of the expected unit cycle cost rate}
 \label{sec:optim}
@@ -1337,11 +1338,22 @@ allowing for a near real-time update.
 \section{Further elaboration of the case study}
 \label{sec:examples}
 
-As illustrative example for a system with complex layout,
-we use the simplified automotive brake system as introduced in Section~\ref{sec:sysrel},
+We now elucidate in more detail the case study used for the previous illustrative figures.
+We use the simplified automotive brake system as introduced in Section~\ref{sec:sysrel},
 see Figure~\ref{fig:brakesys-layout}.
-In all subsequent examples of this section,
-prior component model parameters are taken as in Table~\ref{tab:priorparams}.
+
+The cost parameters are chosen as $c_u = 1$, $c_p = 0.2$, % in all examples,
+i.e., corrective maintenance is five times more costly than preventive maintenance.
+This makes it worthwile to aim for a preventive repair of the system,
+but corrective maintenance will not be avoided at all cost.
+%Indeed, $c_u / c_p = 5$ means that risking corrective maintenance is worthwile
+%if one can expect to run the system five times longer
+%than the preventive maintenance interval.
+
+The choice of prior parameters for the four component models are discussed in Section~\ref{sec:ex-prior};
+then, our maintenance policy is illustrated under three different exemplary failure time histories,
+described in Sections~\ref{sec:ex-1}, \ref{sec:ex-2} and \ref{sec:ex-3}.
+A systematic study based on simulation failure times is subsequently presented in Section~\ref{sec:sim}.
 
 \begin{table}
 \centering
@@ -1366,6 +1378,12 @@ The corresponding expected failure behaviour is visualized in Figure~\ref{fig:co
 \label{tab:priorparams}
 \end{table}
 
+
+\subsection{Prior component models}
+\label{sec:ex-prior}
+
+The prior component model parameters chosen for this case study
+are given in Table~\ref{tab:priorparams}.
 Note that the scale parameter for component type H is $1$,
 such that failure times for this component type are assumed to follow an Exponential distribution.
 In cases where only $H$ and one or both of $P_3$ and $P_4$ are functioning,
@@ -1403,16 +1421,9 @@ but a weighted average over Weibull reliability functions according to the prior
 \label{fig:compprior1fig1}
 \end{figure}
 
-The cost parameters are chosen as $c_u = 1$, $c_p = 0.2$ in all examples,
-i.e., corrective maintenance is five times more costly than preventive maintenance.
-This makes it worthwile to aim for a preventive repair of the system,
-but corrective maintenance will not be avoided at all cost.
-Indeed, $c_u / c_p = 5$ means that risking corrective maintenance is worthwile
-if one can expect to utilize the system five times longer
-than under a predictive maintenance schedule.
 
-Below, we illustrate our procedure under three different exemplary failure time histories;
-a more systematic simulation study is subsequently presented in Section~\ref{sec:sim}.
+\subsection{Failure history 1: failures later than expected}
+\label{sec:ex-1}
 
 In the first failure history, we observe
 $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$ and $H = 8$,
@@ -1458,19 +1469,25 @@ Without the continuous update, residual system lifetime continues to be underest
 and maintenance is scheduled too early,
 leading to lower prospective ($\gstarnow$) and total ($\gtotalnow$) expected unit cost rates.
 
+
+\subsection{Failure history 2: failure times as expected}
+\label{sec:ex-2}
+
 In a second failure history, we observe the failure times $C_2 = 1$, $C_2 = 3$, $P_2 = 0.5$, $P_3 = 1.5$,
-and follow the system until $\tnow = 2$ only.
+and follow the system until $\tnow = 2.5$ only.
 Here, components of type $C$ behave more or less as expected,
-while type $P$ components fail quite early.
+while type $P$ components fail slightly earlier than expected.
 Overall, prior assumptions are reasonably in line with observed failure behaviour.
 %with a slight tendency to earlier failures.
 Consequently, the difference between the continuous update case and the no update case is small,
 as visualized in Figure~\ref{fig:tauhist2fig3T}.
-***$\tausnow$ values are slightly lower when component parameters are updated,
-reflecting the slightly too early failures of type $P$ components.
-Due to recommending maintenance to be carried out a bit earlier,
-prospective and total cost rate are slightly higher than in the no update case.
-However, these differences are minuscule in comparison to the gains offered by the continuous update
+***$\tausnow$ values for the model with parameter updates vary around those obtained without parameter updates,
+same for $\tstarnow$ and $\gstarnow$.
+Model with update suggests to mainatin a bit earlier,
+since $\tausnow$ drops below $\delta = 0.1$ at $\tnow = ***$,
+while this happens for the no update model at $\tnow = ***$.
+
+However, these differences are very small in comparison to the gains offered by the continuous update
 in case of the first failure history
 (note the differing vertical and horizontal scales in Figures~\ref{fig:tauhist1fig3T} and \ref{fig:tauhist2fig3T}).
 
@@ -1485,6 +1502,10 @@ unlike in case of the first failure history as depicted in Figure~\ref{fig:tauhi
 where updating gave considerable gains.}
 \label{fig:tauhist2fig3T}
 \end{figure}
+
+
+\subsection{Failure history 3: failures earlier than expected}
+\label{sec:ex-3}
 
 %The third failure history contains very late failures for all component types
 %by assuming $C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$,
@@ -1507,15 +1528,15 @@ where updating gave considerable gains.}
 %containing very late failures for all component types ($C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$).}
 %\label{fig:tauhist3fig3}
 %\end{figure}
-
+%
 The third failure history contains very early failures
 with $C_2 = 0.2$, $C_3 = 0.3$, $H = 0.5$, $P_2 = 0.05$, $P_3 = 0.15$,
-and we follow the system until $\tnow = 0.5$.
+and we follow the system until $\tnow = 0.5$***0.75?.
 
 ***see Figure~\ref{fig:tauhist4fig3T}
 
 ***without update consistently higher, adaptive algorithm takes surprisingly early failures into account,
-unlike in other scenarios, overall trend for $\tausnow$ constant because of heavy drops,
+unlike in other scenarios, overall trend for $\tstarnow$ constant because of heavy drops,
 costs are underestimated without update***
 
 \begin{figure}
@@ -1620,11 +1641,6 @@ $\tthresh = 0.1$ (left) and $\tthresh = 0.2$ (right).}
 
 \section{Outlook}
 \label{sec:outlook}
-
-***$\tthresh$ could vary over time, e.g., longer on weekends or outside office hours
-
-***$\tprep$ instead of $\tthresh$: always too late when scheduling maintenance once $\tausnow < \tprep$.
-Problem common to all CBM policies? usually no preparation time assumed?
 
 *** study other replacement schemes, e.g., replacing only failed components:
 when repaired/replaced components are present in system,
