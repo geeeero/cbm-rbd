@@ -55,7 +55,7 @@ tauhist1fig2T <- ggplot(melt(br1taus1fineT[-c(5,6)], "tnow"), aes(x = tnow, y = 
 pdf("tauhist1fig2T.pdf", width = 3.5, height = 7)
 tauhist1fig2T
 dev.off()
-#br1taus1fine[40:41,]
+#br1taus1fineT[55:65,]
 br1taus1fineprT <- taustarhist(br, brctypes, brcompfts, br1n0y0, br1beta, seq(0,8,by=0.1),
                                hor=4, seqlen=401, prior = TRUE, onecycle = FALSE)
 names(br1taus1fineprT)[2:6] <- c(taustar = expression(tau['*']^(t[now])),
@@ -73,6 +73,8 @@ tauhist1fig3T <- ggplot(br1taus1prpoT, aes(x = tnow, y = value)) + xlab(expressi
 pdf("tauhist1fig3T.pdf", width = 6, height = 2.75)
 tauhist1fig3T
 dev.off()
+
+#br1taus1fineprT[35:45,]
 
 br1taus1prpoTR <- rbind(data.frame(melt(br1taus1fineT[-5], "tnow"), variable2 = "Parameter update"),
                         data.frame(melt(br1taus1fineprT[-5], "tnow"), variable2 = "No parameter update"))
