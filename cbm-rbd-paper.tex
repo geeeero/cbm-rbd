@@ -651,25 +651,28 @@ omitting the rows for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_
 
 In this section, we describe how the system reliability function $\Rsysnow(t)$ at current time $\tnow$ 
 can be calculated for a specific choice of component model.
-Section~\ref{sec:policy} will then show how an adaptive maintenance policy
-can be derived for a monitored system based on such a current system residual life distribution. 
+%Section~\ref{sec:policy} will then show how an adaptive maintenance policy
+%can be derived for a monitored system based on such a current system residual life distribution. 
 
 We consider the well-known Weibull model for component lifetimes,
 which is used in a wide variety of reliability studies \textbf{***more motivation Weibull***}. 
 To keep things simple, we assume that the shape parameter of the Weibull distribution is known,
 and that only the scale parameter needs to be estimated.
+The model could be extended to learn also the shape parameter in a later step,
+using, e.g., the discretized approach by \cite{1969:soland}.
+
 By using a Bayesian approach, described in Section~\ref{sec:weibull},
 our component model allows to include both expert assessments and test data (if available),
-and furthermore can account for component lifetime information from the current run of the system up to $\tnow$.
+and furthermore can account for component lifetime information from the current operational cycle up to $\tnow$.
 %***component model: weibull with fixed shape,
 %inverse gamma prior on scale parameter,
 %fix priors via expected lifetime and prior strength,
 %test data inclusion
 %with noninformatiove right-censoring
 %
-Section~\ref{sec:postpred} then derives the posterior predictive distribution
+In Section~\ref{sec:postpred} we derive the posterior predictive distribution
 for the Weibull component model as needed for the current system reliability calculation.
-Section~\ref{sec:sysreltnow} then adapts the method from Section~\ref{sec:sysrel} for the adaptive setting,
+Finally, in Section~\ref{sec:sysreltnow}, we adapt the method from Section~\ref{sec:sysrel} for the adaptive setting,
 resulting in a formula for $\Rsysnow(t)$.
 %***output is $\Rsysnow(t)$, the current (at time $\tnow$) system reliability function
 %(residual life distribution, RLD)
@@ -680,15 +683,15 @@ resulting in a formula for $\Rsysnow(t)$.
 
 The model description below follows closely \cite{2016:walter-coolen},
 who presented the same residual life distribution model.
-However, \cite{2016:walter-coolen} did not consider any maintenance policies,
-and focus instead on a generalization of the RLD model using sets of priors for the component models.
-These sets of priors can be seen as parametric P-boxes,
-a certain kind of imprecise probability model \citep[see, e.g.,][]{itip}.
-Such models allow for vague and partial prior specifications,
-and provide sensitivity to prior-data conflict \cite[\S 2.2.3.3]{diss}.
+However, \cite{2016:walter-coolen} did not consider maintenance policies,
+but focus instead on a generalization of the RLD model using sets of priors for the component models.
+%These sets of priors can be seen as parametric P-boxes,
+%a certain kind of imprecise probability model \citep[see, e.g.,][]{itip}.
+%Such models allow for vague and partial prior specifications,
+%and provide sensitivity to prior-data conflict \cite[\S 2.2.3.3]{diss}.
 
 
-\subsection{Bayesian update of Weibull component models}
+\subsection{Bayesian update of the Weibull component models}
 \label{sec:weibull}
 
 Here we describe the Weibull model for the component lifetimes,
@@ -696,9 +699,9 @@ together with the Bayesian update procedure which allows to include
 expert knowledge, component tests, and information from the monitored components in the system.
 
 For each type $k$ component, we assume that the lifetime $T_{k,i}$ ($i=1,\ldots,N_k$, $k = 1, \ldots, K$)
-is Weibull distributed with fixed shape parameter $\beta_k > 0$,
+is Weibull distributed with scale parameter $\lambda_k$ and (fixed) shape parameter $\beta_k > 0$,
 in short $T_{k,i} \mid \lambda_k \sim \wei(\beta_k,\lambda_k)$,
-with density and cdf
+with pdf (probability density function) and cdf (cumulative distribution function)
 \begin{align}
 \label{eq:weibulldens}
 f(t_{k,i} \mid \lambda_k) &= \frac{\beta_k}{\lambda_k} (t_{k,i})^{\beta_k-1} e^{-\frac{(t_{k,i})^{\beta_k}}{\lambda_k}}\,, \\
@@ -710,9 +713,6 @@ where $\lambda_k > 0$ and $t > 0$.
 The shape parameter $\beta_k$ determines whether the hazard rate is increasing ($\beta_k > 1$)
 or decreasing ($\beta_k < 1$) over time.
 For $\beta_k=1$, one obtains the Exponential distribution with constant hazard rate as a special case.
-To keep things simple, we assume $\beta_k$ to be known.
-(We plan to extend the model to learn also $\beta_k$ in a later step,
-using, e.g., the discretized approach by \cite{1969:soland}.)
 The scale parameter $\lambda_k$ can be interpreted through the relation
 \begin{align}
 \E[T_{k,i} \mid \lambda_k] &= \lambda_k^{1/\beta_k}\, \Gamma(1 + 1/\beta_k)\,.
@@ -742,17 +742,17 @@ f(\lambda_k\mid a_k,b_k) &= \frac{(b_k)^{a_k}}{\Gamma(a_k)} \lambda_k^{-a_k -1} 
 \label{eq:ig-def}
 \end{align}
 in short, $\lambda_k \mid a_k, b_k \sim \ig(a_k,b_k)$.
-Here, we have added the prior parameters $a_k$ and $b_k$ in notation
-to indicate that the prior over $\lambda$ depends on their values.
+%Here, we have added the prior parameters $a_k$ and $b_k$ in notation
+%to indicate that the prior over $\lambda$ depends on their values.
 
-The inverse Gamma is convenient because it is a conjugate prior,
-i.e., the posterior obtained by Bayes' rule is again inverse Gamma and thus easily tractable;
-the prior parameters only need to be updated to obtain the posterior parameters,
+The inverse Gamma distribution is convenient because it is a conjugate prior,
+i.e., the posterior obtained by Bayes' rule is again an inverse Gamma distribution and thus easily tractable
+because only the prior parameters need to be updated to obtain the posterior parameters,
 so no numerical integation or simulation techniques are necessary.
 Furthermore, this conjugacy holds also when right-censored observations are used for updating,
 as indicated below.
 
-In place of the usual parametrization in terms of $a_k$ and $b_k$,
+Instead of the usual parametrization in terms of $a_k$ and $b_k$,
 we use the parameters $\nk > 1$ and $\yk > 0$
 %(the upper index ${}\uz$ is used to indicate that these are prior parameters)
 because they are more easy to interpret.
@@ -766,7 +766,7 @@ They are defined as
 where $\yk$ can be interpreted as the prior guess for the scale parameter $\lambda_k$,
 as $\E[\lambda_k\mid\nk,\yk] = \yk$.
 Using \eqref{eq:lambdainterpret},
-we can thus translate an expert's statement of expected component lifetime into a corresponding value for $\yk$.
+we can thus translate an expert's statement of the expected component lifetime into a corresponding value for $\yk$.
 $\nk$ can be seen as a prior strength or pseudocount,
 this will become clear in the discussion of the update step below.
 
@@ -794,22 +794,22 @@ where $\tautk = \sum_{i=1}^{e_k} (t_{k,i})^\beta + \sum_{i=1}^{c_k} (t^+_{k,i})^
 %where we leave out the index $k$ for $n_k$ in the upper index to increase legibility.
 
 From the simple update rule \eqref{eq:ig-update}, we see that
-$\ykp$ is a weighted average of the prior parameter $\yk$ and the maximum likelihood (ML) estimator $\tautk/e_k$,
+$\ykp$ is a weighted average of the prior parameter $\yk$ and the maximum likelihood estimator (ML) $\tautk/e_k$,
 with weights proportional to $\nk$ and $e_k$, respectively.
 $\nk$ can thus be interpreted as a prior strength or pseudocount,
 indicating how much our prior guess should weigh against the $e_k$ observed failure events.
 Furthermore, $\V[\lambda\mid\nk,\yk] = (\yk)^2 / (1 - 1/\nk)$;
-for fixed $\yk$, a higher $\nk$ indicates thus 
+for fixed $\yk$, a higher $\nk$ indicates 
 that more probability mass is concentrated around $\yk$.
 
-Using \eqref{eq:abtony} and \eqref{eq:ig-update}, the posterior distribution over $\lambda_k$ is
+Using \eqref{eq:abtony} and \eqref{eq:ig-update}, the posterior distribution over $\lambda_k$ is given by
 \begin{align}
 \lambda_k \mid \nk, \yk, \vec{t}_k \sim \ig(\nk + e_k + 1, \nk \yk + \tautk)\,.
 \label{eq:ig-update-alpha}
 \end{align}
 %where we have added the prior parameters $\nkz$ and $\ykz$ in notation
 %to emphasize that the posterior is a synthesis of prior information and data.
-As this posterior \eqref{eq:ig-update-alpha} can be defined in terms of
+As this posterior can be defined in terms of
 the updated, posterior parameters $\nkp$ and $\ykp$,
 we may also write
 \begin{align*}
@@ -817,7 +817,7 @@ f(\lambda_k \mid \nk, \yk, \vec{t}_k) &= f(\lambda_k \mid \nkp, \ykp)\,.
 \end{align*}
 The iterative nature of Bayesian inference means that we can take the updated,
 posterior parameters as new prior parameters and update them again using new data.
-Indeed, we will use this property to use the extra information about components
+We will use this property to use the extra information about components
 that accumulates during operation of the system:
 At any time $\tnow > 0$,
 all non-failed components contribute a right censored observation $\tpnow$;
@@ -846,7 +846,7 @@ Denote by $\nkz$ and $\ykz$ the parameters reflecting the knowledge base at syst
 These could have been obtained by updating prior parameters $\nk$ and $\yk$ (reflecting expert knowledge)
 to $\nkp$ and $\ykp$ using test data,
 or could be taken directly equal to $\nk$ and $\yk$ if no test data is available.
-In both cases, the distribution $f(\lambda_l \mid \nkz, \ykz)$
+In both cases, the distribution $f(\lambda_k \mid \nkz, \ykz)$
 thus accounts for all knowledge on component type $k$ that is available at system start-up.
 
 Following our comments at the end of Section~\ref{sec:weibull},
@@ -860,7 +860,7 @@ We denote the resulting parameter values by $\nknow$ and $\yknow$.
 %Furthermore, the fact that the components in the system that still function have reached the age $\tnow$
 %must be used when calculating the posterior predictive distribution.
 
-In analogue to the notation from Section~\ref{sec:weibull},
+In analogue to the notation used in Section~\ref{sec:weibull},
 let $N_k = \eknow + \cknow$ be the number of type $k$ components in the monitored system,
 where $\eknow$ is the number of components that have failed by $\tnow$,
 and $\cknow$ is the number of components that have not failed by $\tnow$.
@@ -905,7 +905,7 @@ Substituting this posterior and \eqref{eq:weibullcondprob} into \eqref{eq:postpr
     \int \lambda_k^{-(\nknow + 1) - 1}
     \exp\Big\{-\frac{(l_k + j) (t^{\beta_k} - (\tnow)^{\beta_k}) + \nknow\yknow}{\lambda_k}\Big\} \dd \lambda_k\,.
 \end{align}
-The terms remaining under the integral form the core of an inverse gamma distribution \eqref{eq:ig-def}
+The terms remaining under the integral form the core of an inverse Gamma distribution \eqref{eq:ig-def}
 with parameters $\nknow + 1$ and $\nknow\yknow + (l_k + j) (t^{\beta_k} - (\tnow)^{\beta_k}))$,
 allowing to solve the integral using the corresponding normalization constant.
 We thus have, for $l_k \in \{0,1,\ldots,\cknow\}$,
@@ -952,12 +952,12 @@ taking into account all information available at $\tnow$:
 Since this is the distribution of system reliability conditional on the system surviving until $\tnow$,
 we have that $\Rsysnow(\tnow) = 1$ for any $\tnow$.
 Note that if one or several components have failed by $\tnow$,
-the system layout changes, and with it the survival signature $\Phi(l_1,\ldots,l_K)$,
-so we denote the current survival signature by $\Phinow(l_1,\ldots,l_K)$.
+the system reliability block diagram changes, and with it the survival signature $\Phi(l_1,\ldots,l_K)$.
+We denote the current survival signature by $\Phinow(l_1,\ldots,l_K)$.
 
 For each prediction time $t$,
-\eqref{eq:sysrel-tnow} is a sum over over $\prod_{k=1}^K (\cknow + 1)$ terms;
-however, some of these terms correspond to $\Phinow(l_1,\ldots,l_K) = 0$,
+\eqref{eq:sysrel-tnow} is a sum over $\prod_{k=1}^K (\cknow + 1)$ terms.
+However, some of these terms correspond to $\Phinow(l_1,\ldots,l_K) = 0$,
 which can thus be disregarded.
 For each of the remaining terms,
 we must calculate the product $\prod_{k=1}^K P(C^k_t = l_k\mid\nkz,\ykz, \vectknow)$.
@@ -970,11 +970,11 @@ We will evaluate \eqref{eq:sysrel-tnow} on a dense grid of prediction times $t >
 thus discretely approximating the RLD.
 As the evaluation of \eqref{eq:sysrel-tnow} for each $t$ does not involve any complex numeric calculations or Monte Carlo sampling,
 the grid of prediction values can be very fine.
-
-Next, we will describe an adaptive maintenance policy based on %\eqref{eq:sysrel-tnow}
-a current residual life distribution,
-first in general, then for our implementation,
-where a fine discrete approximation of the RLD is obtained.
+%
+%Next, we will describe an adaptive maintenance policy based on %\eqref{eq:sysrel-tnow}
+%a current residual life distribution,
+%first in general, then for our implementation,
+%where a fine discrete approximation of the RLD is obtained.
 
 
 \section{Dynamic and adaptive maintenance policy based on the current system residual life distribution}
