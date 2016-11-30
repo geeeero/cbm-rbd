@@ -499,16 +499,16 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 \end{scriptsize}
 
 
-\section{Reliability functions for complex systems using the survival signature}
+\section{Reliability function for complex systems using the survival signature}
 \label{sec:sysrel}
 
-Here we describe how the system reliability function, given the system layout and arbitrary component models,
+Here we describe how the system reliability function, given the system reliability block diagram and arbitrary component models,
 can be efficiently calculated using the survival signature.
-We will show in Section~\ref{sec:adaptive-sysrel-weibull} how, for a certain choice of component model,
-this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
-giving us the residual life distribution on which we base our adaptive maintenance policy.
+%We will show in Section~\ref{sec:adaptive-sysrel-weibull} how, for a certain choice of component model,
+%this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
+%giving us the residual life distribution on which we base our adaptive maintenance policy.
 
-We can analyze systems of arbitrary reliability block diagram layout,
+We can analyze systems with an arbitrary reliability block diagram,
 consisting of components of $K$ different types,
 where there are $N_k$ exchangeable components of type $k$ in the system,
 and the total number of components in the system is $\sum_{k=1}^K N_k = N$.
@@ -521,8 +521,6 @@ which in turn actuate a braking pad assembly each ($P_1$ -- $P_4$).
 The hand brake mechanism ($H$) directly actuates the brake pad assemblies $P_3$ and $P_4$;
 the vehicle brakes when at least one brake pad assembly is actuated.
 Note that because of the `handbrake shortcut', this system cannot be described as a nesting of series and parallel subsystems.
-***This is a popular example to illustrate such kinds of systems,
-see, e.g., \cite[p.~***]{2010:ebeling}.***
 %This system is observed until time $\tnow$,
 %leading to censored observation of certain component lifetimes within the system.
 
@@ -584,13 +582,13 @@ see, e.g., \cite[p.~***]{2010:ebeling}.***
 \end{scope}
 \end{tikzpicture}
 \caption{Reliability block diagram for a simplified automotive brake system
-with four component types $M$, $H$, $C$ and $P$.
-Note that this system layout cannot be expressed as a nesting of series and parallel layouts.
-The corresponding survival signature $\Phi(l_M,l_H,l_C,l_P)$ is given in Table~\ref{tab:brakesys-survsign}.}
+with four component types $M$, $H$, $C$ and $P$.}
+%Note that this system layout cannot be expressed as a nesting of series and parallel layouts.
+%The corresponding survival signature $\Phi(l_M,l_H,l_C,l_P)$ is given in Table~\ref{tab:brakesys-survsign}.}
 \label{fig:brakesys-layout}
 \end{figure}
 
-In a system with $N$ components, the state of the components can be expressed by the state vector
+In a system with $N$ components, the state of the system can be expressed by the state vector
 $\vec{x} = (x_1,x_2,\ldots,x_N) \in \{0,1\}^N$,
 with $x_i=1$ if the $i$th component functions and $x_i=0$ if not.
 The structure function $\phi : \{0,1\}^N \rightarrow \{0,1\}$, defined for all possible $\vec{x}$,
@@ -614,14 +612,14 @@ P(\Tsys > t) &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} P(\Tsys > t \mid C^
              &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} \Phi(l_1,\ldots,l_K) \prod_{k=1}^K P(C^k_t = l_k)\,,
 \label{eq:sysrel-survsign}
 \end{align}
-where $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$,
-and the last equality holds as we assume that components of different types are independent.
+where $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$.
+The last equality holds as we assume that components fail independently.
 Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is non-decreasing in each $l_k$.
 
 Continuing our example,
 the survival signature for the system in Figure~\ref{fig:brakesys-layout} is given in Table~\ref{tab:brakesys-survsign},
 omitting the entries for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_C, l_P) = 1$,
-since the full table would contain $\prod_{k=1}^K (N_k + 1) = 2 \times 2 \times 5 \times 5 = 100$ rows.
+because the full table would contain $\prod_{k=1}^K (N_k + 1) = 2 \times 2 \times 5 \times 5 = 100$ rows.
 
 \begin{table}
 \centering
@@ -1474,7 +1472,7 @@ leading to lower prospective ($\gstarnow$) and total ($\gtotalnow$) expected uni
 \label{sec:ex-2}
 
 In a second failure history, we observe the failure times $C_2 = 1$, $C_2 = 3$, $P_2 = 0.5$, $P_3 = 1.5$,
-and follow the system until $\tnow = 2.5$ only.
+and follow the system until $\tnow = 2.5$.
 Here, components of type $C$ behave more or less as expected,
 while type $P$ components fail slightly earlier than expected.
 Overall, prior assumptions are reasonably in line with observed failure behaviour.
@@ -1483,11 +1481,10 @@ Consequently, the difference between the continuous update case and the no updat
 as visualized in Figure~\ref{fig:tauhist2fig3T}.
 ***$\tausnow$ values for the model with parameter updates vary around those obtained without parameter updates,
 same for $\tstarnow$ and $\gstarnow$.
-Model with update suggests to mainatin a bit earlier,
-since $\tausnow$ drops below $\delta = 0.1$ at $\tnow = ***$,
-while this happens for the no update model at $\tnow = ***$.
-
-However, these differences are very small in comparison to the gains offered by the continuous update
+With $\delta = 0.1$, the moment of maintenance is $2.6$ and $2.5$, respectively,
+this shows that for this failure history, where there is indeed no need to update,
+and $\tausnow$ behaviour is dominated by the update of the system reliability block diagram.
+Here, any differences due to the update are very small in comparison to the gains offered by the continuous update
 in case of the first failure history
 (note the differing vertical and horizontal scales in Figures~\ref{fig:tauhist1fig3T} and \ref{fig:tauhist2fig3T}).
 
@@ -1530,25 +1527,30 @@ where updating gave considerable gains.}
 %\end{figure}
 %
 The third failure history contains very early failures
-with $C_2 = 0.2$, $C_3 = 0.3$, $H = 0.5$, $P_2 = 0.05$, $P_3 = 0.15$,
-and we follow the system until $\tnow = 0.5$***0.75?.
+with $C_2 = 0.1$, $C_3 = 0.2$, $C_4 = 0.8$ $H = 1$, $P_2 = 0.3$, $P_3 = 0.4$,
+and we follow the system until $\tnow = 1$.
 
 ***see Figure~\ref{fig:tauhist4fig3T}
 
-***without update consistently higher, adaptive algorithm takes surprisingly early failures into account,
-unlike in other scenarios, overall trend for $\tstarnow$ constant because of heavy drops,
-costs are underestimated without update***
+***without update $\tausnow$ consistently higher,
+adaptive algorithm takes surprisingly early failures into account.
+Unlike in the other two scenarios, the overall trend for $\tstarnow$ is a decrease,
+expected cycle costs are underestimated without update***
+
+Model with update consistently suggests to maintain earlier,
+but for both models, $\tausnow$ drops below $\delta = 0.1$ upon the failure of H at $\tnow = 1$.
+Like in failure history 2, the structural information plays an important part in the policy.
+This aspect will be confirmed in the small simulation study described next.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{tauhist4fig3T}
 \caption{Effect of the continuous parameter update for the third failure history,
-containing very early failures ($C_2 = 0.2$, $C_3 = 0.3$, $H = 0.5$, $P_2 = 0.05$, $P_3 = 0.15$).
-***more }
+containing very early failures ($C_2 = 0.1$, $C_3 = 0.2$, $C_4 = 0.8$ $H = 1$, $P_2 = 0.3$, $P_3 = 0.4$).}
 \label{fig:tauhist4fig3T}
 \end{figure}
 
 
-\section{Small simulation study}
+\section{A small simulation study}
 \label{sec:sim}
 
 We now present a small simulation study
