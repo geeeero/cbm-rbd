@@ -289,7 +289,7 @@ for when no degradation signal for the system is available,
 but where the status (working or not working) of the components can be monitored continuously.
 In this situation, one can use the system's reliability block diagram
 and information with respect to the status of its components
-to directly calculate the system residual life distribution (RLD),
+to directly calculate the system residual life distribution,
 and base the maintenance policy for the system on this distribution.
 (In fact, our CBM policy can be seen as based on a multivariate degradation signal,
 where each component sends a binary signal, and the reliability block diagram is used for sensor fusion.) 
@@ -300,7 +300,7 @@ directly after the failure of a component where the system still functions (2),
 and directly after the failure of a component due to which the system as a whole no longer can function (3). 
 
 In case of a trigger of type (1),
-the currently used model for system failure times is updated
+the currently used model for component failure times is updated
 to account for the aging of components,
 and the extra lifetime observed for the components.
 The latter information is taken into account via right-censored observations
@@ -318,8 +318,8 @@ is calculated based on minimizing the expected maintenance-related cost per unit
 where an operational cycle starts with a new system, and ends after this system has been replaced by a(n as good as) new system. 
 
 In case of a trigger of type (3),
-the currently used model for system failure times is updated
-like in case of a trigger of type (2)
+the currently used component failure time distributions are updated
+like in case of a trigger of type (1) and (2)
 to account for the information gained on components
 until the moment of system failure.
 Hereafter, a new system is installed,
@@ -490,13 +490,59 @@ and we allow for set-up time
 \section{Literature review}
 \label{sec:literature}
 
+Although there is a lot of literature on CBM policies for multi-component systems,
+see, e.g., \citet{2016:oldekeizer},
+we found only a few papers having some relation to our approach.
 
+The paper that comes closest to this paper is the paper by \citet{2013:si-et-al}.
+In that paper, the condition of a system is inspected,
+where the moment of the next inspection is determined via an updated degradation path based on the present condition of the system.
+The authors provide exact expressions for the RUL (remaining useful lifetime) distribution,
+also known as residual life distribution (RLD),
+which is updated in an empirical Bayesian framework using conjugate priors.
+The RLD is used to construct a replacement decision model using a cost rate.
+
+One of the main differences between \citet{2013:si-et-al} and our paper
+is that we use component status data and the system reliability block diagram instead of the degradation signal
+as basis for calculating the system RUL.
+Another main difference is that our policy can be applied to arbitrary system configurations
+(i.e., arbitrary reliability block diagrams with arbitrary components),
+whereas the method given by \citet{2013:si-et-al} can only be applied to single components.
+A third difference concerns how the cost rate is calculated.
+\citet{2013:si-et-al} calculate this rate using the renewal-reward theory approximation.
+Essential for using the renewal-reward theory for calculating the expected cost per unit of time
+is that the relevant characteristics of the system considered and its environment are not changing,
+i.e. that the failure behavior of the system,
+in essence its relibability function, does not change over time,
+and that we use the same policy with the same parameter values during a statistically long enough period of time.
+However, due to the update method related to the CBM policy presented in this paper
+like in \citet{2013:si-et-al}, we cannot use this approximate calculation method,
+and therefore use the exact formula for the average cost per unit of time.
+
+Another paper that includes some of the aspects included in our paper is the paper by \citet{2012:sun-et-al}.
+The authors construct a health index for a system based on sensor measurements,
+where the health status prediction is updated sequentially,
+resulting in a RUL distribution like with our method.
+However, in contrast to our paper, the authors do not link their RUL distribution to any maintenance decisions.
+
+\citet{2011:kim-et-al} developed a periodic monitoring CBM policy
+where a maintenance decision is triggered when a Bayesian control chart
+(a sequentially updated health indicator) exceeds a control limit (threshold)
+that is determined by minimizing the expected average cost per time unit.
+We use the same cost criterion, but base the maintenance policy decision directly on our exact RLD.
+
+To summarize the main contribution of our paper,
+it introduces a CBM-like policy that does not require knowledge of the degradation path of the system,
+but can take into account continuous changes in the system reliability block diagram,
+as well as changes in the component failure time distribution.
+
+
+
+% ----------------------------------------------------------------------------------------------------
+\iffalse
 ***CBM via RUL/RLD, $M^*$ out of $N$ policies?
-
 ***also generally Bayesian methods in maintenance optimization?
-
 ***cite CBM review Olde Keizer, Flapper, Teunter, and other refs from it?
-
 
 Example for Bayesian method in CBM via inspections: \cite{2007:wang-jia}
 propose a model that uses Bayesian updating,
@@ -570,8 +616,9 @@ and do not scale well to large networks (many tasks are NP-hard).
 
 The above papers seem to use a BN to model a degradation signal or (system) health index (have to check again to be sure).
 Our approach is different, as we get an exact formulation for the system RUL directly.
-
 \end{scriptsize}
+\fi
+% ----------------------------------------------------------------------------------------------------
 
 
 \section{Reliability function for complex systems using the survival signature}
