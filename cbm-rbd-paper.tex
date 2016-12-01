@@ -225,30 +225,35 @@
 
 
 \begin{abstract}
-We propose a new way of developing a condition-based maintenance policy for complex systems,
-based not on a one-dimensional continuous degradation signal,
-but on the status of all components within a system.
+We propose a new condition-based maintenance policy for complex systems,
+based on the status (working, defective) of all components within a system,
+as well as the relaibility block diagaram of the system.
 
 By means of the survival signature,
 a generalization of the system signature allowing for multiple component types,
-we obtain a predictive distribution for system survival time
+we obtain a predictive distribution for the system survival time
 %(also known as RUL, remaining useful life)
-(known as residual life distribution, RLD)
+(also known as residual life distribution, RLD)
 based on which of the system's components currently function or not,
 and the current age of the functioning components.
 
-Component time to failure is modeled by a Weibull distribution with fixed shape parameter.
+The time to failure of the components of the system
+is modeled by a Weibull distribution with a fixed shape parameter.
 The scale parameter is iteratively updated in a Bayesian fashion
 using the current (censored and non-censored) component lifetimes.
-Each component type has a separate model that may also include test data.
+Each component type has a separate (Weibull) model that may also include test data.
 
-The cost-optimal moment of repair for the system is obtained by minimizing the one-cycle unit cost rate.
-The unit cost rate is recalculated at fixed time points,
-leading to a dynamic policy since the aging of components and possible failures will change the cost-optimal moment of repair.
+The cost-optimal moment of replacement for the system is obtained by minimizing
+the expected cost rate per unit of time.
+The unit cost rate is recalculated when components fail
+or at the end of every (very short) fixed inter-inspection interval,
+leading to a dynamic maintenance policy,
+since the aging of components and possible failures will change the cost-optimal moment of repair in the course of time.
+Via numerical experiments, some insight into the performance of the policy is given.
 \end{abstract}
 
 \begin{keyword}
-condition-based maintenance \sep system reliability \sep remaining useful life \sep survival signature \sep one-cycle unit cost rate\end{keyword}
+condition-based maintenance \sep system reliability \sep remaining useful life \sep survival signature \sep unit time cost rate\end{keyword}
 \end{frontmatter}
 
 
@@ -257,21 +262,91 @@ condition-based maintenance \sep system reliability \sep remaining useful life \
 \section{Introduction}
 \label{intro}
 
+Both in practice and academics,
+there is a growing interest in CBM (condition-based maintenance), see e.g.,
+\citet[pp.~15--55]{2016:oldekeizer}
+The central idea behind CBM is to maintain systems or components at the right time,
+i.e., before they fail, but not too early, in order to keep their reliability high and operating costs low.
+In this context a trade-off is made between the risk of failure during operation
+(which can lead to costly downtime: idle workforce, missed production, penalties, loss of reputation)
+and the costs of premature maintenance (wasting potential component or system lifetime,
+downtime cost, cost of executing unnecessary maintenance activities).
 
-***main message:
-can do CBM for systems without degradation signal,
-especially useful for redundant systems,
-dynamic policy using one-cycle unit cost rate (exact, unlike renewal theorem based!),
-using iterative Bayesian update of component models,
-thus taking all information into account (history and current status)
+Among the reasons for the above interest are the importance of increasingly short and
+reliable delivery times, and decreasing profit margins due to worldwide competition.
+All kinds of technical improvements have made it possible % it is more / better / earlier possible
+to estimate the condition of systems as a whole as well as their undelying components,
+whereas the cost for these technologies is decreasing rapidly,
+making the use of CBM policies even more feasible.
 
-***Bayesian approach allows component models to include expert info, test data (if available),
-and information that can be gained from the behaviour of components in the running system
-in the form of censored and non-censored component lifetimes 
+Most CBM policies are based on a directly observable, continuously measurable condition or degradation signal.
+Alternatively, such a signal or health status is constructed
+using indirect measurements to determine the remaining useful life or time to failure of a system,
+see, e.g., \citet{2014:rul-review, 2011:rul-review-statistical}.
 
-***we argue that our approach is CBM because it takes current system state into account
-and adjusts the moment of maintenance accordingly.
+In this paper, we propose an inspection-based CBM policy
+for when no degradation signal for the system is available,
+but where the status (working or not working) of the components can be monitored continuously.
+In this situation, one can use the system's reliability block diagram
+and information with respect to the status of its components
+to directly calculate the system residual life distribution (RLD),
+and base the maintenance policy for the system on this distribution.
+(In fact, our CBM policy can be seen as based on a multivariate degradation signal,
+where each component sends a binary signal, and the reliability block diagram is used for sensor fusion.) 
 
+There are 3 types of triggers to review the system in our new policy:
+at the end of each very short inspection interval (1),
+directly after the failure of a component where the system still functions (2),
+and directly after the failure of a component due to which the system as a whole no longer can function (3). 
+
+In case of a trigger of type (1),
+the currently used model for system failure times is updated
+to account for the aging of components,
+and the extra lifetime observed for the components.
+The latter information is taken into account via right-censored observations
+in a Bayesian parameter update step.
+
+In case of a trigger of type (2),
+when a component has failed since the last inspection but the system is still functioning,
+also the reliability block diagram of the system is updated.
+Based on the above changes,
+it is determined in both cases whether the system should be replaced now,
+or that this decision should be postponed until the next planned inspection moment,
+accepting the risk of a system breakdown before.
+In this context, the optimal moment of maintenance
+is calculated based on minimizing the expected maintenance-related cost per unit of time for the present operational cycle,
+where an operational cycle starts with a new system, and ends after this system has been replaced by a(n as good as) new system. 
+
+In case of a trigger of type (3),
+the currently used model for system failure times is updated
+like in case of a trigger of type (2)
+to account for the information gained on components
+until the moment of system failure.
+Hereafter, a new system is installed,
+using the updated models for all components based on the insight obtained from the concluded operational cycle.
+
+At first sight, the above quasi-continous updating of the component failure models,
+and the system reliability block diagram,
+as well as redetermining the best moment to replace the system,
+seems to result in a (very) nervous maintenance policy.
+However, due to the very short calculation times,
+only at certain moments in time people involved in the execution of maintenance tasks
+need to receive detailed information,
+whereas during the remaining time,
+all can be handled automatically, as done at the moment within, e.g., many safety systems. 
+
+The setup of the rest of the paper is as follows.
+In Section~\ref{sec:literature}, we show our contribution to the CBM literature.
+Next, in Sections~\ref{sec:sysrel}, \ref{sec:adaptive-sysrel-weibull} and \ref{sec:policy},
+the three main steps in our policy are discussed in detail.
+Hereafter, in Sections~\ref{sec:examples} and \ref{sec:sim},
+our policy is applied further to an example.
+Finally, in Section~\ref{sec:outlook},
+a short summary and our main conclusions are given,
+followed by some suggestions for further research.
+
+\iffalse
+% ----------------------------------------------------------------------------------------------------
 \subsection*{---------------------}
 ***general discussion on CBM as usual
 
@@ -303,7 +378,6 @@ again time till failure via distance of current degradation level to fixed known
 by minimizing the expected unit cost rate,
 which is often approximated using the renewal reward theorem.
 %but in practice threshold often not known
-
 \subsection*{---------------------}
 
 Here we propose a different approach to CBM
@@ -388,7 +462,6 @@ and for situations with high set-up costs,
 as is typical for CBM applications,
 the replace-all scheme is most likely the cost-optimal strategy. 
 
-
 ***figure of process: component priors $\to$ component posteriors $\to$ system RLD $\to$ $\gnow(\tau)$ $\to$ $\tausnow$
 
 ***operation: recalculate $\tausnow$ at fixed dense grid of time points (quasi-continuous),
@@ -411,10 +484,12 @@ and the cost parameters $c_p$ and $c_u$.
 we are dynamic (would mean for a $M^*$ out of $N$ policy that $M^*$ decreases over time due to component aging),
 we learn about component lifetimes,
 and we allow for set-up time
+\fi
+% ----------------------------------------------------------------------------------------------------
 
+\section{Literature review}
+\label{sec:literature}
 
-
-\section{Literature***}
 
 ***CBM via RUL/RLD, $M^*$ out of $N$ policies?
 
