@@ -12,7 +12,8 @@ minirel <- list(theme(axis.title = element_blank()),
                 scale_y_continuous(breaks=c(0, 0.5, 1)))
 minirelsize <- 1.5
 
-ijarcols <- c("#b2df8a", "#1f78b4")
+#ijarcols <- c("#b2df8a", "#1f78b4")
+ijarcols <- c("#1f78b4", "#b2df8a")
 ijarcol <- scale_colour_manual(values = ijarcols)
 ijarfill <- scale_fill_manual(values = ijarcols)
 

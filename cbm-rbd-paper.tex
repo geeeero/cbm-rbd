@@ -1409,7 +1409,7 @@ P & $1.5$ & $ 5$\rule{1.5ex}{0ex} & $ 13.0$ & $1$\rule{1ex}{0ex} \\
 The prior component model parameters chosen for this case study
 are given in Table~\ref{tab:priorparams}.
 Note that the scale parameter for component type H is $1$,
-such that failure times for this component type are assumed to follow an Exponential distribution.
+such that the failure times for this component type are assumed to follow an Exponential distribution.
 In cases where only $H$ and one or both of $P_3$ and $P_4$ are functioning,
 the system reliability function will thus be close to exponential,
 making preventive maintenance unattractive.
@@ -1426,10 +1426,12 @@ then $\nkz$ will typically be larger,
 since the update of $n_k$ involves the number of observed failures
 (see Section~\ref{sec:weibull}).
 
-The expected component failure behaviour according to the parameter choices in Table~\ref{tab:priorparams}
+The expected component failure behaviour obtained by the parameter choices in Table~\ref{tab:priorparams}
 is visualized in Figure~\ref{fig:compprior1fig1},
 showing the prior predictive reliability function for a single component of each type.
-We see that, e.g., median prior expected failure times are
+Note that these functions are not plain Weibull reliability functions,
+but weighted averages over Weibull reliability functions according to the prior distribution over the scale parameter $\lambda_k$.
+We see that, e.g., the median prior expected failure times are
 $2.2$, $4.1$, $6.3$, and $3.1$ for type $C$, $H$, $M$, and $P$ components, respectively.
 While it is a priori quite unlikely that any type $C$ component will survive past time $6$,
 we expect 25\% of type $H$ components to survive past time $10$.
@@ -1439,9 +1441,7 @@ we expect 25\% of type $H$ components to survive past time $10$.
 \includegraphics[width=\textwidth]{compprior1fig1}
 \caption{Prior predictive reliability functions corresponding to the values from Table~\ref{tab:priorparams},
 %for the four component types of the system depicted in Figure~\ref{fig:brakesys-layout},
-showing the expected failure behaviour.
-Note that each of these is not a plain Weibull reliability function,
-but a weighted average over Weibull reliability functions according to the prior distribution over the scale parameter.}
+showing the expected failure behaviour.}
 \label{fig:compprior1fig1}
 \end{figure}
 
@@ -1458,15 +1458,14 @@ Here, failures observed for type $C$ are thus considerably later than expected,
 while for type $P$, the two observed failures are close to the assumed MTTF. 
 Both failure at time $8$ for $H$ and non-failure by time $8$ for $M$ are nothing unusual.
 In total, due to the late type $C$ failures, prior assumptions turn out to be somewhat pessimistic.
+
 This is reflected in Figure~\ref{fig:tauhist1fig2T},
-***where $\tausnow$ first decreases but then tends to increase during failure-free periods,
+where $\tausnow$ (left panel) first decreases quickly but then tends to decrease more slowly during failure-free periods,
 which is a consequence of adjusting prior expectations for type $C$ components
 due to their unexpected reliability.
-
-Figure~\ref{fig:tauhist1fig2T}: 
-$\tausnow$ (left panel) decrease weakens and attains a near-constant speed from about $\tnow = 2$ during failure-free periods,
-with discrete drops at the failures of components $P_2$, $P_3$ and $H$ only.
-%With the failure of $H$ at time $\tnow = 8$,
+Large drops of $\tausnow$ happen only at the failures of components $P_2$, $P_3$ and $H$
+at times 3, 4 and 8, respectively,
+as $\Rsysnow(t)$ changes considerably at these moments.
 $\tausnow$ falls below $\delta = 0.1$ at time $\tnow = 6$,
 triggering preventive maintenance of the system.
 $\tausnow = 1.60$ at $\tnow = 0$, this corresponds to the optimal maintenance time
@@ -1480,37 +1479,38 @@ with small upward jumps at the failures of $P_2$ and $P_3$.
 %so the drops in $\tausnow$ do not entirely outweigh the higher likelihood of system failure
 %due to the failure of these components.
 %\textbf{***show $\Rsysnow(\tausnow)$???}
-At $\tnow = 6$, the expected unit cost rate is $0.033$,
-and so considerably lower than the expected cost rate of $0.2 / 1.6 = 0.125$
-for an age-based policy not accounting for component information.
+At $\tnow = 6$, the expected operational cycle cost rate is $0.033$,
+and so considerably lower than the operational cycle cost rate of $0.2 / 1.6 = 0.125$
+that one obtains by maintaining the system preventively at time 1.6,
+as suggested by the age-based policy that disregards the information from component monitoring.
+In this example, using the component failure information allows to lower the cost rate by 73\%.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{tauhist1fig3T}
 \caption{Illustration of the gains due to the parameter update at each $\tnow$,
-assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$.
-$\tausnow$ (left panel) is consistently lower for the non-adaptive algorithm,
-same with $\tstarnow$ (center panel).
-This is because the adaptive algorithm recognizes that system components are more reliable than expected,
-leading to lower expected unit cost rates $\gstarnow$ (right panel).
-$\tausnow$ for the non-adaptive algorithm drops below $\delta = 0.1$ at $\tnow = 4$,
-while maintenance is triggered for the adaptive algorithm at $\tnow = 6$.
-The parameter update thus allows to run the system for two more time units,
-corresponding to a unit cost rate of $0.2 / 6 = 0.033$ instead of $0.2 / 4 = 0.05$,
-a reduction of 33\%.}
+assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$.}
 \label{fig:tauhist1fig3T}
 \end{figure}
 
-The effect of this continuous parameter update is illustrated in Figure~\ref{fig:tauhist1fig3T}.
+The effect of the continuous parameter update in our policy is illustrated in Figure~\ref{fig:tauhist1fig3T}.
 There, the results as seen already in Figure~\ref{fig:tauhist1fig2T} are compared
-to the case when component parameters are not updated,
+to the case when component parameters are not updated during the operation of the system,
 while still accounting for the fact that components age,
 and that a failed component changes the system layout.
 %***so dynamic but not adaptive?***
-***We see that $\tausnow$ is steadily decreasing in the no update case,
+We see that $\tausnow$ (left panel) is decreasing more quickly in the no update case,
 with the jumps at component failure times being less pronounced than in the update case.
 Without the continuous update, residual system lifetime continues to be underestimated,
 and maintenance is scheduled too early,
-leading to lower prospective ($\gstarnow$) and total ($\gtotalnow$) expected unit cost rates.
+%$\tausnow$ (left panel) is consistently lower for the non-adaptive algorithm,
+%same with $\tstarnow$ (center panel).
+%This is because the adaptive algorithm recognizes that system components are more reliable than expected,
+leading to lower expected operational cycle cost rates $\gstarnow$ (right panel).
+$\tausnow$ for the policy without parameter update drops below $\delta = 0.1$ at $\tnow = 4$,
+while maintenance is triggered for the algorithm with parameter update at $\tnow = 6$.
+The parameter update thus allows to run the system for two more time units,
+corresponding to a unit cost rate of $0.2 / 6 = 0.033$ instead of $0.2 / 4 = 0.05$,
+a reduction of 33\%.
 
 
 \subsection{Failure history 2: failure times as expected}
@@ -1524,11 +1524,11 @@ Overall, prior assumptions are reasonably in line with observed failure behaviou
 %with a slight tendency to earlier failures.
 Consequently, the difference between the continuous update case and the no update case is small,
 as visualized in Figure~\ref{fig:tauhist2fig3T}.
-***$\tausnow$ values for the model with parameter updates vary around those obtained without parameter updates,
-same for $\tstarnow$ and $\gstarnow$.
-With $\delta = 0.1$, the moment of maintenance is $2.6$ and $2.5$, respectively,
-this shows that for this failure history, where there is indeed no need to update,
-and $\tausnow$ behaviour is dominated by the update of the system reliability block diagram.
+There, $\tausnow$ values for the policy with parameter updates vary around those obtained for the policy without parameter updates,
+and a similar behavior for $\tstarnow$ and $\gstarnow$ is observed.
+With $\delta = 0.1$, preventive maintenance is carried out at times $2.6$ and $2.5$ for the two policies, respectively.
+This shows that for this failure history, in which there is not much to be gained by the parameter update,
+$\tausnow$ behaviour is dominated by the update of the system reliability block diagram.
 Here, any differences due to the update are very small in comparison to the gains offered by the continuous update
 in case of the first failure history
 (note the differing vertical and horizontal scales in Figures~\ref{fig:tauhist1fig3T} and \ref{fig:tauhist2fig3T}).
@@ -1538,8 +1538,8 @@ in case of the first failure history
 \caption{Effect of the continuous parameter update for the second failure history ($C_2 = 1$, $C_2 = 3$, $P_2 = 0.5$, $P_3 = 1.5$)
 which is more or less in line with expectations.
 %containing slightly early failures of type $P$ components.
-***With observed failure behaviour more or less in line with expectations,
-the model with and without continuous update perform similarly,
+With observed failure behaviour more or less in line with expectations,
+both the policies with and without continuous update perform similarly,
 unlike in case of the first failure history as depicted in Figure~\ref{fig:tauhist1fig3T},
 where updating gave considerable gains.}
 \label{fig:tauhist2fig3T}
@@ -1573,19 +1573,30 @@ where updating gave considerable gains.}
 %
 The third failure history contains very early failures
 with $C_2 = 0.1$, $C_3 = 0.2$, $C_4 = 0.8$ $H = 1$, $P_2 = 0.3$, $P_3 = 0.4$,
-and we follow the system until $\tnow = 1$.
+and we follow the system until $\tnow = 1$,
+see Figure~\ref{fig:tauhist4fig3T}.
 
-***see Figure~\ref{fig:tauhist4fig3T}
+The policy without parameter update leads to consistently higher $\tausnow$ values,
+while the policy with parameter update takes the surprisingly early failures into account.
+Unlike in the other two failure histories, $\tstarnow$ is generally decreasing,
+indicating that maintenance should happen much earlier than expected initially.
+The policy with parameter update consistently suggests to maintain earlier than the policy without update,
+but for both models, $\tausnow$ drops below $\delta = 0.1$ upon the failure of H at $\tnow = 1$,
+obtaining an operational cycle cost rate of $0.2$.
+In contrast, 
+the age-based policy that disregards the information from component monitoring
+would have scheduled maintenance for time $1.6$,
+but it is very unlikely that the system will still function by that time.
+If the system fails between time 1 and time 1.6,
+then the age-based policy would lead to an operational cycle cost of $0.625$ to $1$,
+much higher than for our policy.
+%expected cycle costs are underestimated without update***
 
-***without update $\tausnow$ consistently higher,
-adaptive algorithm takes surprisingly early failures into account.
-Unlike in the other two scenarios, the overall trend for $\tstarnow$ is a decrease,
-expected cycle costs are underestimated without update***
-
-Model with update consistently suggests to maintain earlier,
-but for both models, $\tausnow$ drops below $\delta = 0.1$ upon the failure of H at $\tnow = 1$.
-Like in failure history 2, the structural information plays an important part in the policy.
-This aspect will be confirmed in the small simulation study described next.
+Like in failure history 2, the structural information (which components still function?)
+seems to deliver a major part of the gains for our CBM policy,
+whereas the parameter update seems most effective in situations where
+component failures happen later than expected.
+These findings are confirmed by results from a small simulation study described next.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{tauhist4fig3T}
@@ -1598,7 +1609,7 @@ containing very early failures ($C_2 = 0.1$, $C_3 = 0.2$, $C_4 = 0.8$ $H = 1$, $
 \section{A small simulation study}
 \label{sec:sim}
 
-A systematic study based on simulation failure times is subsequently presented in Section~\ref{sec:sim}.
+%A systematic study based on simulation failure times is subsequently presented in Section~\ref{sec:sim}.
 We now present a small simulation study
 
 $\esys$ is the number of system failures,
