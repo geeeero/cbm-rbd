@@ -228,12 +228,12 @@
 We propose a new condition-based maintenance policy for complex systems,
 based on the status (working, defective) of all components within a system,
 as well as the relaibility block diagaram of the system.
-
+%
 By means of the survival signature,
 a generalization of the system signature allowing for multiple component types,
-we obtain a predictive distribution for the system survival time
+we obtain a predictive distribution for the system survival time,
 %(also known as RUL, remaining useful life)
-(also known as residual life distribution, RLD)
+also known as residual life distribution,
 based on which of the system's components currently function or not,
 and the current age of the functioning components.
 
@@ -241,7 +241,7 @@ The time to failure of the components of the system
 is modeled by a Weibull distribution with a fixed shape parameter.
 The scale parameter is iteratively updated in a Bayesian fashion
 using the current (censored and non-censored) component lifetimes.
-Each component type has a separate (Weibull) model that may also include test data.
+Each component type has a separate Weibull model that may also include test data.
 
 The cost-optimal moment of replacement for the system is obtained by minimizing
 the expected cost rate per unit of time.
@@ -284,20 +284,25 @@ Alternatively, such a signal or health status is constructed
 using indirect measurements to determine the remaining useful life or time to failure of a system,
 see, e.g., \citet{2014:rul-review, 2011:rul-review-statistical}.
 
-In this paper, we propose an inspection-based CBM policy
+In this paper, we propose a kind of inspection-based CBM policy
 for when no degradation signal for the system is available,
 but where the status (working or not working) of the components can be monitored continuously.
 In this situation, one can use the system's reliability block diagram
 and information with respect to the status of its components
 to directly calculate the system residual life distribution,
 and base the maintenance policy for the system on this distribution.
-(In fact, our CBM policy can be seen as based on a multivariate degradation signal,
-where each component sends a binary signal, and the reliability block diagram is used for sensor fusion.) 
+In fact, our CBM policy can be seen as based on a multivariate degradation signal,
+where each component sends a binary signal, and the reliability block diagram is used for sensor fusion.
 
 There are 3 types of triggers to review the system in our new policy:
 at the end of each very short inspection interval (1),
 directly after the failure of a component where the system still functions (2),
 and directly after the failure of a component due to which the system as a whole no longer can function (3). 
+We denote each review of the system in reaction to these triggers by `evaluation',
+since the system RLD is re-evaluated at each of these time points.
+We use the term `evaluation' in place of the term `inspection',
+because the re-evaluation of the system RLD does not require a physical inspection,
+as we assume to learn of the exact failure times of components online via continuous monitoring.
 
 In case of a trigger of type (1),
 the currently used model for component failure times is updated
@@ -311,11 +316,11 @@ when a component has failed since the last inspection but the system is still fu
 also the reliability block diagram of the system is updated.
 Based on the above changes,
 it is determined in both cases whether the system should be replaced now,
-or that this decision should be postponed until the next planned inspection moment,
+or that this decision should be postponed until the next planned evaluation moment,
 accepting the risk of a system breakdown before.
 In this context, the optimal moment of maintenance
 is calculated based on minimizing the expected maintenance-related cost per unit of time for the present operational cycle,
-where an operational cycle starts with a new system, and ends after this system has been replaced by a(n as good as) new system. 
+where an operational cycle starts with a new system, and ends after this system has been replaced by an as good as new system. 
 
 In case of a trigger of type (3),
 the currently used component failure time distributions are updated
@@ -336,7 +341,7 @@ whereas during the remaining time,
 all can be handled automatically, as done at the moment within, e.g., many safety systems. 
 
 The setup of the rest of the paper is as follows.
-In Section~\ref{sec:literature}, we show our contribution to the CBM literature.
+In Section~\ref{sec:literature}, we describe our contribution to the CBM literature.
 Next, in Sections~\ref{sec:sysrel}, \ref{sec:adaptive-sysrel-weibull} and \ref{sec:policy},
 the three main steps in our policy are discussed in detail.
 Hereafter, in Sections~\ref{sec:examples} and \ref{sec:sim},
@@ -534,7 +539,7 @@ We use the same cost criterion, but base the maintenance policy decision directl
 To summarize the main contribution of our paper,
 it introduces a CBM-like policy that does not require knowledge of the degradation path of the system,
 but can take into account continuous changes in the system reliability block diagram,
-as well as changes in the component failure time distribution.
+as well as changes in the component failure time distributions.
 
 
 
@@ -1867,8 +1872,8 @@ Here, CBM-cpu obtains the longest system runtimes, and thus the lowest cost rate
 with a clear advantage over CBM-epu and CBM-npu.
 
 Overall, it seems that CBM-cpu can play its adaptive strengths most effectively
-when prior assumptions were too pessimistic,
-while also performing well when prior assumptions were correct or too optimistic.
+when prior assumptions are too pessimistic,
+while also performing well when prior assumptions are correct or too optimistic.
 %This means that experts may confidently tend towards pessimistic specifications
 %of the component mean time to failures $\yzk$.
 
@@ -1911,24 +1916,24 @@ $\tthresh = 0.1$ (left) and $\tthresh = 0.2$ (right).}
 \fi
 
 
-\section{Outlook}
+\section{Summary and outlook}
 \label{sec:outlook}
 
 In this paper, we have proposed a new condition-based maintenance policy
 for systems based on monitoring of the functioning of components.
 We use the survival signature to compute system reliability functions
-based on component models, and propose to use Weibull component models
+for given component models, and propose to use Weibull component models
 with conjugate priors to express expert knowledge.
 The resulting policy shows promising results in
 different numerical exmples and a small simulation study.
 
 There are several aspects in our modelling that warrant further investigation.
 So far, we assume that component failure times are observed precisely via monitoring.
-In many applications however, the component status can only be determined
+However, in many applications, the component status can only be determined
 at inspections, leading to interval-censored failure time observations.
 Extending the model to account for interval-censored failure times
-would allow to derive a condition-based maintenance policy with inspections,
-which determines the optimal moment of inspection of the system.
+would allow to derive a condition-based maintenance policy with wider-spaced inspections,
+which could also determine the optimal moment for the next inspection of the system.
 %*** extend the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 %we would need to add interval-censored data (failure has happened between last and current inspection)
 
@@ -1938,19 +1943,19 @@ i.e., simultaneous failures with a shared root cause.
 Common cause failures seriously reduce the system reliability,
 and can lead to sudden system failures.
 To offer a realistic estimation of the optimal time to maintenance $\tausnow$,
-the system RLD $\Rsys(t)$ needs to account for such failures.
+the system RLD $\Rsys(t)$ needs to account for such failures when they are possible.
 %This needs to be implemented on the level of component models,
 %specifically $P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big)$ 
 %(not a product anymore if common-case failures can affect several component types at once).
 When common cause failures can affect several component types at once,
 the joint posterior predictive probabilities $P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big)$ in \eqref{eq:sysrel-survsign}
-cannot be obtained as a product of component posterior predictive probabilities.
+cannot be obtained as a product of component posterior predictive probabilities any more.
 We think that by combining ideas from \cite{2015:coolen-coolen-maturi} and \cite{Troffaes2014a},
 the proposed policy could be extended to accomodate common cause failures.
 
 In our policy, we assumed that in both preventive and corrective repair
-all components are restored an as good as new state.
-An obvious alternative is to only replace the failed components instead,
+all components are restored to an as good as new state.
+An obvious alternative is to only replace the failed components,
 but would this offer any advantage?
 Furthermore, could it be even optimal to repair a subset of the failed components only?
 Such selective component replacement schemes
