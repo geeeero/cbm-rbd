@@ -1610,57 +1610,148 @@ containing very early failures ($C_2 = 0.1$, $C_3 = 0.2$, $C_4 = 0.8$ $H = 1$, $
 \label{sec:sim}
 
 %A systematic study based on simulation failure times is subsequently presented in Section~\ref{sec:sim}.
-We now present a small simulation study
+We conducted a small simulation study to illustrate the performance of our policy
+as compared to corrective and age-based policies.
+To be able to discern the effect of parameter learning over several operational cycles,
+we simulated component failure times for five subsequent operational cycles for each simulation repetition.
+We thus can compare policies that carry information gained in one operational cycle to the next operational cycle
+with policies that do not update component parameters at the end of an operational cycle.
+We also distinguish the condition-based maintenance policies with and without continuous parameter update
+as in Section~\ref{sec:examples}.
+In total, we compare the six maintenance policies listed in Table~\ref{tab:sim-abbrev},
+which also gives the abbreviations used in Figures~\ref{fig:br1sim1fig5Tt01}, \ref{fig:br1sim2fig5Tt01} and \ref{fig:br1sim3fig5Tt01}.
 
-$\esys$ is the number of system failures,
-$\mrsys$ is the mean realized system runtime (I called this 'cycle length' before),
-$\bar{g}$ is the mean realized unit cost rate.
+\begin{table}
+\centering
+\begin{tabular}{ll}
+  \toprule
+Policy & Description \\
+  \midrule
+CBM-cpu & Condition-based maintenance (continuous parameter update)\\
+CBM-epu & Condition-based maintenance (end of cycle parameter update)\\
+CBM-npu & Condition-based maintenance (no parameter update)\\
+ABM-epu & Age-based maintenance (end of cycle parameter update)\\
+ABM-npu & Age-based maintenance (no parameter update)\\
+CM      & Corrective maintenance\\
+  \bottomrule
+\end{tabular}
+\caption{The six maintenance policies compared in the simulation study.}
+\label{tab:sim-abbrev}
+\end{table}
 
-CBM = condition-based maintenance
-ABM = age-based maintenance
-CM = corrective maintenance
-cpu = continuous parameter update
-epu = end of cycle parameter update
-npu = no parameter update
+We compare these policies by three simple performance measures,
+calculated for each repetition. %, which contains five operational cycles.
+$\esys$ is the number of system failures that occured when applying the policy,
+This is an integer between zero and five, as there are five operational cycles per repetition.
+$\mrsys$ is the mean realized system runtime,
+i.e., the average of the realized operational cycle length,
+taken over the five operational cycles per repetition.
+%(I called this 'cycle length' before),
+$\bar{g}$ is the mean realized operational cycle cost rate obtained over the five operational cycles.
+This is calculated as the sum of preventive and corrective maintenance costs incurred in the five operational cycles,
+divided by the sum of the five realized operational cycle lengths.
+%This is a weighted average of the realized operational cycle cost rate for each of the five operational cycles,
+%with weights proportional to the corresponding realized operational cycle length.
+%This equals 
 
-
-
-Case 1: failure behaviour as expected,
-failure times simulated using Weibull scale parameters $\lambda_k = \ykz$ from Table~\ref{tab:priorparams}.
-
-Obviously, CM has always 5 system failures in the 5 cycles, while CBM and ABM (mostly) avoid system failures. Mean system runtimes are longest for CM because it runs the system until failure, but this leads to the highest mean unit cost rates. CBM with continuous parameter update has the lowest mean unit cost rate since it has the longest system runtimes without failures. The age-based policy without parameter update always schedules maintenance for $\tau_*^{(0)} = 1.6$, and as the system does not fail before this time in any of the simulations, the system runtime is always 1.6 and the unit cost rate is $0.2 / 1.6 = 0.125$.
+We use again the simplified automotive brake system depicted in Figure~\ref{fig:brakesys-layout},
+together with the prior parameters for the component models as given in Table~\ref{tab:priorparams},
+and assume that $c_c = 1$ and $c_p = 0.2$ like before.
+We study three data scenarios A, B and C, corresponding to failure times as expected, as well as
+failure times earlier and later than expected.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{br1sim1fig5Tt01ac}
-\caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
-where failure times are simulated according to prior parameters.}
+\caption{Simulation study with 20 repetitions, where each repetition consists of 5 subsequent operational cycles.
+Case A: $\lambda_k = \ykz$.}
 \label{fig:br1sim1fig5Tt01}
 \end{figure}
 
-Case 2: failures earlier than expected,
-failure times simulated using
-$\lambda_k = 0.5 \ykz$ (Figure~\ref{fig:br1sim2fig5Tt01})
+\subsection{Case A: failure times as expected, $\lambda_k = \ykz$}
+\label{sec:case1}
+
+For this scenario, we simulated component failure times according to prior expectations,
+i.e., component failure times were simulated as Weibull failure times
+with the scale parameter $\lambda_k$ chosen as equal to the expert's prior guess $\ykz$
+for all four component types.
+The results are depicted in Figure~\ref{fig:br1sim1fig5Tt01}.
+
+Obviously, the corrective maintenance policy (CM) results in $\esys = 5$ for all 20 repetitions,
+as it cannot lead to preventive maintenance.
+In contrast, all condition-based (CBM) and age-based policies can avoid system failures entirely (with a single exception for ABM-epu).
+Mean system runtimes are longest for CM because it runs the system until failure,
+but this leads to the highest mean cost rates.
+The condition-based maintenance policy with continuous parameter update (CBM-cpu) obtains the lowest mean cost rates,
+since it leads to the longest system runtimes without system failures.
+CBM-epu and CBM-npu have slightly higher cost rates,
+as they lead to shorter system runtimes.
+The age-based policy without parameter update (ABM-npu)
+always schedules maintenance for $\tau_*^{(0)} = 1.6$.
+As the system does not fail before this time in any of the five operational cycles within the 20 repetitions,
+the mean realized system runtime is constantly $1.6$, with mean cost rate $0.2 / 1.6 = 0.125$.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{br1sim2fig5Tt01ac}
-\caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
-where failure times are simulated as being earlier ($0.5 \times$ MTTF) than expected.}
+\caption{Simulation study with 20 repetitions, where each repetition consists of 5 subsequent operational cycles.
+Case B: $\lambda_k = 0.5\ykz$.}
 \label{fig:br1sim2fig5Tt01}
 \end{figure}
 
-Case 3: failures later than expected,
-failure times simulated using $\lambda_k = 2 \ykz$ from Table~\ref{tab:priorparams}.
+\subsection{Case B: failure times earlier than expected, $\lambda_k = 0.5 \ykz$}
+\label{sec:case2}
+
+For the second scenario,
+component failure times were simulated as being earlier than expected,
+by choosing $\lambda_k$ for all component types as half the size of the expert's prior guess,
+i.e., $\lambda_k = 0.5 \ykz$ for all $k =$ C, H, M, P.
+%($0.5 \times$ MTTF) than expected.
+The results are depicted in Figure~\ref{fig:br1sim2fig5Tt01}.
+
+Here, both corrective and age-based policies cannot avoid system failures entirely.
+The condition-based policies result in two to three system failures in the $20 \times 5 = 100$ system runs,
+whereas the age-based policies result in nine to ten system failures.
+System runtimes are less variable for the age-based policies
+since they do not use the current system structure information, %available information on the component level,
+i.e., which components have failed and which not. %during operational cycles
+System runtimes are more variable for the condition-based policies,
+but longer on average, leading to lower realized cost rates.
+Again, CBM-cpu performs slightly better than CBM-epu
+as it has the possibility to learn within an operational cycle as well.
+CBM-npu does surprisingly well, considering that it never updates prior component parameters. 
+This confirms the observation from Section~\ref{sec:ex-3}
+that current system structure information delivers a major part of the gains for our CBM policy.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{br1sim3fig5Tt01ac}
-\caption{***Simulation study, each repetition consists of simulating 5 subsequent operational cycles,
-where failure times are simulated as being later ($2 \times$ MTTF) than expected.}
+\caption{Simulation study with 20 repetitions, where each repetition consists of 5 subsequent operational cycles.
+Case C: $\lambda_k = 2\ykz$.}
 \label{fig:br1sim3fig5Tt01}
 \end{figure}
 
+\subsection{Case C: failure times later than expected, $\lambda_k = 2 \ykz$}
+\label{sec:case3}
+
+The third scenario consists of component failure times taht are later than expected,
+obtained by simulating Weibull lifetimes using $\lambda_k = 2 \ykz$ for all four component types.
+The results are depicted in Figure~\ref{fig:br1sim3fig5Tt01}.
+
+As the expert's information now underestimates component lifetimes,
+all policies (except the corrective policy) act quite cautiously,
+leading to complete avoidance of system failures.
+However, the mean system runtimes $\mrsys$ exhibit
+a clear hierarchy between age-based and condition-based policies,
+and within these two groups a clear effect of the parameter update strategy.
+Here, CBM-cpu obtains the longest system runtimes, and thus the lowest cost rates,
+with a clear advantage over CBM-epu and CBM-npu.
+
+Overall, it seems that CBM-cpu can play its adaptive strengths most effectively
+when prior assumptions were too pessimistic,
+while also performing well when prior assumptions were correct or too optimistic.
+%This means that experts may confidently tend towards pessimistic specifications
+%of the component mean time to failures $\yzk$.
 
 
-% ------------- overview figures ----------------------------------
+% ------------- old overview figures ----------------------------------
 \iffalse
 \begin{figure}
 \includegraphics[width=0.5\textwidth]{br1sim1fig5}
@@ -1701,37 +1792,81 @@ $\tthresh = 0.1$ (left) and $\tthresh = 0.2$ (right).}
 \section{Outlook}
 \label{sec:outlook}
 
-*** study other replacement schemes, e.g., replacing only failed components:
-when repaired/replaced components are present in system,
-then one needs to use actual ages (and not time since system startup) in parameter update,
-introduces new component type for $\Rsysnow(t)$ calculation but with same posterior parameters as unreplaced component type.
-Repaired/replaced components require the creation of a separate type in the survival signature decomposition
-and thus the calculation of separate posterior predictive probabilities
-$P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
-which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
+In this paper, we have proposed a new condition-based maintenance policy
+for systems based on monitoring of the functioning of components.
+We use the survival signature to compute system reliability functions
+based on component models, and propose to use Weibull component models
+with conjugate priors to express expert knowledge.
+The resulting policy shows promising results in
+different numerical exmples and a small simulation study.
 
-***common-cause failures will seriously reduce RLD in a way currently not covered by our model.
-This needs to be implemented on the level of component models,
-specifically $P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big)$ 
-(not a product anymore if common-case failures can affect several component times at once).
-Combine ideas from \cite{2015:coolen-coolen-maturi} and \cite{Troffaes2014a}.
+There are several aspects in our modelling that warrant further investigation.
+So far, we assume that component failure times are observed precisely via monitoring.
+In many applications however, the component status can only be determined
+at inspections, leading to interval-censored failure time observations.
+Extending the model to account for interval-censored failure times
+would allow to derive a condition-based maintenance policy with inspections,
+which determines the optimal moment of inspection of the system.
+%*** extend the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
+%we would need to add interval-censored data (failure has happened between last and current inspection)
 
-*** move to sets of priors, set of residual life distributions like in \cite{2016:walter-coolen}.
-Leads to set of $\gnow(\tau)$, finding (set of) $\tausnow$ is then non-trivial,
-needs decision criteria from imprecise probability literature like E-admissibility, maximality, or maximin
-\citep[see, e.g., \S 9***][]{itip}.
+As mentioned at the end of Section~\ref{sec:costrate},
+we currently disregard the possibility of common cause failures,
+i.e., simultaneous failures with a shared root cause.
+Common cause failures seriously reduce the system reliability,
+and can lead to sudden system failures.
+To offer a realistic estimation of the optimal time to maintenance $\tausnow$,
+the system RLD $\Rsys(t)$ needs to account for such failures.
+%This needs to be implemented on the level of component models,
+%specifically $P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big)$ 
+%(not a product anymore if common-case failures can affect several component types at once).
+When common cause failures can affect several component types at once,
+the joint posterior predictive probabilities $P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big)$ in \eqref{eq:sysrel-survsign}
+cannot be obtained as a product of component posterior predictive probabilities.
+We think that by combining ideas from \cite{2015:coolen-coolen-maturi} and \cite{Troffaes2014a},
+the proposed policy could be extended to accomodate common cause failures.
 
-*** to use the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
-we would need to add interval-censored data (failure has happened between last and current inspection)
+In our policy, we assumed that in both preventive and corrective repair
+all components are restored an as good as new state.
+An obvious alternative is to only replace the failed components instead,
+but would this offer any advantage?
+Furthermore, could it be even optimal to repair a subset of the failed components only?
+Such selective component replacement schemes
+seem to be a promising area for research.
+To account for different ages of components at system startup,
+one could introduce artificial component types in \eqref{eq:sysrel-survsign},
+grouping components both by type and by age.
+However, computational complexity increases with the number of component types,
+%and the conceptual algorithmic advantage of the survival signature vanishes
+%when each component forms its own type
+so it seems most promising to replace batches of components,
+or all components of one type.
+%*** study other replacement schemes, e.g., replacing only failed components:
+%when repaired/replaced components are present in system,
+%then one needs to use actual ages (and not time since system startup) in parameter update,
+%introduces new component type for $\Rsysnow(t)$ calculation but with same posterior parameters as unreplaced component type.
+%Repaired/replaced components require the creation of a separate type in the survival signature decomposition
+%and thus the calculation of separate posterior predictive probabilities
+%$P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
+%which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
 
-
+Another promising extension would be to use sets of conjugate priors for the component models.
+This approach is described in \cite{2016:walter-coolen},
+leading to sets of current residual life distributions $\Rsys(t)$.
+Consequently, we would obtain a set of expected operational cycle cost rate functions $\gnow(\tau)$.
+The determination of the (set of) optimal time(s) to maintenance $\tausnow$
+is then non-trivial,
+and would involve decision criteria discussed in the imprecise probability literature,
+like E-admissibility, maximality, or maximin \citep[see, e.g., \S 8][]{itip}.
 
 
 \section*{Acknowledgements}
 
-CAMPI
+Gero Walter was supported by the DINALOG project CAMPI
+(``Coordinated Advanced Maintenance and Logistics Planning for the Process Industries'').
 
-Frank Coolen for inspiring discussions
+Both authors would like to thank Frank Coolen for inspiring discussions
+and valuable hints on maintenance optimization criteria.
 
 \section*{Bibliography}
 
