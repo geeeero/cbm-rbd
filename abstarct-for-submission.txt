@@ -1,3 +1,55 @@
 We propose a new condition-based maintenance policy for complex systems, based on the status (working, defective) of all components within a system, as well as the reliability block diagram of the system. By means of the survival signature, we obtain a predictive distribution for the system survival time, based on components' functioning status and the current age of the functioning components. The time to failure of the components of the system is modeled by a Weibull distribution with a fixed shape parameter. The scale parameter is iteratively updated in a Bayesian fashion using the current (censored and non-censored) component lifetimes. Each component type has a separate Weibull model that may also include test data. The cost-optimal moment of replacement for the system is obtained by minimizing the expected cost rate per unit of time. The unit cost rate is recalculated when components fail or at the end of every (very short) fixed inter-inspection interval, leading to a dynamic maintenance policy, since the aging of components and possible failures will change the cost-optimal moment of repair in the course of time. Via numerical experiments, some insight into the performance of the policy is given.
 
 condition-based maintenance; system reliability; remaining useful life; survival signature; unit time cost rate
+
+1. Ahmadzadeh, F., Lundberg, J., 2014. Remaining useful life estimation: review. International Journal of System Assurance Engineering and Management 5, 461–474.
+
+2. Ansell, J., Bendell, A., Humble, S., 1984. Age replacement under alternative cost criteria. Management Science 30, 358–367.
+
+3. Aslett, L., 2016. ReliabilityTheory: Tools for structural reliability analysis. R package, http://www.louisaslett.com.
+
+4. Augustin, T., Coolen, F. P. A., de Cooman, G., Troffaes, M. C. M., 2014. Introduction to Imprecise Probabilities. Wiley, New York.
+
+5. Barlow, R., Proschan, F., 1975. Statistical Theory of Reliability and Life Testing. Holt, Rinehart and Winston, Inc., New York.
+
+6. Coolen, F. P. A., Coolen-Maturi, T., 2012. Generalizing the signature to systems with multiple types of components. In: Zamojski, W., Mazurkiewicz, J., Sugier, J., Walkowiak, T., Kacprzyk, J. (Eds.), Complex Systems and Dependability. Vol. 170 of Advances in Intelligent and Soft Computing. Springer, pp. 115–130.
+
+7. Coolen, F. P. A., Coolen-Maturi, T., 2015. Predictive inference for system reliability after common-cause component failures. Reliability Engineering and System Safety 135, 27-33.
+
+8. Coolen-Schrijner, P., Coolen, F. P. A., 2006. On optimality criteria for age replacement. Journal of Risk and Reliability 220, 21–28.
+
+9. Kim, M. J., Jiang, R., Makis, V., Lee, C.-G., 2011. Optimal Bayesian fault prediction scheme for a partially observable system subject to random failure. European Journal of Operational Research 214, 331–339.
+
+10. Mazzuchi, T. A., Soyer, R., 1996. A Bayesian perspective on some replacement strategies. Reliability Engineering and System Safety 51, 295–303.
+
+11. Olde Keizer, M. C. A., 2016. Condition-based maintenance policies for systems with multiple dependent components: a review. Ph.D. thesis, Groningen University, Groningen, The Netherlands.
+
+12. R Core Team, 2016. R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing, Vienna, Austria, https:
+//www.R-project.org/.
+
+13. Si, X.-S., Wang, W., Chen, M.-Y., Hu, C.-H., Zhou, D.-H., 2013. A degradation path-dependent approach for remaining useful life estimation with an exact and closed-form solution. European Journal of Operational Research 226, 53-66.
+
+14. Si, X.-S., Wang, W., Hu, C.-H., Zhou, D.-H., 2011. Remaining useful life estimation – a review on the statistical data-driven approaches. European Journal of Operational Research 213, 1–14.
+
+15. Soland, R. M., 1969. Bayesian analysis of the Weibull process with unknown scale and shape parameters. IEEE Transactions on Reliability 18, 181–184.
+
+16. Sun, J., Zuo, H., Wang, W., Precht, M. G., 2012. Application of a state space modeling technique to system prognostics based on a health index for condition-based maintenance. Mechanical Systems and Signal Processing 28, 585–596.
+
+17. Troffaes, M. C. M., Walter, G., Kelly, D. L., 2014. A robust Bayesian approach to modelling epistemic uncertainty in common-cause failure models. Reliability Engineering & System Safety 125, 13–21.
+
+18. Walter, G., Coolen, F. P. A., 2016. Robust Bayesian reliability for complex systems under prior-data conflict. Submitted to ASCE-ASME Journal of Risk and Uncertainty in Engineering Systems, Part A: Civil Engineering, submission available at http://arxiv.org/abs/1610.07222.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

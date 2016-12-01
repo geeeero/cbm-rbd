@@ -782,7 +782,7 @@ can be calculated for a specific choice of component model.
 %can be derived for a monitored system based on such a current system residual life distribution. 
 
 We consider the well-known Weibull model for component lifetimes,
-which is used in a wide variety of reliability studies \textbf{***more motivation Weibull***}. 
+which is used in a wide variety of reliability studies. 
 To keep things simple, we assume that the shape parameter of the Weibull distribution is known,
 and that only the scale parameter needs to be estimated.
 The model could be extended to learn also the shape parameter in a later step,
@@ -1124,7 +1124,7 @@ as soon as $\tausnow$ decreases below the time span to the next evaluation time.
 %continuing to the the next evaluation point $\tnow$ would carry the risk 
 %a time span chosen to reflect operational practicalities.
 This dynamic and adaptive maintenance policy is described in more detail in Section~\ref{sec:operationalprocedure};
-a graphical overview is given in Figure~\ref{fig:procedure}.
+a flow chart for the policy is given in Figure~\ref{fig:procedure}.
 
 The optimal time to maintenance $\tausnow$ is determined based on $\Rsysnow(t)$
 by minimizing $\gnow(\tau)$, the expected cost rate for the current operational cycle.
@@ -1233,7 +1233,7 @@ Define a grid of planned evaluation time points as $\{m \delta : m \in \naturals
 %and $\delta$ sufficiently small to be negligible on the system lifetime scale.
 with $\delta$ a sufficiently small time increment.
 During an operational cycle,
-$\tausnow$ is recalculated at times $\tnow = m \delta$, $m = 0, 1, 2, \ldots$.
+$\tausnow$ is usually recalculated at times $\tnow = m \delta$, $m = 0, 1, 2, \ldots$.
 %where the time increment $\delta$ should be small enough to be negligible on the scale of system lifetime.
 However, if a component fails before the next $\tnow$ on the grid,
 $\tnow$ is set instead to the exact failure time $t_{k,i}$.
