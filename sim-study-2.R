@@ -489,4 +489,13 @@ pdf("br1sim4fig5T.pdf", width = 6, height = 6)
 br1sim4fig5T
 dev.off()
 
+
+#
+
+# save stuff
+ststr <- paste("br1sim", 1:3, sep="")
+enstr <- c("Tt01", "prTt01", "prprTt01", "a", "apr", "c")
+savelist <- as.vector(sapply(ststr, function(brstr) paste(brstr, enstr, sep="")))
+save(list = savelist, file = "papersimobjects")
+
 #
