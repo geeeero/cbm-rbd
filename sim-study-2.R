@@ -497,5 +497,6 @@ ststr <- paste("br1sim", 1:3, sep="")
 enstr <- c("Tt01", "prTt01", "prprTt01", "a", "apr", "c")
 savelist <- as.vector(sapply(ststr, function(brstr) paste(brstr, enstr, sep="")))
 save(list = savelist, file = "papersimobjects")
+load("papersimobjects")
 
 #
