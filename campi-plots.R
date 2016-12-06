@@ -36,11 +36,14 @@ dev.off()
 
 
 # AB system reliability plots
-sysAB <- graph.formula(s -- A1:A2:B -- t)
-sysABtypes <- list("A"=c("A1", "A2"), "B"=c("B"))
+#sysAB <- graph.formula(s -- A1:A2:B -- t)
+#sysABtypes <- list("A"=c("A1", "A2"), "B"=c("B"))
+sysAB <- graph.formula(s -- A1:A2:B1 -- t, s -- A3:A4:B2 -- t)
+sysABtypes <- list("A"=c("A1", "A2", "A3", "A4"), "B"=c("B1", "B2"))
 sysAB <- setCompTypes(sysAB, sysABtypes)
 sysABsign <- computeSystemSurvivalSignature(sysAB)
-sysABfts <- list(A1 = NULL, A2 = 5, B = NULL)
+#sysABfts <- list(A1 = NULL, A2 = 5, B = NULL)
+sysABfts <- list(A1 = NULL, A2 = 5, A3 = NULL, A4 = NULL, B1 = NULL, B2 = 10)
 sysABn0y0 <- list(A = compA$n0y0$A, B = compB$n0y0$B)
 sysABrelhist05 <- sysrelnowhist(sysAB, sysABtypes, sysABfts, sysABn0y0, c(betaA, betaB), c(0,5), hor=15)
 pdf("talk-campi/sysABrel0.pdf", width = 1.5*minirelsize, height = minirelsize)
@@ -51,9 +54,9 @@ ggplot(subset(sysABrelhist05, tnow == 5), aes(x = t, y = rel)) + geom_line(size 
 dev.off()
 
 sysABtnowseq <- seq(0, 10, by=2.5)
-sysABghist <- gnowhist(sysAB, sysABtypes, sysABfts, sysABn0y0, c(betaA, betaB), sysABtnowseq, hor = 15, seqlen = 301)
+sysABghist <- gnowhist(sysAB, sysABtypes, sysABfts, sysABn0y0, c(betaA, betaB), sysABtnowseq, hor = 15, seqlen = 301, onecycle = FALSE)
 sysABghist$tnow <- factor(sysABghist$tnow, levels = sysABtnowseq)
-sysABtauhist <- taustarhist(sysAB, sysABtypes, sysABfts, sysABn0y0, c(betaA, betaB), sysABtnowseq, hor = 5, seqlen = 501)
+sysABtauhist <- taustarhist(sysAB, sysABtypes, sysABfts, sysABn0y0, c(betaA, betaB), sysABtnowseq, hor = 5, seqlen = 501, onecycle = FALSE)
 sysABtauhist$tnowf <- factor(sysABtauhist$tnow, levels = sysABtnowseq)
 
 for(i in 1:length(sysABtnowseq)){
@@ -70,11 +73,12 @@ for(i in 1:length(sysABtnowseq)){
   pdf(paste("talk-campi/sysABghist", i, ".pdf", sep=""), width = 6, height = 1.7)
   print(#
   ggplot(subset(sysABghist, tnow %in% sysABtnowseq[1:i]), aes(x = t, y = gnow)) + 
-    coord_cartesian(xlim = c(0,25), ylim = c(0,0.4)) + xlab(expression(t)) +
+#    coord_cartesian(xlim = c(0,25), ylim = c(0,0.4)) + xlab(expression(t)) +
+    coord_cartesian(xlim = c(0,25), ylim = c(-0.025,0.2)) + xlab(expression(t)) +
     geom_line(aes(group = tnow, colour = tnow), size = 0.8) + #ylab(expression(paste(g^(t[now]), (t),))) +
     theme(axis.title = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
     theme(axis.title.y = element_blank()) + guides(colour=guide_legend(title=expression(t[now]))) +
-    scale_y_continuous(breaks=seq(0.1, 0.4, 0.1)) + scale_colour_discrete(drop = FALSE))
+    scale_y_continuous(breaks=seq(0.0, 0.2, 0.1)) + scale_colour_discrete(drop = FALSE))
   dev.off()
   pdf(paste("talk-campi/sysABtau", i, ".pdf", sep=""), width = 4.5, height = 1)
   print(#
