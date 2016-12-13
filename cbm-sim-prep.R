@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------- #
-# CBM systems paper - functions for simulation
+# CBM systems paper - functions for simulation with preparation time
 # --------------------------------------------------------------------------- #
 
 # function to simulate a single operational cycle, i.e. until the system fails,
