@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------- #
 
 source("weibull-sys-functions.R")
-source("cbm-sim.R")
+source("cbm-sim2.R")
 source("plotdefs.R")
 
 # full system for prior
