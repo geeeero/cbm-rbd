@@ -326,5 +326,101 @@ simNcycleAgebased <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, s
 }
 
 
+# function to calculate tend, costrate for a single cycle using the corrective policy (cp is ignored)
+# sys      system reliability block diagram at t = 0
+# ctypes   list giving the types of components in the system, same format as
+#          used for setCompTypes(), but needs the same order as in survsign table (!!!)
+# compfts  list with elements named like the vertices in sys, giving the N (simulated)
+#          failure times of this component -- assumed that no failure times == 0
+# tnowstep time interval after which current system reliability is re-evaluated
+# cc       cost of unplanned (corrective) repair action
+# cp       cost of planned (preventive) repair action, cp < cc
+# timeround to how many digits to round the time points
+sim1cycleCorrective <- function(sys, ctypes, compfts, tnowstep, cc = 1, cp = 0.2, timeround = 5){
+  K <- length(ctypes)
+  ftschron <- sort(unlist(compfts)) # when something happens
+  ftschroni <- 1
+  gotonext <- TRUE
+  res <- data.frame(tnow = 0, failed = FALSE) # initialize results data frame (assumed that initial system functions)
+  while(gotonext){
+    failedcompsnow <- ftschron[1:ftschroni]
+    tnow <- ftschron[ftschroni]
+    sysnow <- induced_subgraph(sys, vids=V(sys)[!(name %in% names(failedcompsnow))])
+    # catch error when sysnow now contains vertices s and t only (suddenly all components fail)
+    if(distances(sysnow, "s", "t") < Inf)
+      signnow <- computeSystemSurvivalSignature(sysnow)
+    else
+      signnow <- data.frame(Probability = 0)
+    # now check if system failed
+    if (all(signnow$Probability == 0)){ # system has failed now, repair with cost cu
+      failed <- TRUE
+      gotonext <- FALSE
+    } else { # system has not failed, go to next ftschron entry
+      failed <- FALSE
+      ftschroni <- ftschroni + 1
+    }
+    # write all current things in results data frame
+    resnow <- data.frame(tnow = tnow, failed = failed)
+    res <- rbind(res, resnow) 
+  }
+  names(tnow) <- NULL
+  # time the system functioned ( = last time on grid before tnow)
+  tfunc <- floor(round((tnow / tnowstep), timeround)) * tnowstep
+  # realized unit cost rate
+  costrate <- cc / tnow
+  # return res and all
+  list(res = res, tfunc = tfunc, tend = tnow, costrate = costrate) 
+}
+
+# function to calculate tend, costrate for N operational cycles using the corrective policy (cp is ignored)
+# sys      system reliability block diagram at t = 0
+# ctypes   list giving the types of components in the system, same format as
+#          used for setCompTypes(), but needs the same order as in survsign table (!!!)
+# compfts  list with elements named like the vertices in sys, giving the N (simulated)
+#          failure times of this component -- assumed that no failure times == 0
+# tnowstep time interval after which current system reliability is re-evaluated
+# cc       cost of unplanned (corrective) repair action
+# cp       cost of planned (preventive) repair action, cp < cc
+# timeround to how many digits to round the time points
+simNcycleCorrective <- function(sys, ctypes, compfts, tnowstep, cc = 1, cp = 0.2, timeround = 5){
+  N <- length(compfts[[1]])
+  if (any(sapply(compfts, length) != N))
+    stop("each element of compfts must contain the same number of failure times")
+  compftsi <- lapply(compfts, function(x) x[1])
+  res <- res2 <- list()
+  for (i in 1:N){
+    cat("Operational cycle", i, "\n")
+    res[[i]] <- sim1cycleCorrective(sys = sys, ctypes = ctypes, compfts = compftsi, tnowstep = tnowstep,
+                                    cc = cc, cp = cp, timeround = timeround)
+    res2 <- rbind(res2, data.frame(cycle = i, res[[i]]$res))
+    if (i < N){ # update stuff for next cycle
+      compftsi <- lapply(compfts, function(x) x[i + 1])
+    }
+  }
+  res2$cycle <- as.factor(res2$cycle)
+  rownames(res2) <- NULL
+  tfuncvec <- sapply(res, function(resi) resi$tfunc)
+  tendvec <- sapply(res, function(resi) resi$tend)
+  costratevec <- sapply(res, function(resi) resi$costrate)
+  return(list(res = res2, tfunc = tfuncvec, tend = tendvec, costrate = costratevec))
+}
+
+
+# function to simulate Weibull failure times according to prior parameter choices (note different parametrization!)
+# ncycles  how many failure times to simulate for each component
+brWeibullData <- function(ncycles, beta, mttf){
+  C1sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
+  C2sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
+  C3sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
+  C4sim1 <- rweibull(ncycles, shape = beta[1], scale = (failuretolambda(mttf[1], beta[1]))^(1/beta[1]))
+  Hsim1  <- rweibull(ncycles, shape = beta[2], scale = (failuretolambda(mttf[2], beta[2]))^(1/beta[2]))
+  Msim1  <- rweibull(ncycles, shape = beta[3], scale = (failuretolambda(mttf[3], beta[3]))^(1/beta[3]))
+  P1sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
+  P2sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
+  P3sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
+  P4sim1 <- rweibull(ncycles, shape = beta[4], scale = (failuretolambda(mttf[4], beta[4]))^(1/beta[4]))
+  list(C1 = C1sim1, C2 = C2sim1, C3 = C3sim1, C4 = C4sim1, H = Hsim1,
+       M = Msim1, P1 = P1sim1, P2 = P2sim1, P3 = P3sim1, P4 = P4sim1)  
+}
 
 #
