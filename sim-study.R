@@ -43,6 +43,11 @@ pdf("br1simN51fig1.pdf", width = 6, height = 4)
 br1simN51fig1
 dev.off()
 
+# test sim cbm
+testfts <- lapply(br1sim5cycle20data2[[1]], function(x) x[1])
+br1simN51test <- sim1cycle(sys = br, ctypes = brctypes, compfts = testfts, n0y0 = br1n0y0, beta = br1beta,
+                           tnowstep = 0.1, hor = 4, seqlen = 401, onecycle = FALSE)
+
 # test sim corrective
 #testfts <- lapply(br1sim5cycle20data1[[1]], function(x) x[1])
 #br1simN51c <- sim1cycleCorrective(sys = br, ctypes = brctypes, compfts = testfts, tnowstep = 0.1)
