@@ -168,7 +168,9 @@ sysrelnowhor <- function(survsign, n0y0, beta, fts, tnow, hor, seqlen=101, prior
 # tnowvec  vector of times for which to evaluate sysrelnow
 # hor      how many time units from tnow into the future to calculate sysrelnow
 # seqlen   at how many points to evaluate sysrelnow
-sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen = 101, prior = FALSE){
+# prior    whether the prior system relibability should be calculated (= no updating with things observed until tnow)
+# verbose  if true, prints some progress information to the console
+sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen = 101, prior = FALSE, verbose = TRUE){
   K <- length(ctypes)
   # calculate survsign only when something fails
   # create fts only the same number of times
@@ -184,7 +186,8 @@ sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen
   presentctypes[[1]] <- 1:K
   # now go through ftschron (first element already done) and calculate survsign and fts
   failedcomps <- numeric(0)
-  cat("calculating reduced survival signatures ...\n")
+  if (verbose)
+    cat("calculating survival signature(s) ...\n")
   for (i in 2:length(ftschron)){
     failedcomps <- c(failedcomps, names(ftschron[i]))
     reducedsys <- induced_subgraph(sys, vids=V(sys)[!(name %in% failedcomps)])
@@ -204,7 +207,8 @@ sysrelnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen
     # index in siglist, ftslist, presentctypes for current (tnow) status
     tnowi <- max(which(ftschron <= tnow))
     prctps <- presentctypes[[tnowi]]
-    cat("calculating sysrel for tnow =", tnow, "...\n")
+    if (verbose)
+      cat("calculating sysrel for tnow =", tnow, "...\n")
     current <- data.frame(tnow = tnow,
                           # add nn, ny
                           sysrelnowhor(survsign = siglist[[tnowi]], n0y0 = n0y0[prctps],
@@ -324,14 +328,16 @@ gnowhor <- function(survsign, n0y0, beta, fts, tnow, hor, seqlen=101, prior = FA
 # cu       cost of unplanned (corrective) repair action
 # cp       cost of planned (preventive) repair action, cp < cu
 # onecycle whether to use the one-cycle criterion or the renewal-based one
+# verbose  if true, prints some progress information to the console
 gnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen = 101, prior = FALSE,
-                     cu = 1, cp = 0.2, onecycle = TRUE){  
+                     cu = 1, cp = 0.2, onecycle = TRUE, verbose = TRUE){  
   sysrels <- sysrelnowhist(sys = sys, ctypes = ctypes, compfts = compfts, n0y0 = n0y0, beta = beta,
-                          tnowvec = tnowvec, hor = hor, seqlen = seqlen, prior = prior)
+                          tnowvec = tnowvec, hor = hor, seqlen = seqlen, prior = prior, verbose = verbose)
   # output: length(tnowvec) * seqlen x 3 data.frame with vars tnow, t, rel
   tnowlen <- length(tnowvec)
   gnowvec <- numeric(0)
-  cat("calculating gnow functions ...\n")
+  if (verbose)
+    cat("calculating gnow function(s) ...\n")
   for (tnowi in tnowvec){
     trel <- subset(sysrels, tnow == tnowi)
     fi <- -diff(trel$rel)
@@ -344,11 +350,26 @@ gnowhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen = 10
 }
   
 # calculate optimal moment of maintenance history for given failure history
-# uses gnowhist(), has same arguments
+# uses gnowhist(), has same arguments and one extra argument (tool)
+# sys      system reliability block diagram
+# ctypes   list giving the types of components in the system, same format as
+#          used for setCompTypes(), but needs the same order as in survsign table (!!!)
+# compfts  list with elements named like the vertices in sys, giving the failure
+#          time of this component; can be NULL if component does not fail
+# n0y0     list of K prior parameter pairs c(n0,y0)
+# beta     vector of K fixed weibull shape parameters
+# tnowvec  vector of times for which to evaluate sysrelnow
+# hor      how many time units from tnow into the future to calculate sysrelnow
+# seqlen   at how many points to evaluate sysrelnow
+# cu       cost of unplanned (corrective) repair action
+# cp       cost of planned (preventive) repair action, cp < cu
+# onecycle whether to use the one-cycle criterion or the renewal-based one
+# verbose  if true, prints some progress information to the console
+# tool     if true, returns also the gnowhist output, defaults to FALSE
 taustarhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen = 101, prior = FALSE,
-                        cu = 1, cp = 0.2, onecycle = TRUE){
-  res <- gnowhist(sys = sys, ctypes = ctypes, compfts = compfts, n0y0 = n0y0, beta = beta,
-                  tnowvec = tnowvec, hor = hor, seqlen = seqlen, prior = prior, cu = cu, cp = cp, onecycle = onecycle)
+                        cu = 1, cp = 0.2, onecycle = TRUE, verbose = TRUE, tool = FALSE){
+  res <- gnowhist(sys = sys, ctypes = ctypes, compfts = compfts, n0y0 = n0y0, beta = beta, tnowvec = tnowvec,
+                  hor = hor, seqlen = seqlen, prior = prior, cu = cu, cp = cp, onecycle = onecycle, verbose = verbose)
   res2 <- subset(res, !is.na(res$gnow))
   cstars <- aggregate(gnow ~ tnow, res2, min)$gnow
   tstarsi <- aggregate(gnow ~ tnow, res2, which.min)
@@ -365,11 +386,53 @@ taustarhist <- function(sys, ctypes, compfts, n0y0, beta, tnowvec, hor, seqlen =
   })
   #cat("cuint =", cuint)
   ctotal <- cp / tstars * res2$rel[tstarsi] + cu * cuint
-  data.frame(tnow = tnowvec, taustar = taustars, tstar = tstars, cstar = cstars, ctotal = ctotal, relstar = relstars)
+  taus <- data.frame(tnow = tnowvec, taustar = taustars, tstar = tstars,
+                     cstar = cstars, ctotal = ctotal, relstar = relstars)
+  if (!tool)
+    return(taus)
+  else
+    return(list(relg = res,
+                taus = taus))
 }
 
+# function to process the output of taustarhist for use in the tool (figure plotting)
+# taustarhistobj  object returned by taustarhist(..., tool = TRUE)
+taustarhistprocessor <- function(taustarhistobj){
+  taustarhistobj$relg$tnow <- as.factor(taustarhistobj$relg$tnow)
+  names(taustarhistobj$relg)[c(3,4)] <- c("Reliability", "Costrate")
+  #taustarhistobj$relg <- melt(taustarhistobj$relg, c("tnow", "t"))
+  #taustarhistobj$relg <- subset(taustarhistobj$relg, !is.na(value))
+  taustarhistobj$taus$tnowf <- factor(taustarhistobj$taus$tnow)
+  taustarhistobj
+}
 
-
+# function to plot sysrel, gnow and taustar based on processed taustarhist object
+# taustarhistobj  object returned by taustarhistprocessor
+# gquantile       quantile to define the upper plotting bound for the g function plot
+# taulabelvjust   postition adjustment for the numbers appearing on the tau plot
+# taulabelround   number of digits for the numbers appearing on the tau plot
+toolplot <- function(taustarhistobj, gquantile = 0.9, taulabelhjust = -1, taulabelround = 3){
+  relfig <- ggplot(taustarhistobj$relg, aes(x = t, y = Reliability)) +
+    geom_line(aes(group = tnow, colour = tnow)) + # xlab(expression(t)) +
+    coord_cartesian(ylim = c(0,1)) + scale_colour_discrete(drop = FALSE) +
+    guides(colour=guide_legend(title=expression(t[now])))
+  gfigylims <- c(quantile(taustarhistobj$relg$Costrate, 0, na.rm = TRUE),
+                 quantile(taustarhistobj$relg$Costrate, gquantile, na.rm = TRUE))
+  gfig <- ggplot(subset(taustarhistobj$relg, !is.na(Costrate)), aes(x = t, y = Costrate)) +
+    geom_line(aes(group = tnow, colour = tnow)) + ylab("Cost rate") +
+    coord_cartesian(ylim = gfigylims) + scale_colour_discrete(drop = FALSE) +
+    guides(colour=guide_legend(title=expression(t[now])))
+  taufigxlimsfactor <- diff(range(taustarhistobj$taus$tnow)) * 0.2
+  taufigxlims <- range(taustarhistobj$taus$tnow) + c(-1 * taufigxlimsfactor, taufigxlimsfactor)
+  taufigylims <- c(min(taustarhistobj$relg$t), max(taustarhistobj$relg$t))
+  taufig <- ggplot(taustarhistobj$taus, aes(x = tnow, y = tstar, ymin = tnow, ymax = tstar, colour = tnowf)) +
+    geom_linerange(size=1.5) + xlab("COMM") + #xlab(expression(tau['*']^(t[now]))) + 
+    theme(axis.title.x = element_blank()) + coord_flip(xlim = taufigxlims, ylim = taufigylims) +
+    geom_text(aes(label = round(tstar, taulabelround), hjust = taulabelhjust)) +
+    scale_x_continuous(breaks = taustarhistobj$taus$tnow, minor_breaks = NULL) + scale_colour_discrete(drop = FALSE) +
+    guides(colour=guide_legend(title=expression(t[now])))
+  grid.arrange(relfig, gfig, taufig, nrow = 3, heights = c(1, 1, 0.5))
+}
 
 # functions to update prior to posterior parameters for Weibull likelihood with censored observations
 # set fts = NULL when no failures occurred
