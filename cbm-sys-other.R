@@ -13,6 +13,11 @@ brctypes <- list("C"=c("C1", "C2", "C3", "C4"), "H"=c("H"), "M"=c("M"), "P"=c("P
 br <- setCompTypes(br, brctypes)
 brsysign <- computeSystemSurvivalSignature(br)
 
+brplotlayout <- matrix(c(0, 1, rep(2,4), rep(3, 4), 4, 1,
+                         0, 0, rep(seq(1.5, -1.5), 2), 0, -1), ncol = 2)
+plot(br, layout = brplotlayout)
+
+
 # order is C H M P
 br1beta <- c(2, 1, 2.5, 1.5)
 br1mttf <- c(3, 10, 8, 5)

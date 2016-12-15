@@ -1,6 +1,7 @@
 ###############################################################################
 #       Functions to calculate and plot system reliability functions          #
 #       for systems consisting of Weibull components with fixed shape         #
+#       Author: Gero Walter (g.m.walter@tue.nl, gero@gmx.at)                  #
 ###############################################################################
 
 library(actuar) # provides dinvgamma(x, shape, scale) where shape = alpha and scale = beta
@@ -406,12 +407,13 @@ taustarhistprocessor <- function(taustarhistobj){
   taustarhistobj
 }
 
-# function to plot sysrel, gnow and taustar based on processed taustarhist object
-# taustarhistobj  object returned by taustarhistprocessor
+# function to plot sysrel, gnow and taustar based on (unprocessed) taustarhist object
+# taustarhistobj  object returned by taustarhist(..., tool = TRUE)
 # gquantile       quantile to define the upper plotting bound for the g function plot
 # taulabelvjust   postition adjustment for the numbers appearing on the tau plot
 # taulabelround   number of digits for the numbers appearing on the tau plot
 toolplot <- function(taustarhistobj, gquantile = 0.9, taulabelhjust = -1, taulabelround = 3){
+  taustarhistobj <- taustarhistprocessor(taustarhistobj)
   relfig <- ggplot(taustarhistobj$relg, aes(x = t, y = Reliability)) +
     geom_line(aes(group = tnow, colour = tnow)) + # xlab(expression(t)) +
     coord_cartesian(ylim = c(0,1)) + scale_colour_discrete(drop = FALSE) +
@@ -457,7 +459,6 @@ nnynlist <- function(n0y0list, ftslist, ctslist, beta){
 }
 
 
-
 # produces survival signature matrix for one component of type "name",
 # for use in nonParBayesSystemInference()
 oneCompSurvSign <- function(name){
@@ -465,5 +466,35 @@ oneCompSurvSign <- function(name){
   names(res)[1] <- name
   res
 }
+
+
+
+# function to print component prior predictive reliability functions for visualizing prior assumptions
+# comphor  time horizon for the plot
+# complen  number of points to evaluate for component reliability plots
+brcomprelplotter <- function(comphor = 10, complen = 201){
+  brfts0 <- list(C=NULL, H=NULL, M=NULL, P=NULL)
+  onecomp <- graph.formula(s -- 1 -- t)
+  Ccomp <- setCompTypes(onecomp, list(C = "1"))
+  Hcomp <- setCompTypes(onecomp, list(H = "1"))
+  Mcomp <- setCompTypes(onecomp, list(M = "1"))
+  Pcomp <- setCompTypes(onecomp, list(P = "1"))
+  Crel1 <- sysrelnowhor(computeSystemSurvivalSignature(Ccomp), br1n0y0[1], br1beta[1], brfts0[1],
+                        tnow = 0, hor = comphor, seqlen = complen)
+  Hrel1 <- sysrelnowhor(computeSystemSurvivalSignature(Hcomp), br1n0y0[2], br1beta[2], brfts0[2],
+                        tnow = 0, hor = comphor, seqlen = complen)
+  Mrel1 <- sysrelnowhor(computeSystemSurvivalSignature(Mcomp), br1n0y0[3], br1beta[3], brfts0[3],
+                        tnow = 0, hor = comphor, seqlen = complen)
+  Prel1 <- sysrelnowhor(computeSystemSurvivalSignature(Pcomp), br1n0y0[4], br1beta[4], brfts0[4],
+                        tnow = 0, hor = comphor, seqlen = complen)
+  compdf1 <- rbind(data.frame(Crel1, comp = "C"), data.frame(Hrel1, comp = "H"),
+                   data.frame(Mrel1, comp = "M"), data.frame(Prel1, comp = "P"))
+  compprior1fig1 <- ggplot(compdf1, aes(x = t, y = rel)) + geom_line(aes(group = comp)) + 
+    ylab("Reliability") + scale_x_continuous(breaks=seq(0, 10, by=2), minor_breaks=0:10) +
+    facet_wrap(~ comp, nrow = 2, scales = "free_y") + coord_cartesian(ylim = c(0, 1))
+  print(compprior1fig1)
+}
+
+
 
 #
