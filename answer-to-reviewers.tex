@@ -1,0 +1,418 @@
+\documentclass[authoryear]{elsarticle}
+
+% ------------ packages -------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[OT1]{fontenc}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{sidecap}
+
+\usepackage{url}
+\usepackage[bookmarks]{hyperref}
+
+%\usetikzlibrary{shapes.misc,fit}
+\usetikzlibrary{%
+   arrows,%
+   calc,%
+   fit,%
+   patterns,%
+   plotmarks,%
+   shapes.geometric,%
+   shapes.misc,%
+   shapes.symbols,%
+   shapes.arrows,%
+   shapes.callouts,%
+   shapes.multipart,%
+   shapes.gates.logic.US,%
+   shapes.gates.logic.IEC,%
+   er,%
+   automata,%
+   backgrounds,%
+   chains,%
+   topaths,%
+   trees,%
+   petri,%
+   mindmap,%
+   matrix,%
+   calendar,%
+   folding,%
+   fadings,%
+   through,%
+   patterns,%
+   positioning,%
+   scopes,%
+   decorations.fractals,%
+   decorations.shapes,%
+   decorations.text,%
+   decorations.pathmorphing,%
+   decorations.pathreplacing,%
+   decorations.footprints,%
+   decorations.markings,%
+   shadows}
+
+%\usepackage{hyperref}
+%\usepackage[bookmarks]{hyperref}
+%\usepackage[colorlinks=true,citecolor=red,linkcolor=black]{hyperref}
+
+% ------------ custom defs -------------
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\posreals}{\reals_{>0}}
+\newcommand{\posrealszero}{\reals_{\ge 0}}
+\newcommand{\naturals}{\mathbb{N}}
+
+\newcommand{\dd}{\,\mathrm{d}}
+
+\newcommand{\mbf}[1]{\mathbf{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\renewcommand{\vec}[1]{{\bm#1}}
+
+\newcommand{\uz}{^{(0)}} % upper zero
+\newcommand{\un}{^{(n)}} % upper n
+\newcommand{\ui}{^{(i)}} % upper i
+
+\newcommand{\ul}[1]{\underline{#1}}
+\newcommand{\ol}[1]{\overline{#1}}
+
+\newcommand{\Tsys}{T_\text{sys}}
+
+\newcommand{\Rsys}{R_\text{sys}}
+\newcommand{\lRsys}{\ul{R}_\text{sys}}
+\newcommand{\uRsys}{\ol{R}_\text{sys}}
+
+\newcommand{\fsys}{f_\text{sys}}
+\newcommand{\Fsys}{F_\text{sys}}
+\newcommand{\lFsys}{\ul{F}_\text{sys}}
+\newcommand{\uFsys}{\ol{F}_\text{sys}}
+
+\newcommand{\lgt}{\ul{g}}
+\newcommand{\ugt}{\ol{g}}
+
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\V}{\operatorname{Var}}
+\newcommand{\wei}{\operatorname{Wei}} % Weibull Distribution
+\newcommand{\ig}{\operatorname{IG}}   % Inverse Gamma Distribution
+
+\newcommand{\El}{\ul{\operatorname{E}}}
+\newcommand{\Eu}{\ol{\operatorname{E}}}
+
+\def\yz{y\uz}
+\def\yn{y\un}
+%\def\yi{y\ui}
+\newcommand{\yfun}[1]{y^{({#1})}}
+\newcommand{\yfunl}[1]{\ul{y}^{({#1})}}
+\newcommand{\yfunu}[1]{\ol{y}^{({#1})}}
+
+\def\ykz{y\uz_k}
+\def\ykn{y\un_k}
+
+\def\yzl{\ul{y}\uz}
+\def\yzu{\ol{y}\uz}
+\def\ynl{\ul{y}\un}
+\def\ynu{\ol{y}\un}
+\def\yil{\ul{y}\ui}
+\def\yiu{\ol{y}\ui}
+
+\def\ykzl{\ul{y}\uz_k}
+\def\ykzu{\ol{y}\uz_k}
+\def\yknl{\ul{y}\un_k}
+\def\yknu{\ol{y}\un_k}
+
+\newcommand{\ykzfun}[1]{y\uz_{#1}}
+\newcommand{\ykzlfun}[1]{\ul{y}\uz_{#1}}
+\newcommand{\ykzufun}[1]{\ol{y}\uz_{#1}}
+
+
+\def\nz{n\uz}
+\def\nn{n\un}
+%\def\ni{n\ui}
+\newcommand{\nfun}[1]{n^{({#1})}}
+\newcommand{\nfunl}[1]{\ul{n}^{({#1})}}
+\newcommand{\nfunu}[1]{\ol{n}^{({#1})}}
+
+\def\nkz{n\uz_k}
+\def\nkn{n\un_k}
+\newcommand{\nkzfun}[1]{n\uz_{#1}}
+\newcommand{\nkzlfun}[1]{\ul{n}\uz_{#1}}
+\newcommand{\nkzufun}[1]{\ol{n}\uz_{#1}}
+
+\def\nzl{\ul{n}\uz}
+\def\nzu{\ol{n}\uz}
+\def\nnl{\ul{n}\un}
+\def\nnu{\ol{n}\un}
+\def\nil{\ul{n}\ui}
+\def\niu{\ol{n}\ui}
+
+\def\nkzl{\ul{n}\uz_k}
+\def\nkzu{\ol{n}\uz_k}
+\def\nknl{\ul{n}\un_k}
+\def\nknu{\ol{n}\un_k}
+
+\def\yknow{y_k^{(\tnow)}}
+\def\nknow{n_k^{(\tnow)}}
+
+\newcommand{\nk}{n_k}
+\newcommand{\nkp}{n_k'}
+\newcommand{\yk}{y_k}
+\newcommand{\ykp}{y_k'}
+
+\def\taut{\tau(\vec{t})}
+\def\ttau{\tilde{\tau}}
+\def\ttaut{\ttau(\vec{t})}
+\def\tautk{\tau(\vec{t}_k)}
+
+\def\MZ{\mathcal{M}\uz}
+\def\MN{\mathcal{M}\un}
+
+\def\MkZ{\mathcal{M}\uz_k}
+\def\MkN{\mathcal{M}\un_k}
+
+\def\PkZ{\Pi\uz_k}
+\def\PkN{\Pi\un_k}
+\newcommand{\PZi}[1]{\Pi\uz_{#1}}
+
+\def\tnow{t_\text{now}}
+\def\tpnow{t^+_\text{now}}
+
+\newcommand{\Rsysnow}{R^{(t_\text{now})}_\text{sys}}
+\newcommand{\Tsysnow}{T^{(t_\text{now})}_\text{sys}}
+\newcommand{\tsysnow}{t^{(t_\text{now})}_\text{sys}}
+\newcommand{\fsysnow}{f^{(t_\text{now})}_\text{sys}}
+\def\eknow{e_k^{(\tnow)}}
+\def\cknow{c_k^{(\tnow)}}
+\def\vectknow{\vec{t}_k^{(\tnow)}}
+\def\Phinow{\Phi^{(\tnow)}}
+\newcommand{\gnow}{g^{(\tnow)}}
+\newcommand{\tausnow}{\tau_*^{(\tnow)}}
+\newcommand{\tprep}{\tau_{\text{prep}}}
+\newcommand{\tthresh}{\tau_{\text{thresh}}}
+\newcommand{\tstarnow}{t_*^{(\tnow)}}
+\newcommand{\gstarnow}{g_*^{(\tnow)}}
+\newcommand{\gtotalnow}{g_\text{total}^{(\tnow)}}
+\newcommand{\esys}{e_\text{sys}}
+\newcommand{\mrsys}{\bar{r}_\text{sys}}
+
+% ------------ options -------------
+
+\allowdisplaybreaks
+
+\journal{RESS}
+
+\begin{document}
+
+% ------------ frontmatter -------------
+
+\begin{frontmatter}
+\title{Answer to Reviewers' Comments on our Manuscript
+``Condition-Based Maintenance for Complex Systems\\ based on Current Component Status\\ and Bayesian Updating of Component Reliability''}
+
+\author[tue]{Gero Walter}
+\ead{g.m.walter@tue.nl}
+\author[tue]{Simme Douwe Flapper}
+\ead{s.d.p.flapper@tue.nl}
+
+\address[tue]{School of Industrial Engineering, Eindhoven University of Technology, Eindhoven, Netherlands}
+
+
+\begin{abstract}
+We would like to thank the three anonymous reviewers for their detailed and constructive comments,
+and their overall positive votum***.
+We reproduce their comments here verbatim, with our answers interlaced.
+Our answers are typeset in \emph{italic}.
+\end{abstract}
+\end{frontmatter}
+
+% ------------ comments & answers -------------
+
+\section*{Reviewer 1}
+
+This paper proposes a condition-based maintenance (CBM) policy under a Bayesian framework. The key technique is to use the Bayesian method to update the reliability of each component based on the failure and censoring times observed so far. The probability distribution of each component type is assumed to be Weibull. For convenience, a conjugate prior distribution (inverse Gamma in the paper) is utilized for the Weibull scale parameter while assuming the shape parameter is known. Upon updating the posterior distribution for each component type, the conditional reliability of the system is updated based on the status of working/failed components, and the reliability diagram and signature of system. The object considered in the CBM policy is to minimize the expected cost rate of operational (inspection) cycle by determining the moment of replacement for the system.
+
+The paper is well-written and the idea is clearly presented and demonstrated.
+The problem is that it might have a significant overlap with the other paper the leading author submitted to another journal.
+
+\smallskip
+
+\emph{The other paper Reviewer 1 mentions here is:}
+
+\nocite{2016:walter-coolen}
+\bibliographystyle{elsarticle-harv}
+\bibliography{refs}
+\smallskip
+
+\emph{We cite this paper in our manuscript in Section~4,
+clearly stating, in the last paragraph before Section~4.1,
+that our manuscript and the cited paper share the same basic approach, namely
+Weibull component models with conjugate inverse Gamma prior
+combined with a survival signature approach to calculate the system remaining life distribution (RLD).
+As mentioned there, however, the focus of these two works is entirely different.
+The cited paper develops an approach to use \textbf{sets} of inverse Gamma priors,
+to allow for a sophisticated modeling of uncertainties in the component models,
+resulting in \textbf{sets} of RLDs which are the ultimate result of the paper.
+Instead, the present manuscript uses the basic approach to develop a \textbf{maintenance policy},
+using the RLD as input for an optimization of the mean cost rate to find the cost-optimal moment of system maintenance.
+Sections~4.1 to 4.3 describe the approach used for RLD calculation
+in a similar way than the cited paper,
+but with notation adapted to the manuscript's objective, i.e., defining a maintenance policy.
+For readers to be able to understand our approach,
+we considered it necessary to include a detailed description of the RLD calculation,
+and not just refering to the paper. ***change wording in the paper?***
+}
+
+\medskip
+
+I have the following questions that I hope the authors can answer.\\
+Questions:
+\begin{enumerate}
+\item In cases of pessimistic and optimistic priors, should we continually update or do not update component reliability in terms of minimizing the overall cos[t]?
+
+\smallskip
+
+\emph{In both cases, it is optimal to continually update the component model parameters.
+This is exemplarily shown in the case study in Section~6, with more systematic evidence given in Section~7.
+In Section~6.2, the case of failures happening later than expected, i.e., a pessimistic prior is considered,
+and the last paragraph before Section~6.3 (beginning with ``The effect of the continuous parameter update \ldots'')
+gives a detailed explanation.
+Section~6.3 studies a case with failure times earlier than expected, i.e., with too optimistic prior.
+Here, as described in the text, both the approach with and without continuous parameter update
+trigger maintenance at the same time, leading to the same costs.
+However, Figure~8 shows that without continuous parameter update, the system RLD is overestimated,
+which may lead to an excess risk of system failure.
+This is confirmed in the simulation study in Section~7.2, Figure~10,
+where the continuous update approach (CBM-cpu) can be seen to lead to slightly lower mean cost rates
+than the approach without continuous parameter update (CBM-epu and CBM-npu).
+Citing the last sentence of Section~7,
+``[o]verall, it seems that CBM-cpu can play its adaptive strengths most effectively
+when prior assumptions are too pessimistic,
+while also performing well when prior assumptions are correct or too optimistic.''\\
+***change some wording?***\\
+***impossible to know beforehand if priors too optimistic or too pessimistic***}
+%
+\item For the example system, I think we can simply use the key stone method (use H as the key stone) to calculate the system reliability when the components are independent.  Is it necessary to use system signature? 
+
+\smallskip
+
+\emph{The example system was deliberately chosen to be very simple,
+and for such a system, indeed a simpler methodology like the key stone method (***??) could very well suffice.
+However, our survival signature based method is also applicable for larger systems where no one component
+can be singled out as the reliability-limiting force***\\
+***add a note on simplicity at example intro in Section~3?***\\
+***use more complex system for simulation study?***}
+\end{enumerate}
+
+
+\section*{Reviewer 2}
+
+The manuscript proposes a condition-based preventive maintenance policy for multi-component systems. The objective is to minimise certain cost rate by means of scheduling preventive maintenance interventions. The failure probabilities and the residual life distribution are updated in a Bayesian fashion as new information of the system’s evolution is gathered. The components are assumed to fail independently, but they are interrelated and the failure of a single component may have an effect in other surrogate elements.
+
+The problem addressed is important and the methodology well-grounded. However, the manuscript requires some important work before it can be accepted.
+
+The English writing is good. However, the paper needs to be reviewed as some sections lack a proper structure and the argument is hard to follow. In particular Section~5 must be completely rewritten.
+
+More specific comments are summarised in the two following sections:
+
+\subsection*{Technical comments}
+
+\begin{itemize}
+\item The notational choice does not seem to be the most appropriate. The use of $\tnow$ is confusing and makes the reading of the paper cumbersome. I will suggest to use something more direct, as $t_j$, where $j=1,\ldots$ represents the $j$th scheduled intervention. With that choice, the notation $\tau^{\tnow}_*$ can be simplified to $\tau^*_j$ without any loss of generality of information. Moreover, with this notational choice (or a similar one) the expression $t_j=j \delta$ becomes natural and. [sic!]
+
+\item The claim in the first paragraph of Section 5 is a strong one and should be properly proved or, at least, a reference must be provided.
+
+\item In Section 5.1, the authors indicate that if, for a given time $\tnow$, $\tau_*^{\tnow}<\delta$, then a preventive maintenance is triggered. I wonder if it will not be better to wait until $\tau_*^{\tnow}$? Given that $\tau_*^{\tnow}$ is---by definition---the optimal intervention time, it seems that the best action is to intervene precisely at that time.
+
+\item It seems that the authors assume constant preventive and corrective maintenance costs. However, in practice one finds that maintenance costs are often state dependent. Is their model suitable for this? Is it robust to different cost structures? How will their results be affected?
+
+\item Throughout the manuscript it is assumed that the survival signature, $\phi$, is a given parameter of the problem and no further details are given. Even though this may be correct for any real life application of their methodology, for the sake of completeness I will suggest to either include the complete version of Table 1(maybe as an appendix) or to provide a closed form of the corresponding survival signature for their toy example.
+
+\item Five subsequent operation cycles seems to be a rather short simulation horizon. I will suggest the authors to extend their analysis to, at least, 20-25 cycles.
+
+\item Beside the didactical advantages of the small example, the authors should consider a more realistic framework for testing their model. Results should be provided for a larger scale simulation exercise.
+\end{itemize}
+
+
+\subsection*{General Comments}
+
+\begin{itemize}
+\item The authors claim that no degradation signal is used for monitoring the system’s state. However, they mention that the status of the components can be monitored continuously. How can this be done? This question becomes more important when the authors mention that certain inspections (which reveal the status of the systems) can be conducted periodically. This seems to be in contradiction with the continuous monitoring mentioned above. Could the authors be so kind to clarify this?
+
+\item The fourth paragraph in Section 1, starting with “In this paper…” must be rewritten. Their argument is not clear and it may seem contradictory; e.g. “no degradation signal for the system is available” and later “each component sends a binary signal”. At the end, it is not clear how information is collected.
+
+\item The definition of an operational cycle in the first paragraph of page 3 seems to be in conflict with the one provided elsewhere in the manuscript, in particular page 11, Section 5.
+
+\item I suggest the authors to define all the acronyms on their first use. For example, CBM is used throughout the text, but never defined; and RDL is used from page 2, but not defined until page 3 (in Section 2).
+
+\item The assumption of independence of the components, that appears for the first time in page 5, must be mentioned earlier in the paper.
+
+\item Some variables are not properly defined, e.g. $\Rsys$ or $\Tsys$. The meaning of $C^k_l$ can be guessed from the context, but for completeness should be clearly stated.
+
+\item As it seems, some of the results in section 4 have been developed elsewhere by one of the authors of this paper. Given that Section 4.1 does not add to the understanding of the problem under discussion, I will suggest to omit it or to include it as an appendix to the manuscript. This is only an opinion and I will understand if the authors decide to ignore my comment.
+
+\item I suggest to place Figure 2 somewhere after parameters $m$ and $\delta$ are defined and the maintenance policy is described in Section 5.1 (for example at the end of the section). Otherwise, it is hard to follow.
+
+\item A timeline sketch depicting the evolution of the policy on time, where the different elements of a time grid are illustrated, will be welcome.
+
+\item Even though the use of the zero sub-indexed double struck capital N is correct for positive naturals and zero, I think that the simpler double struck capital N is enough. The context makes evident the inclusion of zero.
+
+\item In page 13, paragraph 2, line 7, please remove “is” from the sentence “is for the current off-grid time”.
+
+\item Frequent references to function $g$, which is only defined later in Section 5.2, make the lecture of the manuscript difficult. I suggest to rewrite the section seeking for all elements to be introduced in a more orderly fashion.
+
+\item As Section 8 concludes the manuscript, I will suggest to refer to it as “the conclusion” rather than Section 8; e.g. at the end of sections 5.1 and 5.2.
+\end{itemize}
+
+
+\section*{Reviewer 3}
+
+The paper is well structured, well written and technically accurate. The numerical experiments are particularly interesting. I recommend the acceptation of the paper after a revision. 
+
+The weak point of the work is related to the different hypothesis which significantly simplify the modeling framework. More precisely:
+
+\begin{enumerate}
+\item All the components have the same lifetime model (namely the Weibull distribution) with a known fixed shape parameter which is not discussed. Only the scale parameter is updated and directly associated with the mean lifetime if the shape parameter is known.
+
+\item In the introduction the authors claim that ``the system RLD does not require a physical inspection’’ because the failure time of each component is detected online via continuous monitoring. This hypothesis seems to be very strong as it requires a costly related instrumentation. Most of the time, systems with redundancies are not monitored in a such way. if a specific application field is inferred, please give it explicitly. It could be interesting to discuss shortly the sensitivity of the proposed maintenance policy to non-detection of some components failures. 
+
+\item The maintenance of the system is always a replacement of the whole system by an as good as new one. This hypothesis is hard to accept especially if all the components are continuously monitored. 
+
+\end{enumerate}
+
+Some additional comments or remarks are given hereafter to help improving the paper. 
+
+\begin{itemize}
+\item The literature review has a strong focus on papers that are very close to the proposed one. There are some ambiguities about what the authors call ``papers having some relation to their approach’’. For example the paper by Si et al. (2013) is referred first as a paper where the inspection of the system condition lead to the choice of the moment for the next inspection. There are a lot of (older) papers with that specificity. The reason why Si et al. (2013) has been chosen is probably the RUL update in a Bayesian framework. It is not clear at this stage.
+
+\item Page 1, last line: Maintaining systems or components at the right time is the central idea of all the maintenance policies, not only for CBM. The specificity of CBM is to take the decision about maintenance on the basis of the on-line system condition. 
+
+\item Page 2, line 18 from top: The phrase ``a kind of inspection-based CBM policy’’ is maladjusted. The paper does not deal with inspection. The system is supposed to be continuously monitored (and re-evaluated from times to times). It would also be interesting to give in details the specific points which make the proposed policy a ``kind of’’ CBM policy.
+
+\item Page 2, line 15 from bottom: Please explain the acronym ``RLD’’ the first time it is used. 
+
+\item Page 4, line 5 from top: Please explain more precisely the meaning of ``this approximate calculation method’’.
+
+\item Page 6, line 11 from bottom: It would be interesting for the reader to know explicitly which sections of the paper follow closely ``Walter and Coolen (2016)’’ to help identifying precisely the original part of the work. 
+
+\item Page 7: The choice of the inverse Gamma distribution as a prior is interesting for mathematical reasons. Are there some possible tests to justify this choice from data?
+
+\item Page 13, section 5.1: The grid of planned evaluation time points is defined with a ``sufficiently small’’ time increment. What does it mean quantitatively? It seems that if $\delta$ is very small the maintenance time will be almost given by $\tau_*^{\tnow}$.
+
+\item Page 14, first paragraph: Is it possible to determine the number of operational cycles which is necessary to improve significantly the values of the parameters? It seems that after a certain amount of time the updates will have a negligible effect. 
+
+\item Page 14, Equation (14): Is it possible to have some elements about the variance of the unit cost rate?
+
+\item Page 15, line 12 from bottom: Please replace ``the costs rate’’ by ``the mean cost rate’’.
+
+\end{itemize}
+
+\end{document}
+
