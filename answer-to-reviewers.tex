@@ -320,6 +320,12 @@ The problem addressed is important and the methodology well-grounded. However, t
 
 The English writing is good. However, the paper needs to be reviewed as some sections lack a proper structure and the argument is hard to follow. In particular Section~5 must be completely rewritten.
 
+\smallskip
+
+\emph{***We rewrote Section~5 according to the reviewer's suggestions.***}
+
+\smallskip
+
 More specific comments are summarised in the two following sections:
 
 \subsection*{Technical comments}
@@ -327,17 +333,73 @@ More specific comments are summarised in the two following sections:
 \begin{itemize}
 \item The notational choice does not seem to be the most appropriate. The use of $\tnow$ is confusing and makes the reading of the paper cumbersome. I will suggest to use something more direct, as $t_j$, where $j=1,\ldots$ represents the $j$th scheduled intervention. With that choice, the notation $\tau^{\tnow}_*$ can be simplified to $\tau^*_j$ without any loss of generality of information. Moreover, with this notational choice (or a similar one) the expression $t_j=j \delta$ becomes natural and. [sic!]
 
+\smallskip
+
+\emph{***This conflicts with our approach that evaluates the RLD and $\tausnow$ also at the exact times of component failures***}
+
 \item The claim in the first paragraph of Section 5 is a strong one and should be properly proved or, at least, a reference must be provided.
+
+\smallskip
+
+\emph{***unclear which claim exactly he refers to, maybe to
+``Close to system startup, $\tausnow$ will be large;
+but as components in the system age and some indeed fail over time, $\tausnow$ will typically decrease.'' ???
+It will be hard to prove this formally, as $\tausnow$ is a result of an optimization over the re-estimated RLD.
+But informally, this is clear: when a component fails, this is taken up by the RLD calculation,
+such the probability mass of the RLD is moving closer to $\tnow$,
+which leads to $\tausnow$ being closer to $\tnow$ as well.***}
 
 \item In Section 5.1, the authors indicate that if, for a given time $\tnow$, $\tau_*^{\tnow}<\delta$, then a preventive maintenance is triggered. I wonder if it will not be better to wait until $\tau_*^{\tnow}$? Given that $\tau_*^{\tnow}$ is---by definition---the optimal intervention time, it seems that the best action is to intervene precisely at that time.
 
+\smallskip
+
+\emph{***Hm, yes, currently we have that the system is repaired at $\tnow$ when $\tausnow < \delta$.
+I could change the simulations to execute repair at time $\tnow + \tausnow$,
+but then one needs to check whether there is a component failure (and with it, a system failure)
+between time $\tnow$ and $\tnow + \tausnow$, making the policy flow chart even more complex.
+If we keep it as it is, we need to explain $\delta$ better as being very small such that repair at $\tnow$ or $\tnow + \tausnow$
+do not make a big difference and that without $\delta$, we get a situation like in the paradox of Achilles and the tortoise.}
+
 \item It seems that the authors assume constant preventive and corrective maintenance costs. However, in practice one finds that maintenance costs are often state dependent. Is their model suitable for this? Is it robust to different cost structures? How will their results be affected?
 
-\item Throughout the manuscript it is assumed that the survival signature, $\phi$, is a given parameter of the problem and no further details are given. Even though this may be correct for any real life application of their methodology, for the sake of completeness I will suggest to either include the complete version of Table 1(maybe as an appendix) or to provide a closed form of the corresponding survival signature for their toy example.
+\smallskip
+
+\emph{***We need to add a comment on this in Section~8. It is possible to have costs dependent on time and on system state,
+method works in the same way, $\tausnow$ will be more variable then.
+Relation to our simplifying assumption that all components are replaced in a maintenance action?***}
+
+\item Throughout the manuscript it is assumed that the survival signature, $\Phi$, is a given parameter of the problem and no further details are given. Even though this may be correct for any real life application of their methodology, for the sake of completeness I will suggest to either include the complete version of Table 1 (maybe as an appendix) or to provide a closed form of the corresponding survival signature for their toy example.
+
+\smallskip
+
+\emph{***Upon re-inspection of Table~1, we have found some errors that we have now corrected,
+and would like to apologize for the confusion that the errors may have caused.
+We now exemplarily show how $\Phi$ is obtained for the case of $l_M = 0, l_H = 1, l_C = 0, l_P = 1$,
+and give an explanation on how the omitted rows in Table~1 can be easily determined by the reader.\\
+{\scriptsize
+(1) Take a row, decrease $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
+If the resulting row is not in Table~1, then the corresponding $\Phi$ is $0$.\\
+(2) Take a row, increase $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
+If the resulting row is not in Table~1, then the corresponding $\Phi$ is $1$.}\\
+Also add complete table in Appendix, or formula for $\Phi$ based on structure function???***}
 
 \item Five subsequent operation cycles seems to be a rather short simulation horizon. I will suggest the authors to extend their analysis to, at least, 20-25 cycles.
 
+\smallskip
+
+\emph{***??? We can do more subsequent operation cycles,
+but I would think more repetitions (say, 100 instead of 20) would be better.
+Maybe emphasize that we use a single-cycle optimization criterion,
+not a renewal-based criterion that indeed holds only for a large number of cycles?
+Also, for many cycles the difference between CBM-cpu and CBM-epu will decrease.***}
+
 \item Beside the didactical advantages of the small example, the authors should consider a more realistic framework for testing their model. Results should be provided for a larger scale simulation exercise.
+
+\smallskip
+
+\emph{***We decided to use the simple example also in the simulation study to keep the paper shorter,
+but another, more complex system would be possible, only extending computation times.
+But what should this more complex system look like? We would need to think of a realistic example...***}
 \end{itemize}
 
 
