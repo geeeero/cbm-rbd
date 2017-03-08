@@ -353,7 +353,7 @@ which leads to $\tausnow$ being closer to $\tnow$ as well.***}
 
 \smallskip
 
-\emph{***Hm, yes, currently we have that the system is repaired at $\tnow$ when $\tausnow < \delta$.
+\emph{***Hmmm, yes, currently we have that the system is repaired at $\tnow$ when $\tausnow < \delta$.
 I could change the simulations to execute repair at time $\tnow + \tausnow$,
 but then one needs to check whether there is a component failure (and with it, a system failure)
 between time $\tnow$ and $\tnow + \tausnow$, making the policy flow chart even more complex.
@@ -373,7 +373,7 @@ Relation to our simplifying assumption that all components are replaced in a mai
 \smallskip
 
 \emph{***Upon re-inspection of Table~1, we have found some errors that we have now corrected,
-and would like to apologize for the confusion that the errors may have caused.
+and would like to apologize for the confusion that these errors may have caused.
 We now exemplarily show how $\Phi$ is obtained for the case of $l_M = 0, l_H = 1, l_C = 0, l_P = 1$,
 and give an explanation on how the omitted rows in Table~1 can be easily determined by the reader.\\
 {\scriptsize
@@ -381,7 +381,8 @@ and give an explanation on how the omitted rows in Table~1 can be easily determi
 If the resulting row is not in Table~1, then the corresponding $\Phi$ is $0$.\\
 (2) Take a row, increase $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
 If the resulting row is not in Table~1, then the corresponding $\Phi$ is $1$.}\\
-Also add complete table in Appendix, or formula for $\Phi$ based on structure function???***}
+Also add complete table in Appendix, or formula for $\Phi$ based on structure function???
+Also note here that there is software to calculate $\Phi$?***}
 
 \item Five subsequent operation cycles seems to be a rather short simulation horizon. I will suggest the authors to extend their analysis to, at least, 20-25 cycles.
 
@@ -408,11 +409,44 @@ But what should this more complex system look like? We would need to think of a 
 \begin{itemize}
 \item The authors claim that no degradation signal is used for monitoring the system’s state. However, they mention that the status of the components can be monitored continuously. How can this be done? This question becomes more important when the authors mention that certain inspections (which reveal the status of the systems) can be conducted periodically. This seems to be in contradiction with the continuous monitoring mentioned above. Could the authors be so kind to clarify this?
 
+\smallskip
+
+\emph{***??? We seem to have confused the reviewer thoroughly.
+We need to clarify that we do not use a \textbf{usual} degradation signal, like vibration measurements.
+But we do get a continuous signal from the components of the system, telling us whether they work or not.
+I need to check again if we say somewhere that we do inspections periodically, which is not true.
+We re-evaluate the RLD periodically (and additionally at times of component failures).***}
+
 \item The fourth paragraph in Section 1, starting with “In this paper…” must be rewritten. Their argument is not clear and it may seem contradictory; e.g. “no degradation signal for the system is available” and later “each component sends a binary signal”. At the end, it is not clear how information is collected.
+
+\smallskip
+
+\emph{***Again, we need to clarify that we do not use a \textbf{usual} degradation signal for the \textbf{system as a whole},
+but that the component status information (working or not) can be seen as a special kind of multivariate system degradation signal.
+I would also do not call our approach ``inspection-based'', as we now do in that paragraph.}
 
 \item The definition of an operational cycle in the first paragraph of page 3 seems to be in conflict with the one provided elsewhere in the manuscript, in particular page 11, Section 5.
 
+\smallskip
+
+\emph{p.~3: ``where an operational cycle starts with a new system,
+and ends after this system has been replaced by an as good as new system''\\
+Section~5: ``An operational cycle begins with system start-up,
+and ends when either preventive maintenance is carried out, or a failure of the system occurs,
+with subsequent corrective maintenance.''\\
+*** I don't quite see the conflict, maybe mention in Sec~5 directly after that sentence that maintenance means replacing the whole system?
+And write on p.~3 ``begins with the start-up of a new system'', or even
+``An operational cycle spans the time between two consecutive system maintenance actions / replacements.
+We thus optimize the unit cost rate calculated over the time since the last system replacement.''
+?***}
+
 \item I suggest the authors to define all the acronyms on their first use. For example, CBM is used throughout the text, but never defined; and RDL is used from page 2, but not defined until page 3 (in Section 2).
+
+\smallskip
+
+\emph{CBM was defined in the first line of Section~1, where we wrote ``CBM (condition-based maintenance)''.
+We now write ``condition-based maintenance (CBM)'' instead.
+We are sorry that we did define RLD too late, and now define it at the first use on page~2.***}
 
 \item The assumption of independence of the components, that appears for the first time in page 5, must be mentioned earlier in the paper.
 

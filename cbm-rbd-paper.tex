@@ -263,7 +263,7 @@ condition-based maintenance \sep system reliability \sep remaining useful life \
 \label{intro}
 
 Both in practice and academics,
-there is a growing interest in CBM (condition-based maintenance), see e.g.,
+there is a growing interest in condition-based maintenance (CBM), see e.g.,
 \citet[pp.~15--55]{2016:oldekeizer}
 The central idea behind CBM is to maintain systems or components at the right time,
 i.e., before they fail, but not too early, in order to keep their reliability high and operating costs low.
@@ -289,7 +289,7 @@ for when no degradation signal for the system is available,
 but where the status (working or not working) of the components can be monitored continuously.
 In this situation, one can use the system's reliability block diagram
 and information with respect to the status of its components
-to directly calculate the system residual life distribution,
+to directly calculate the system residual life distribution (RLD),
 and base the maintenance policy for the system on this distribution.
 In fact, our CBM policy can be seen as based on a multivariate degradation signal,
 where each component sends a binary signal, and the reliability block diagram is used for sensor fusion.
@@ -502,14 +502,14 @@ we found only a few papers having some relation to our approach.
 The paper that comes closest to this paper is the paper by \citet{2013:si-et-al}.
 In that paper, the condition of a system is inspected,
 where the moment of the next inspection is determined via an updated degradation path based on the present condition of the system.
-The authors provide exact expressions for the RUL (remaining useful lifetime) distribution,
-also known as residual life distribution (RLD),
+The authors provide exact expressions for the RLD,
+also known as RUL (remaining useful lifetime) distribution,
 which is updated in an empirical Bayesian framework using conjugate priors.
 The RLD is used to construct a replacement decision model using a cost rate.
 
 One of the main differences between \citet{2013:si-et-al} and our paper
 is that we use component status data and the system reliability block diagram instead of the degradation signal
-as basis for calculating the system RUL.
+as basis for calculating the system RLD.
 Another main difference is that our policy can be applied to arbitrary system configurations
 (i.e., arbitrary reliability block diagrams with arbitrary components),
 whereas the method given by \citet{2013:si-et-al} can only be applied to single components.
@@ -517,9 +517,9 @@ A third difference concerns how the cost rate is calculated.
 \citet{2013:si-et-al} calculate this rate using the renewal-reward theory approximation.
 Essential for using the renewal-reward theory for calculating the expected cost per unit of time
 is that the relevant characteristics of the system considered and its environment are not changing,
-i.e. that the failure behavior of the system,
+i.e.\ that the failure behavior of the system,
 in essence its relibability function, does not change over time,
-and that we use the same policy with the same parameter values during a statistically long enough period of time.
+and that the same policy with the same parameter values is used for a statistically long enough period of time.
 However, due to the update method related to the CBM policy presented in this paper
 like in \citet{2013:si-et-al}, we cannot use this approximate calculation method,
 and therefore use the exact formula for the average cost per unit of time.
