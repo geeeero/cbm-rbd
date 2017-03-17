@@ -1242,7 +1242,7 @@ However, if a component fails before the next $\tnow$ on the grid,
 $\tnow$ is set instead to the exact failure time $t_{k,i}$.
 Next, we check whether the system has failed due to this component failure.
 If the system has failed, a corrective maintenance action is carried out, incurring cost $c_c$.
-If the system has not failed, we calculate $\tausnow$ is for the current off-grid time $\tnow = t_{k,i}$,
+If the system has not failed, we calculate $\tausnow$ for the current off-grid time $\tnow = t_{k,i}$,
 and move back onto the grid afterwards,
 unless there is another component failure before the next planned evaluation time.
 
@@ -1317,7 +1317,7 @@ While this is in principle possible in our approach,
 exploring such selective replacement schemes is out of scope for this paper,
 since optimizing over replacement schemes is, in our view, a higly interesting topic
 that merits an investigation of its own,
-and we will comment on this in Section~\ref{sec:outlook}.
+and we will comment on this in the conclusion (Section~\ref{sec:outlook}).
 %
 %As we use a one-cycle criterion, the time both preventive and corrective maintenance actions require
 %does not matter directly for the determination of $\tausnow$.
@@ -1435,7 +1435,7 @@ Common cause failures, i.e., failures of several components at the same time due
 are currently not accounted for in our model. %, as we assume component failures to be mutually independent
 %given the component model parameters.
 Such simulatenous failures will seriously influence the RLD and thus $\tausnow$.
-We will return to this in Section~\ref{sec:outlook}.
+We will return to this in the conclusion (Section~\ref{sec:outlook}).
 %
 %Next, we describe how to numerically evaluate \eqref{eq:gtnowtau} and determine $\tausnow$
 %for our choice of component model.

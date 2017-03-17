@@ -228,8 +228,9 @@
 \begin{abstract}
 We would like to thank the three anonymous reviewers for their detailed and constructive comments,
 and their overall positive votum***.
-We reproduce their comments here verbatim, with our answers interlaced.
-Our answers are typeset in \emph{italic}.
+We reproduce their comments here verbatim,
+and have numbered the reviewers' comments and questions to allow for easy referencing. 
+Our answers are interlaced and typeset in \emph{italic}.
 \end{abstract}
 \end{frontmatter}
 
@@ -267,7 +268,7 @@ in a similar way than the cited paper,
 but with notation adapted to the manuscript's objective, i.e., defining a maintenance policy.
 For readers to be able to understand our approach,
 we considered it necessary to include a detailed description of the RLD calculation,
-and not just refering to the paper. ***change wording in the paper?***
+and not just refering to the paper.
 }
 
 \medskip
@@ -330,12 +331,15 @@ More specific comments are summarised in the two following sections:
 
 \subsection*{Technical comments}
 
-\begin{itemize}
+\begin{enumerate}
 \item The notational choice does not seem to be the most appropriate. The use of $\tnow$ is confusing and makes the reading of the paper cumbersome. I will suggest to use something more direct, as $t_j$, where $j=1,\ldots$ represents the $j$th scheduled intervention. With that choice, the notation $\tau^{\tnow}_*$ can be simplified to $\tau^*_j$ without any loss of generality of information. Moreover, with this notational choice (or a similar one) the expression $t_j=j \delta$ becomes natural and. [sic!]
 
 \smallskip
 
-\emph{***This conflicts with our approach that evaluates the RLD and $\tausnow$ also at the exact times of component failures***}
+\emph{***This conflicts with our approach that evaluates the RLD and $\tausnow$ also at the exact times of component failures!***\\
+maybe something like
+$\big\{ t_j: (t_j = m\delta, m \in \naturals_0) \cup (t_j = t_{k,i}, k \in \{1,\ldots,K\}, i \in \{1,\ldots, N_k\}) \big\}$ ???
+But this is also quite complex!***}
 
 \item The claim in the first paragraph of Section 5 is a strong one and should be properly proved or, at least, a reference must be provided.
 
@@ -401,12 +405,12 @@ Also, for many cycles the difference between CBM-cpu and CBM-epu will decrease.*
 \emph{***We decided to use the simple example also in the simulation study to keep the paper shorter,
 but another, more complex system would be possible, only extending computation times.
 But what should this more complex system look like? We would need to think of a realistic example...***}
-\end{itemize}
+\end{enumerate}
 
 
 \subsection*{General Comments}
 
-\begin{itemize}
+\begin{enumerate}
 \item The authors claim that no degradation signal is used for monitoring the system’s state. However, they mention that the status of the components can be monitored continuously. How can this be done? This question becomes more important when the authors mention that certain inspections (which reveal the status of the systems) can be conducted periodically. This seems to be in contradiction with the continuous monitoring mentioned above. Could the authors be so kind to clarify this?
 
 \smallskip
@@ -446,26 +450,77 @@ We thus optimize the unit cost rate calculated over the time since the last syst
 
 \emph{CBM was defined in the first line of Section~1, where we wrote ``CBM (condition-based maintenance)''.
 We now write ``condition-based maintenance (CBM)'' instead.
-We are sorry that we did define RLD too late, and now define it at the first use on page~2.***}
+We are sorry that we indeed defined RLD too late, and now define it at the first use on page~2.***}
 
 \item The assumption of independence of the components, that appears for the first time in page 5, must be mentioned earlier in the paper.
 
+\smallskip
+
+\emph{*** yes, we should mention this in the introduction.}
+
 \item Some variables are not properly defined, e.g. $\Rsys$ or $\Tsys$. The meaning of $C^k_l$ can be guessed from the context, but for completeness should be clearly stated.
+
+\smallskip
+
+\emph{***We define $\Rsys(t) = P(\Tsys > t)$ on p.~5 above Equation~1,
+but indeed did not introduce $\Tsys$ as the random failure time of the system.
+We do so now in *** (start of Section~3?)}
 
 \item As it seems, some of the results in section 4 have been developed elsewhere by one of the authors of this paper. Given that Section 4.1 does not add to the understanding of the problem under discussion, I will suggest to omit it or to include it as an appendix to the manuscript. This is only an opinion and I will understand if the authors decide to ignore my comment.
 
+\smallskip
+
+\emph{*** Section~4.1 introduces the Weibull component models
+and the conjugate inverse Gamma prior distribution in our non-standard parametrization,
+explaining the Bayesian parameter update step for right-censored lifetimes.
+We think that Section~4.1 is crucial to the understanding of our method,
+especially for readers not familiar with Bayesian approaches.
+As mentioned in our answer to Reviewer~1's main comment,
+Sections~4.1 to 4.3 combine results from several parts of the cited manuscript
+in a from that is adapted to the purpose of the present manuscript.
+We thus think that it is preferable to keep Section~4.1 within the main part of the manuscript.}
+
 \item I suggest to place Figure 2 somewhere after parameters $m$ and $\delta$ are defined and the maintenance policy is described in Section 5.1 (for example at the end of the section). Otherwise, it is hard to follow.
+
+\smallskip
+
+\emph{We had placed Figure~2 (depicting the flowchat for the policy) directly before Section~5.1 which explains the policy,
+and agree that it should appear during or after Section~5.1 to avoid confusion.***}
 
 \item A timeline sketch depicting the evolution of the policy on time, where the different elements of a time grid are illustrated, will be welcome.
 
+\smallskip
+
+\emph{We agree with Reviewer~2 that such a sketch is helpful, and provide it now as Figure~***.}
+
 \item Even though the use of the zero sub-indexed double struck capital N is correct for positive naturals and zero, I think that the simpler double struck capital N is enough. The context makes evident the inclusion of zero.
+
+\smallskip
+
+\emph{??? Reviewer~2 suggests to use $\naturals$ in place of $\naturals_0$.
+***I don't think this is a good idea, with $\naturals_0$ we emphasize that
+we evaluate the RLD for the first time directly at system startup time 0.***}
 
 \item In page 13, paragraph 2, line 7, please remove “is” from the sentence “is for the current off-grid time”.
 
+\smallskip
+
+\emph{Thanks for pointing this out, done.}
+
 \item Frequent references to function $g$, which is only defined later in Section 5.2, make the lecture of the manuscript difficult. I suggest to rewrite the section seeking for all elements to be introduced in a more orderly fashion.
 
+\smallskip
+
+\emph{***We rewrote the entire section as requested, and hope that this is now more clear.
+Our intention was to establish the cost rate function $g^{(\tnow)}(\cdot)$ as a generic function first
+and to explain the details of its calculation later***}
+
 \item As Section 8 concludes the manuscript, I will suggest to refer to it as “the conclusion” rather than Section 8; e.g. at the end of sections 5.1 and 5.2.
-\end{itemize}
+
+\smallskip
+
+\emph{***Agreed, we now write ``the conclusion (Section~8)''.}
+\end{enumerate}
 
 
 \section*{Reviewer 3}
@@ -485,7 +540,7 @@ The weak point of the work is related to the different hypothesis which signific
 
 Some additional comments or remarks are given hereafter to help improving the paper. 
 
-\begin{itemize}
+\begin{enumerate}
 \item The literature review has a strong focus on papers that are very close to the proposed one. There are some ambiguities about what the authors call ``papers having some relation to their approach’’. For example the paper by Si et al. (2013) is referred first as a paper where the inspection of the system condition lead to the choice of the moment for the next inspection. There are a lot of (older) papers with that specificity. The reason why Si et al. (2013) has been chosen is probably the RUL update in a Bayesian framework. It is not clear at this stage.
 
 \item Page 1, last line: Maintaining systems or components at the right time is the central idea of all the maintenance policies, not only for CBM. The specificity of CBM is to take the decision about maintenance on the basis of the on-line system condition. 
@@ -508,7 +563,7 @@ Some additional comments or remarks are given hereafter to help improving the pa
 
 \item Page 15, line 12 from bottom: Please replace ``the costs rate’’ by ``the mean cost rate’’.
 
-\end{itemize}
+\end{enumerate}
 
 \end{document}
 
