@@ -462,7 +462,7 @@ We are sorry that we indeed defined RLD too late, and now define it at the first
 
 \smallskip
 
-\emph{***We define $\Rsys(t) = P(\Tsys > t)$ on p.~5 above Equation~1,
+\emph{***We defined $\Rsys(t) := P(\Tsys > t)$ on p.~5 above Equation~1,
 but indeed did not introduce $\Tsys$ as the random failure time of the system.
 We do so now in *** (start of Section~3?)}
 
@@ -477,7 +477,7 @@ We think that Section~4.1 is crucial to the understanding of our method,
 especially for readers not familiar with Bayesian approaches.
 As mentioned in our answer to Reviewer~1's main comment,
 Sections~4.1 to 4.3 combine results from several parts of the cited manuscript
-in a from that is adapted to the purpose of the present manuscript.
+in a form that is adapted to the purpose of the present manuscript.
 We thus think that it is preferable to keep Section~4.1 within the main part of the manuscript.}
 
 \item I suggest to place Figure 2 somewhere after parameters $m$ and $\delta$ are defined and the maintenance policy is described in Section 5.1 (for example at the end of the section). Otherwise, it is hard to follow.
@@ -532,37 +532,141 @@ The weak point of the work is related to the different hypothesis which signific
 \begin{enumerate}
 \item All the components have the same lifetime model (namely the Weibull distribution) with a known fixed shape parameter which is not discussed. Only the scale parameter is updated and directly associated with the mean lifetime if the shape parameter is known.
 
+\smallskip
+
+\emph{We agree that the assumption of a fixed known shape parameter is a serious limitation of our approach. 
+We added a comment on this in the conclusion,
+repeating a comment from the beginning of Section~4, where we wrote:
+``The model could be extended to learn also the shape parameter in a later step,
+using, e.g., the discretized approach by Soland (1969).''
+We now also emphasize in the conclusion that the proposed method should be seen as a first step towards
+a completely new class of CBM policies.***}
+
 \item In the introduction the authors claim that ``the system RLD does not require a physical inspection’’ because the failure time of each component is detected online via continuous monitoring. This hypothesis seems to be very strong as it requires a costly related instrumentation. Most of the time, systems with redundancies are not monitored in a such way. if a specific application field is inferred, please give it explicitly. It could be interesting to discuss shortly the sensitivity of the proposed maintenance policy to non-detection of some components failures. 
+
+\smallskip
+
+\emph{***We have added a short discussion related to the non-detection of component failures in the conclusion.
+We were mostly thinking of systems where a failure of a component is immediately eminent,
+but the measurement of the component's health degree is very difficult or too costly.
+This is, e.g., the case for components in power systems, where failure of a certain component
+is reflected in a loss of current (detectable from the control centre),
+but proper health monitoring is cumbersome and costly.
+***}
 
 \item The maintenance of the system is always a replacement of the whole system by an as good as new one. This hypothesis is hard to accept especially if all the components are continuously monitored. 
 
+\smallskip
+
+\emph{***Agreed, this is another important simplifying assumption that we needed to make in this manuscript,
+which should be seen as a first step towards a completely new class of CBM policies.
+We originally mentioned this in the description of the policy but only at the end of Section~5.1,
+and commented on this in the fourth paragraph of the conclusion (Section~8), bottom of p.~25.
+In the re-write of Section~5, we tried to emphasize the pilot character of our approach,
+mentioning the restricting assumptions more prominently.***}
 \end{enumerate}
 
 Some additional comments or remarks are given hereafter to help improving the paper. 
 
 \begin{enumerate}
-\item The literature review has a strong focus on papers that are very close to the proposed one. There are some ambiguities about what the authors call ``papers having some relation to their approach’’. For example the paper by Si et al. (2013) is referred first as a paper where the inspection of the system condition lead to the choice of the moment for the next inspection. There are a lot of (older) papers with that specificity. The reason why Si et al. (2013) has been chosen is probably the RUL update in a Bayesian framework. It is not clear at this stage.
+\item The literature review has a strong focus on papers that are very close to the proposed one. There are some ambiguities about what the authors call ``papers having some relation to their approach’’. For example the paper by Si et al. (2013) is referred first as a paper where the inspection of the system condition lead to the choice of the moment for the next inspection. There are a lot of (older) papers with that specificity. The reason why Si et al.~(2013) has been chosen is probably the RUL update in a Bayesian framework. It is not clear at this stage.
+
+\smallskip
+
+\emph{***We did mention right in the first paragraph of the discussion of Si et al.~(2013)
+that they use an empirical Bayesian framework,
+but now also state explicitely that the use of a Bayesian approach is a main reason why we consider this paper relevant for the discussion.}
 
 \item Page 1, last line: Maintaining systems or components at the right time is the central idea of all the maintenance policies, not only for CBM. The specificity of CBM is to take the decision about maintenance on the basis of the on-line system condition. 
 
+\smallskip
+
+\emph{***??? rewrite???}
+
 \item Page 2, line 18 from top: The phrase ``a kind of inspection-based CBM policy’’ is maladjusted. The paper does not deal with inspection. The system is supposed to be continuously monitored (and re-evaluated from times to times). It would also be interesting to give in details the specific points which make the proposed policy a ``kind of’’ CBM policy.
+
+\smallskip
+
+\emph{Agreed, we deleted that notion, and hope to be more clear now here.***}
 
 \item Page 2, line 15 from bottom: Please explain the acronym ``RLD’’ the first time it is used. 
 
+\smallskip
+
+\emph{We are sorry that we defined RLD too late, and now define it at the first use.}
+
 \item Page 4, line 5 from top: Please explain more precisely the meaning of ``this approximate calculation method’’.
+
+\smallskip
+
+\emph{We replaced ``this approximate calculation method’’ with ``the renewal-reward theory based calculation method''
+in the hope to make this more clear.}
 
 \item Page 6, line 11 from bottom: It would be interesting for the reader to know explicitly which sections of the paper follow closely ``Walter and Coolen (2016)’’ to help identifying precisely the original part of the work. 
 
+\smallskip
+
+\emph{Agreed, the respective sections are now added.}
+
 \item Page 7: The choice of the inverse Gamma distribution as a prior is interesting for mathematical reasons. Are there some possible tests to justify this choice from data?
 
-\item Page 13, section 5.1: The grid of planned evaluation time points is defined with a ``sufficiently small’’ time increment. What does it mean quantitatively? It seems that if $\delta$ is very small the maintenance time will be almost given by $\tau_*^{\tnow}$.
+\smallskip
+
+\emph{It is not possible to use data for testing the adequacy of the parametric family of the prior,
+as it is supposed to reflect the expert's opinion.
+So the actual question is rather whether inverse Gamma distributions can adequately reflect the expert's opinions.
+A tool to help answering that question are prior predictive distributions.
+They give a distribution for the failure times that can be expected according to the expert's choice of prior
+(here: inverse Gamma with specific parameters)
+\textbf{in combination with the assumed sample model} (here: Weibull).
+Figure~6 (previously Figure~5)*** depicts prior predictive reliability functions for the priors in the case study of Section~6,
+as a way to visualize the choice of prior parameters given in Table~2 in the context of the Weibull model.
+When an expert feels that these prior predictive reliability functions do not correspond to the failure time distribution (s)he postulates,
+and no change of prior parameters can approximate the postulated failure time distribution,
+then the prior family would seem inappropriate,
+under the condition that the sample model is indeed correct.
+(Methods for checking the sample model are discussed, e.g., in
+Bayarri and Berger (2000), ``P values for composite null models'',
+Journal of the American Statistical Association 95(452): 1127–1142.)}
+
+\item Page 13, section 5.1: The grid of planned evaluation time points is defined with a ``sufficiently small’’ time increment. What does it mean quantitatively? It seems that if $\delta$ is very small the maintenance time will be almost given by $\tau_*^{(\tnow)}$.
+
+\smallskip
+
+\emph{***depends on the scale of failure times? seconds / minutes? ??? not sure what is meant by the second sentence.}
 
 \item Page 14, first paragraph: Is it possible to determine the number of operational cycles which is necessary to improve significantly the values of the parameters? It seems that after a certain amount of time the updates will have a negligible effect. 
 
+\smallskip
+
+\emph{***Indeed, after a certain time the parameter $y_k$ (the expected value of the Weibull scale parameter $\lambda_k$)
+will not change by much during the update in Equation (7).
+However, the strength parameter $n_k$ will continue to increase,
+since the other part of (7) reads $n'_k = n_k + e_k$, i.e.,
+$n_k$ is incremented by 1 for each observed failure.
+The consequence is that the posterior distribution over $\lambda_k$ becomes ever more pointed
+(the variance of the posterior approaches zero),
+leading to the posterior predictive approaching the Weibull with $\lambda_k$ equal to $y_k$.
+Stopping to update would make only sense when the posterior is practically equal to a point mass on $y_k$.
+However, this holds only if a component's failure behaviour does not change.
+Updating allows to automatically adapt to any changes in the failure behaviour.}
+
 \item Page 14, Equation (14): Is it possible to have some elements about the variance of the unit cost rate?
 
-\item Page 15, line 12 from bottom: Please replace ``the costs rate’’ by ``the mean cost rate’’.
+\smallskip
 
+\emph{***??? In Equation~(15), the unit cost rate $\gnow(\tau)$ is defined as
+$\gnow(\tau) = \E[g(\tau \mid \Tsysnow)]$,
+i.e., as expectation of the conditioned unit cost rate $g(\tau \mid \Tsysnow)$ from Equation~(14).
+We do not think the variance of the conditioned unit cost rate,
+$\text{V}[g(\tau \mid \Tsysnow)]$ is instructive for the purposes of our manuscript.}
+
+\item Page 15, line 12 from bottom: Please replace ``the costs rate’’ [sic!] by ``the mean cost rate’’.
+
+\smallskip
+
+\emph{We wrote ``$\gnow(\tau)$ gives the cost rate that we expect to incur [...]'',
+which includes the notion of mean via ``expect'', and we hope this is clear enough.*** (???)}
 \end{enumerate}
 
 \end{document}

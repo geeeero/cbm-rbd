@@ -507,8 +507,9 @@ also known as RUL (remaining useful lifetime) distribution,
 which is updated in an empirical Bayesian framework using conjugate priors.
 The RLD is used to construct a replacement decision model using a cost rate.
 
+***While we also use a Bayesian approach to provide exact expressions for the RLD,***
 One of the main differences between \citet{2013:si-et-al} and our paper
-is that we use component status data and the system reliability block diagram instead of the degradation signal
+is that we use component status data and the system reliability block diagram instead of a continuous degradation signal
 as basis for calculating the system RLD.
 Another main difference is that our policy can be applied to arbitrary system configurations
 (i.e., arbitrary reliability block diagrams with arbitrary components),
@@ -521,7 +522,7 @@ i.e.\ that the failure behavior of the system,
 in essence its relibability function, does not change over time,
 and that the same policy with the same parameter values is used for a statistically long enough period of time.
 However, due to the update method related to the CBM policy presented in this paper
-like in \citet{2013:si-et-al}, we cannot use this approximate calculation method,
+like in \citet{2013:si-et-al}, we cannot use the renewal-reward theory based calculation method,
 and therefore use the exact formula for the average cost per unit of time.
 
 Another paper that includes some of the aspects included in our paper is the paper by \citet{2012:sun-et-al}.
@@ -811,10 +812,10 @@ resulting in a formula for $\Rsysnow(t)$.
 %and the lifetime histories of all component types,
 %including test data (if available) and expert assessments.
 
-The model description below follows closely \cite{2016:walter-coolen},
+The model description below follows closely \cite[\S 2, \S 4.1 -- \S 4.3]{2016:walter-coolen},
 who presented the same residual life distribution model.
 However, \cite{2016:walter-coolen} did not consider maintenance policies,
-but focus instead on a generalization of the RLD model using sets of priors for the component models.
+but focus instead on a generalization of the RLD model by using imprecise probability models*** for the component models.
 %These sets of priors can be seen as parametric P-boxes,
 %a certain kind of imprecise probability model \citep[see, e.g.,][]{itip}.
 %Such models allow for vague and partial prior specifications,
@@ -1146,6 +1147,15 @@ Section~\ref{sec:optim} then focuses on our choice for the component models and 
 and shows how $\tausnow$ is determined in this situation.
 %Numerical examples comparing results for three exemplary failure histories are given in Section~\ref{sec:examples},
 %and a small simulation study is presented in Section~\ref{sec:sim}.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\node {exemplary timeline};
+\end{tikzpicture}
+\caption{***exemplary timeline sketch}
+\label{fig:timeline}
+\end{figure}
 
 \begin{figure}
 \centering
@@ -1928,7 +1938,7 @@ We use the survival signature to compute system reliability functions
 for given component models, and propose to use Weibull component models
 with conjugate priors to express expert knowledge.
 The resulting policy shows promising results in
-different numerical exmples and a small simulation study.
+different numerical examples and a small simulation study.
 
 There are several aspects in our modelling that warrant further investigation.
 So far, we assume that component failure times are observed precisely via monitoring.
@@ -1939,6 +1949,10 @@ would allow to derive a condition-based maintenance policy with wider-spaced ins
 which could also determine the optimal moment for the next inspection of the system.
 %*** extend the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 %we would need to add interval-censored data (failure has happened between last and current inspection)
+
+***estimate and update also Weibull shape parameter***
+
+***non-detection of component failures***
 
 As mentioned at the end of Section~\ref{sec:costrate},
 we currently disregard the possibility of common cause failures,
