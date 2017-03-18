@@ -748,6 +748,21 @@ Continuing our example,
 the survival signature for the system in Figure~\ref{fig:brakesys-layout} is given in Table~\ref{tab:brakesys-survsign},
 omitting the entries for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_C, l_P) = 1$,
 because the full table would contain $\prod_{k=1}^K (N_k + 1) = 2 \times 2 \times 5 \times 5 = 100$ rows.
+***The omitted rows from Table~\ref{tab:brakesys-survsign} can be determined as follows:
+\begin{itemize}
+\item Take a row, decrease $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
+If the resulting row is not in Table~\ref{tab:brakesys-survsign}, then the corresponding $\Phi$ is $0$.
+\item Take a row, increase $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
+If the resulting row is not in Table~\ref{tab:brakesys-survsign}, then the corresponding $\Phi$ is $1$.
+\end{itemize} 
+***As an example, Consider the case $l_M = 0, l_H = 1, l_C = 0, l_P = 1$,
+i.e., $M$ has failed, $H$ functions, $C_1$ -- $C_4$ have failed, and one of $P_1$ -- $P_4$ functions.
+The system functions only if the single functioning type $P$ component is either $P_3$ or $P_4$.
+As the type $P$ components are exchangeable, each has the same probability of being the functioning component,
+and so the probability of $P_3$ or $P_4$ being the functioning component is $0.5$, and $\Phi(0, 1, 0, 1) = 0.5$.
+
+The \textsf{R} package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
+provides a convenient function to calculate the survival signature based on a given graph.
 
 \begin{table}
 \centering
@@ -1952,8 +1967,6 @@ which could also determine the optimal moment for the next inspection of the sys
 
 ***estimate and update also Weibull shape parameter***
 
-***non-detection of component failures***
-
 As mentioned at the end of Section~\ref{sec:costrate},
 we currently disregard the possibility of common cause failures,
 i.e., simultaneous failures with a shared root cause.
@@ -1993,6 +2006,10 @@ or all components of one type.
 %and thus the calculation of separate posterior predictive probabilities
 %$P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
 %which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
+
+***different cost structures, let repair costs depend on number of failed components?***
+
+***non-detection of component failures***
 
 Another promising extension would be to use sets of conjugate priors for the component models.
 This approach is described in \cite{2016:walter-coolen},

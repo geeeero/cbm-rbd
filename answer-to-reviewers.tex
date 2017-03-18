@@ -262,7 +262,7 @@ The cited paper develops an approach to use \textbf{sets} of inverse Gamma prior
 to allow for a sophisticated modeling of uncertainties in the component models,
 resulting in \textbf{sets} of RLDs which are the ultimate result of the paper.
 Instead, the present manuscript uses the basic approach to develop a \textbf{maintenance policy},
-using the RLD as input for an optimization of the mean cost rate to find the cost-optimal moment of system maintenance.
+using \textbf{a single} RLD as input for an optimization of the mean cost rate to find the cost-optimal moment of system maintenance.
 Sections~4.1 to 4.3 describe the approach used for RLD calculation
 in a similar way than the cited paper,
 but with notation adapted to the manuscript's objective, i.e., defining a maintenance policy.
@@ -290,7 +290,7 @@ Here, as described in the text, both the approach with and without continuous pa
 trigger maintenance at the same time, leading to the same costs.
 However, Figure~8 shows that without continuous parameter update, the system RLD is overestimated,
 which may lead to an excess risk of system failure.
-This is confirmed in the simulation study in Section~7.2, Figure~10,
+This is confirmed in the simulation study in Section~7.2, Figure~11 (previously Figure~10),
 where the continuous update approach (CBM-cpu) can be seen to lead to slightly lower mean cost rates
 than the approach without continuous parameter update (CBM-epu and CBM-npu).
 Citing the last sentence of Section~7,
@@ -305,9 +305,12 @@ while also performing well when prior assumptions are correct or too optimistic.
 \smallskip
 
 \emph{The example system was deliberately chosen to be very simple,
-and for such a system, indeed a simpler methodology like the key stone method (***??) could very well suffice.
-However, our survival signature based method is also applicable for larger systems where no one component
-can be singled out as the reliability-limiting force***\\
+and for such a system, indeed a simpler methodology like the keystone method could very well suffice.
+However, our survival signature based method is also applicable for larger systems where the keystone method
+is not applicable or cumbersome.
+Furthermore, the \textsf{R} package \texttt{ReliabilityTheory} allows to easily calculate the
+survival signature from a given system graph.\\
+%no one component can be singled out as the reliability-limiting force.\\
 ***add a note on simplicity at example intro in Section~3?***\\
 ***use more complex system for simulation study?***}
 \end{enumerate}
@@ -379,21 +382,21 @@ Relation to our simplifying assumption that all components are replaced in a mai
 \emph{***Upon re-inspection of Table~1, we have found some errors that we have now corrected,
 and would like to apologize for the confusion that these errors may have caused.
 We now exemplarily show how $\Phi$ is obtained for the case of $l_M = 0, l_H = 1, l_C = 0, l_P = 1$,
-and give an explanation on how the omitted rows in Table~1 can be easily determined by the reader.\\
-{\scriptsize
-(1) Take a row, decrease $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
-If the resulting row is not in Table~1, then the corresponding $\Phi$ is $0$.\\
-(2) Take a row, increase $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
-If the resulting row is not in Table~1, then the corresponding $\Phi$ is $1$.}\\
-Also add complete table in Appendix, or formula for $\Phi$ based on structure function???
-Also note here that there is software to calculate $\Phi$?***}
+and give an explanation on how the omitted rows in Table~1 can be easily determined by the reader.}
+%{\scriptsize
+%(1) Take a row, decrease $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
+%If the resulting row is not in Table~1, then the corresponding $\Phi$ is $0$.\\
+%(2) Take a row, increase $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
+%If the resulting row is not in Table~1, then the corresponding $\Phi$ is $1$.}\\
+%Also add complete table in Appendix, or formula for $\Phi$ based on structure function???
+%Also note here that there is software to calculate $\Phi$?***}
 
 \item Five subsequent operation cycles seems to be a rather short simulation horizon. I will suggest the authors to extend their analysis to, at least, 20-25 cycles.
 
 \smallskip
 
 \emph{***??? We can do more subsequent operation cycles,
-but I would think more repetitions (say, 100 instead of 20) would be better.
+but I would think more repetitions (say, 50 or 100 instead of 20) would be better.
 Maybe emphasize that we use a single-cycle optimization criterion,
 not a renewal-based criterion that indeed holds only for a large number of cycles?
 Also, for many cycles the difference between CBM-cpu and CBM-epu will decrease.***}
@@ -415,9 +418,9 @@ But what should this more complex system look like? We would need to think of a 
 
 \smallskip
 
-\emph{***??? We seem to have confused the reviewer thoroughly.
+\emph{***??? It seems we have confused the reviewer thoroughly.
 We need to clarify that we do not use a \textbf{usual} degradation signal, like vibration measurements.
-But we do get a continuous signal from the components of the system, telling us whether they work or not.
+But we do get a (time-) continuous signal from the components of the system, telling us whether they work or not.
 I need to check again if we say somewhere that we do inspections periodically, which is not true.
 We re-evaluate the RLD periodically (and additionally at times of component failures).***}
 
@@ -484,14 +487,14 @@ We thus think that it is preferable to keep Section~4.1 within the main part of 
 
 \smallskip
 
-\emph{We had placed Figure~2 (depicting the flowchat for the policy) directly before Section~5.1 which explains the policy,
+\emph{We had placed Figure~2 (depicting the flowchat for the policy, now Figure~3) directly before Section~5.1 which explains the policy,
 and agree that it should appear during or after Section~5.1 to avoid confusion.***}
 
 \item A timeline sketch depicting the evolution of the policy on time, where the different elements of a time grid are illustrated, will be welcome.
 
 \smallskip
 
-\emph{We agree with Reviewer~2 that such a sketch is helpful, and provide it now as Figure~***.}
+\emph{We agree with Reviewer~2 that such a sketch is helpful, and provide it now as Figure~2.}
 
 \item Even though the use of the zero sub-indexed double struck capital N is correct for positive naturals and zero, I think that the simpler double struck capital N is enough. The context makes evident the inclusion of zero.
 
@@ -539,7 +542,7 @@ We added a comment on this in the conclusion,
 repeating a comment from the beginning of Section~4, where we wrote:
 ``The model could be extended to learn also the shape parameter in a later step,
 using, e.g., the discretized approach by Soland (1969).''
-We now also emphasize in the conclusion that the proposed method should be seen as a first step towards
+We now also emphasize in the introduction and the conclusion that the proposed method should be seen as a first step towards
 a completely new class of CBM policies.***}
 
 \item In the introduction the authors claim that ``the system RLD does not require a physical inspection’’ because the failure time of each component is detected online via continuous monitoring. This hypothesis seems to be very strong as it requires a costly related instrumentation. Most of the time, systems with redundancies are not monitored in a such way. if a specific application field is inferred, please give it explicitly. It could be interesting to discuss shortly the sensitivity of the proposed maintenance policy to non-detection of some components failures. 
@@ -550,8 +553,8 @@ a completely new class of CBM policies.***}
 We were mostly thinking of systems where a failure of a component is immediately eminent,
 but the measurement of the component's health degree is very difficult or too costly.
 This is, e.g., the case for components in power systems, where failure of a certain component
-is reflected in a loss of current (detectable from the control centre),
-but proper health monitoring is cumbersome and costly.
+is usually reflected in a loss of current (detectable from the control centre),
+but proper health monitoring (going beyond working yes/no) is cumbersome and costly.
 ***}
 
 \item The maintenance of the system is always a replacement of the whole system by an as good as new one. This hypothesis is hard to accept especially if all the components are continuously monitored. 
@@ -562,7 +565,7 @@ but proper health monitoring is cumbersome and costly.
 which should be seen as a first step towards a completely new class of CBM policies.
 We originally mentioned this in the description of the policy but only at the end of Section~5.1,
 and commented on this in the fourth paragraph of the conclusion (Section~8), bottom of p.~25.
-In the re-write of Section~5, we tried to emphasize the pilot character of our approach,
+In the introduction and the complete re-write of Section~5, we tried to emphasize the pilot character of our approach,
 mentioning the restricting assumptions more prominently.***}
 \end{enumerate}
 
@@ -593,7 +596,7 @@ but now also state explicitely that the use of a Bayesian approach is a main rea
 
 \smallskip
 
-\emph{We are sorry that we defined RLD too late, and now define it at the first use.}
+\emph{We are sorry that we defined RLD too late, and now define it at first use.}
 
 \item Page 4, line 5 from top: Please explain more precisely the meaning of ``this approximate calculation method’’.
 
@@ -614,7 +617,7 @@ in the hope to make this more clear.}
 
 \emph{It is not possible to use data for testing the adequacy of the parametric family of the prior,
 as it is supposed to reflect the expert's opinion.
-So the actual question is rather whether inverse Gamma distributions can adequately reflect the expert's opinions.
+So the crucial question is rather whether inverse Gamma distributions can adequately reflect the expert's opinions.
 A tool to help answering that question are prior predictive distributions.
 They give a distribution for the failure times that can be expected according to the expert's choice of prior
 (here: inverse Gamma with specific parameters)
@@ -627,7 +630,8 @@ then the prior family would seem inappropriate,
 under the condition that the sample model is indeed correct.
 (Methods for checking the sample model are discussed, e.g., in
 Bayarri and Berger (2000), ``P values for composite null models'',
-Journal of the American Statistical Association 95(452): 1127–1142.)}
+Journal of the American Statistical Association 95(452): 1127–1142.)\\
+***add this reference to the paper?***}
 
 \item Page 13, section 5.1: The grid of planned evaluation time points is defined with a ``sufficiently small’’ time increment. What does it mean quantitatively? It seems that if $\delta$ is very small the maintenance time will be almost given by $\tau_*^{(\tnow)}$.
 
@@ -646,7 +650,7 @@ since the other part of (7) reads $n'_k = n_k + e_k$, i.e.,
 $n_k$ is incremented by 1 for each observed failure.
 The consequence is that the posterior distribution over $\lambda_k$ becomes ever more pointed
 (the variance of the posterior approaches zero),
-leading to the posterior predictive approaching the Weibull with $\lambda_k$ equal to $y_k$.
+such that the posterior predictive distribution approaches the Weibull distribution with $\lambda_k$ equal to $y_k$.
 Stopping to update would make only sense when the posterior is practically equal to a point mass on $y_k$.
 However, this holds only if a component's failure behaviour does not change.
 Updating allows to automatically adapt to any changes in the failure behaviour.}
