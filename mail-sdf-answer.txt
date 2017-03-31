@@ -1,0 +1,37 @@
+
+Dear Simme Douwe,
+
+thanks for all the work and thoughts on our paper. I like the new setup text explaining the different triggers to update the residual life distribution. But I'm not sure if the simulations should focus on these. Below, I comment on your ideas, writing in blue.
+
+To understand: we wait until the system as a whole fails. Then we look at all components, and can see if they still work or not. We have right-censoring for all the components that still work, but do not know when the failed components exactly failed, so for them, we have left censoring. (It is in principle possible to properly account for left-censored observations in a Bayesian update step, but then we loose the conjugacy property, which makes the update step easy and allows quick calculations. So properly including left-censoring would be an entirely different paper.)
+
+Yes, in Si et al (2013) (and also often elsewhere) the idea is that the prior should not "count much" and that after a short time, the data "drowns" any possible wrong prior information, and the method adapts to the data. You can see this a bit in Figure 8 of Si et al (2013), where the blue line is first far away from the actual degradation path, but then quickly approaches it.
+
+
+I re-read Si et al (2013), and I think they don't really use their g() criterion for decision making, they don't give an actual policy. Figure 10 shows their g() curve only for a specific time point t_110 = 272.5 (hours). They show what the cost-optimal time until replacement at time t_110 is, but do not give a general decision rule when to do the replacement.
+
+
+I agree that tau < delta does not seem very convincing, but I fear this is the only thing we can do without writing an entirely new paper. I hope that with some more careful motivation and wording, we will be able to convince Reviewer 2.
+
+
+In all the papers I have seen that calculate a remaining useful life distribution (RLD), there are no formal maintenance policies, they always stop at "here is the RLD" or, like Si et al (2013), do not go further than "here is how you can calculate an optimal time to replacement at a certain time", but never say what to do with it, how to make the decision. The papers with formal policies are those which determine a threshold for the degradation signal, with the policy "repair when the signal moves above the threshold". I fear now that the reason we don't see RLD papers giving a policy is that it is indeed difficult to create a formal maintenance policy with it. I have the impression that their idea is more that a decision maker will look at the RLD (or the cost-optimal time to replacement) and then decides whether to schedule maintenance, taking lots of factors into account in an informal way.
+
+
+Hm, this would mean a different focus for the simulation study in Section 7, and also for all numeric examples in Section 6, because they now illustrate something else.
+
+
+In your triggers 1 - 2 - 3 idea, the idea is to recalculate tau (cost-optimal time to replacement) only at certain time points, but then use all information available at these time points. What I did in Section 6 and Section 7 was to recalculate tau all the time for all three CBM policies, but for some I did not use all information because I did not update the parameters for each tau recalculation. My idea there was to illustrate that updating all the time is useful. With your idea, the idea would be to show that frequent recalculation of tau is useful.
+
+
+"123" corresponds to CBM-cpu (continuous parameter update) of Section 7. "23" means to recalculate tau only at times when a component fails, whereas "13" means to recalculate tau on a fixed grid and when the system has failed.
+
+
+In contrast, CBM-epu (end of cycle parameter update) determines tau at all points like "123", using the reliability block diagram information and the age of components, but still using the parameters from the beginning of the current cycle, updating only at the end of each of the five cycles. CBM-npu (no parameter update) does the same like CBM-epu, but always uses the initial parameters from the first cycle, never updating them.
+
+
+ABM-epu and ABM-npu calculate tau only at the start of each cycle, fixing the time of replacement. ABM-epu updates the parameters at the end of the cycle, and thus is a bit like "3", but using the actual failure times.
+
+
+To summarize, I think the notion of triggers 1 2 3 really helps to explain the idea of when we recalculate tau, but I think we should assume we have the component status (working yes / no) monitored continuously and we want to fully use this information. Maybe we can put a small example at the start of section 6, showing a situation where tau falls below delta at a type 1 triggered recalculation (not at a type  2 triggered recalculation, as currently happens in all section 6 examples).
+
+Yes, I had an idea about a computer server farm required to do different services (think email, web traffic, database, ...) with the system functioning when all services are offered (-> series). For each service, there are several specialized servers (-> parallel), but there are also a number of servers that can do all (or a subset of) services ( -> complex system structure). But this example might be distracting, as people might think about capacities then, which are not accounted for in a reliability block diagram.
