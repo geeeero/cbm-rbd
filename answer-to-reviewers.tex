@@ -500,7 +500,7 @@ We thus think that it is preferable to keep Section~4.1 within the main part of 
 
 \smallskip
 
-\emph{We had placed Figure~2 (depicting the flowchat for the policy, now Figure~3) directly before Section~5.1 which explains the policy,
+\emph{We had placed Figure~2 (depicting the flowchart for the policy, now Figure~3) directly before Section~5.1 which explains the policy,
 and agree that it should appear during or after Section~5.1 to avoid confusion.}
 
 \item A timeline sketch depicting the evolution of the policy on time, where the different elements of a time grid are illustrated, will be welcome.
@@ -550,13 +550,17 @@ The weak point of the work is related to the different hypothesis which signific
 
 \smallskip
 
-\emph{We agree that the assumption of a fixed known shape parameter is a serious limitation of our approach. 
+\emph{Yes, each component type has an individual Weibull model assigned,
+where the (component type specific) shape parameter is assumed to be fixed and known.
+We agree that the assumption of a fixed known shape parameter is a serious limitation of our approach. 
 We added a comment on this in the conclusion,
 repeating a comment from the beginning of Section~4, where we wrote:
 ``The model could be extended to learn also the shape parameter in a later step,
 using, e.g., the discretized approach by Soland (1969).''
-We now also emphasize in the introduction and the conclusion that the proposed method should be seen as a first step towards
-a completely new class of CBM policies.***}
+We now also emphasize in the introduction and the conclusion that the method as described in the manuscript is deliberately kept simple
+to allow for a clear and straight-forward demonstration of the general approach.
+For a practical application, one should indeed update the shape parameter as well,
+but in our view, adding this simple but notationally cumbersome feature would obstruct the goal of this manuscript.***}
 
 \item In the introduction the authors claim that ``the system RLD does not require a physical inspection’’ because the failure time of each component is detected online via continuous monitoring. This hypothesis seems to be very strong as it requires a costly related instrumentation. Most of the time, systems with redundancies are not monitored in a such way. if a specific application field is inferred, please give it explicitly. It could be interesting to discuss shortly the sensitivity of the proposed maintenance policy to non-detection of some components failures. 
 
