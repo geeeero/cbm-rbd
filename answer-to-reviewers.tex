@@ -222,12 +222,12 @@
 \author[tue]{Simme Douwe Flapper}
 \ead{s.d.p.flapper@tue.nl}
 
-\address[tue]{School of Industrial Engineering, Eindhoven University of Technology, Eindhoven, Netherlands}
+\address[tue]{School of Industrial Engineering, Eindhoven University of Technology,\\ Eindhoven, The Netherlands}
 
 
 \begin{abstract}
 We would like to thank the three anonymous reviewers for their detailed and constructive comments,
-and their overall positive votum***.
+and their overall positive votum.
 We reproduce their comments here verbatim,
 and have numbered the reviewers' comments and questions to allow for easy referencing. 
 Our answers are interlaced and typeset in \emph{italic}.
@@ -264,7 +264,7 @@ resulting in \textbf{sets} of RLDs which are the ultimate result of the paper.
 Instead, the present manuscript uses the basic approach to develop a \textbf{maintenance policy},
 using \textbf{a single} RLD as input for an optimization of the mean cost rate to find the cost-optimal moment of system maintenance.
 Sections~4.1 to 4.3 describe the approach used for RLD calculation
-in a similar way than the cited paper,
+in a similar way as in the cited paper,
 but with notation adapted to the manuscript's objective, i.e., defining a maintenance policy.
 For readers to be able to understand our approach,
 we considered it necessary to include a detailed description of the RLD calculation,
@@ -280,7 +280,7 @@ Questions:
 
 \smallskip
 
-\emph{In both cases, it is optimal to continually update the component model parameters.
+\emph{In both cases, it is optimal to continuously update the component model parameters.
 This is exemplarily shown in the case study in Section~6, with more systematic evidence given in Section~7.
 In Section~6.2, the case of failures happening later than expected, i.e., a pessimistic prior is considered,
 and the last paragraph before Section~6.3 (beginning with ``The effect of the continuous parameter update \ldots'')
@@ -290,14 +290,17 @@ Here, as described in the text, both the approach with and without continuous pa
 trigger maintenance at the same time, leading to the same costs.
 However, Figure~8 shows that without continuous parameter update, the system RLD is overestimated,
 which may lead to an excess risk of system failure.
-This is confirmed in the simulation study in Section~7.2, Figure~11 (previously Figure~10),
+***This is confirmed in the simulation study in Section~7.2, Figure~11 (previously Figure~10),
 where the continuous update approach (CBM-cpu) can be seen to lead to slightly lower mean cost rates
-than the approach without continuous parameter update (CBM-epu and CBM-npu).
-Citing the last sentence of Section~7,
-``[o]verall, it seems that CBM-cpu can play its adaptive strengths most effectively
+than the approach without continuous parameter update (CBM-epu and CBM-npu).\\
+%
+***new simulation scenario to illustrate this!***\\
+%
+***Citing the last sentence of Section~7,
+``[o]verall, it seems that CBM-cpu can play ***exert?*** its adaptive strengths most effectively
 when prior assumptions are too pessimistic,
 while also performing well when prior assumptions are correct or too optimistic.''\\
-***change some wording?***\\
+%
 ***impossible to know beforehand if priors too optimistic or too pessimistic***}
 %
 \item For the example system, I think we can simply use the key stone method (use H as the key stone) to calculate the system reliability when the components are independent.  Is it necessary to use system signature? 
@@ -305,14 +308,14 @@ while also performing well when prior assumptions are correct or too optimistic.
 \smallskip
 
 \emph{The example system was deliberately chosen to be very simple,
-and for such a system, indeed a simpler methodology like the keystone method could very well suffice.
-However, our survival signature based method is also applicable for larger systems where the keystone method
-is not applicable or cumbersome.
-Furthermore, the \textsf{R} package \texttt{ReliabilityTheory} allows to easily calculate the
-survival signature from a given system graph.\\
+and for such a system, indeed a simpler methodology like the keystone method can very well suffice.
+However, our survival signature based method is also applicable for larger systems ***with hundreds or thousands of components,
+where the keystone method is usually not practical anymore.***\\
+***find surv sign papers with complex systems and add citations***
+Furthermore, the \textsf{R} package \texttt{ReliabilityTheory} allows to automatically calculate the
+survival signature from any given system graph.\\
 %no one component can be singled out as the reliability-limiting force.\\
-***add a note on simplicity at example intro in Section~3?***\\
-***use more complex system for simulation study?***}
+***add a note on simplicity (to understand what's going on) at example intro in Section~3?***}
 \end{enumerate}
 
 
@@ -371,16 +374,19 @@ do not make a big difference and that without $\delta$, we get a situation like 
 
 \smallskip
 
-\emph{***We need to add a comment on this in Section~8. It is possible to have costs dependent on time and on system state,
-method works in the same way, $\tausnow$ will be more variable then.
-Relation to our simplifying assumption that all components are replaced in a maintenance action?***}
+\emph{***Yes, we indeed assumed constant cost parameters in our manuscript.
+We now comment on this in the Section~8, where we now state that our model allows
+to let costs depend on time and on system state in the optimization step.
+***Such dependencies will lead to a more variable $\tausnow$***
+}
 
 \item Throughout the manuscript it is assumed that the survival signature, $\Phi$, is a given parameter of the problem and no further details are given. Even though this may be correct for any real life application of their methodology, for the sake of completeness I will suggest to either include the complete version of Table 1 (maybe as an appendix) or to provide a closed form of the corresponding survival signature for their toy example.
 
 \smallskip
 
-\emph{***Upon re-inspection of Table~1, we have found some errors that we have now corrected,
+\emph{Upon re-inspection of Table~1, we have found some errors that we have now corrected,
 and would like to apologize for the confusion that these errors may have caused.
+(We did all calculations with the correct survival signature though.)
 We now exemplarily show how $\Phi$ is obtained for the case of $l_M = 0, l_H = 1, l_C = 0, l_P = 1$,
 and give an explanation on how the omitted rows in Table~1 can be easily determined by the reader.}
 %{\scriptsize
@@ -395,19 +401,20 @@ and give an explanation on how the omitted rows in Table~1 can be easily determi
 
 \smallskip
 
-\emph{***??? We can do more subsequent operation cycles,
-but I would think more repetitions (say, 50 or 100 instead of 20) would be better.
-Maybe emphasize that we use a single-cycle optimization criterion,
-not a renewal-based criterion that indeed holds only for a large number of cycles?
-Also, for many cycles the difference between CBM-cpu and CBM-epu will decrease.***}
+\emph{***We agree that the simulation study in our submitted manuscript was rather small,
+and thus have extended the simulation to not only to 25 subsequent cycles,
+but also increased the number of repetitions from 20 to 100 for each policy and scenario.
+Furthermore, we added a fourth scenario to better illustrate the advantage of the policy
+using continuous parameter update.***}
 
 \item Beside the didactical advantages of the small example, the authors should consider a more realistic framework for testing their model. Results should be provided for a larger scale simulation exercise.
 
 \smallskip
 
-\emph{***We decided to use the simple example also in the simulation study to keep the paper shorter,
-but another, more complex system would be possible, only extending computation times.
-But what should this more complex system look like? We would need to think of a realistic example...***}
+\emph{***We decided to use the simple example also in the simulation study ***to provide clear insights
+that could get lost with a more complex example.***
+Generally, more complex systems are possible, only extending computation times,
+and we comment on the scalability of our approach in Section***.}
 \end{enumerate}
 
 
@@ -418,19 +425,24 @@ But what should this more complex system look like? We would need to think of a 
 
 \smallskip
 
-\emph{***??? It seems we have confused the reviewer thoroughly.
-We need to clarify that we do not use a \textbf{usual} degradation signal, like vibration measurements.
-But we do get a (time-) continuous signal from the components of the system, telling us whether they work or not.
-I need to check again if we say somewhere that we do inspections periodically, which is not true.
-We re-evaluate the RLD periodically (and additionally at times of component failures).***}
+\emph{We would like to apologize to Reviewer 2,
+and agree that our manuscript was indeed very confusing in this point.
+We completely rewrote the introduction and other relevant parts,
+hopefully making more clear now that 
+we do not use a \textbf{usual} domain-continuous degradation signal, like, e.g., vibration measurements.
+Instead, we assume a time-continuous signal from the components of the system, telling us only whether they work or not.
+We also previously denoted our frequent re-evaluation of the system RLD by ``inspections'',
+which was indeed not adequate, and have changed our wording and explanations.***}
 
 \item The fourth paragraph in Section 1, starting with “In this paper…” must be rewritten. Their argument is not clear and it may seem contradictory; e.g. “no degradation signal for the system is available” and later “each component sends a binary signal”. At the end, it is not clear how information is collected.
 
 \smallskip
 
-\emph{***Again, we need to clarify that we do not use a \textbf{usual} degradation signal for the \textbf{system as a whole},
-but that the component status information (working or not) can be seen as a special kind of multivariate system degradation signal.
-I would also do not call our approach ``inspection-based'', as we now do in that paragraph.}
+\emph{***Agreed, this is one of the paragraphs that we changed substantially as mentioned in the answer to the previous question,
+and we hope that our argument is now more clear.***}
+%Again, we need to clarify that we do not use a \textbf{usual} degradation signal for the \textbf{system as a whole},
+%but that the component status information (working or not) can be seen as a special kind of multivariate system degradation signal.
+%I would also do not call our approach ``inspection-based'', as we now do in that paragraph.
 
 \item The definition of an operational cycle in the first paragraph of page 3 seems to be in conflict with the one provided elsewhere in the manuscript, in particular page 11, Section 5.
 
@@ -459,21 +471,22 @@ We are sorry that we indeed defined RLD too late, and now define it at the first
 
 \smallskip
 
-\emph{*** yes, we should mention this in the introduction.}
+\emph{*** yes, we should mention this in the introduction.***}
 
 \item Some variables are not properly defined, e.g. $\Rsys$ or $\Tsys$. The meaning of $C^k_l$ can be guessed from the context, but for completeness should be clearly stated.
 
 \smallskip
 
-\emph{***We defined $\Rsys(t) := P(\Tsys > t)$ on p.~5 above Equation~1,
+\emph{We wrote $\Rsys(t) = P(\Tsys > t)$ on p.~5 above Equation~1,
 but indeed did not introduce $\Tsys$ as the random failure time of the system.
-We do so now in *** (start of Section~3?)}
+We do so now at the start of Section~3.
+$C^k_t$ is now properly defined in the text below Equation~1.}
 
 \item As it seems, some of the results in section 4 have been developed elsewhere by one of the authors of this paper. Given that Section 4.1 does not add to the understanding of the problem under discussion, I will suggest to omit it or to include it as an appendix to the manuscript. This is only an opinion and I will understand if the authors decide to ignore my comment.
 
 \smallskip
 
-\emph{*** Section~4.1 introduces the Weibull component models
+\emph{Section~4.1 introduces the Weibull component models
 and the conjugate inverse Gamma prior distribution in our non-standard parametrization,
 explaining the Bayesian parameter update step for right-censored lifetimes.
 We think that Section~4.1 is crucial to the understanding of our method,
@@ -488,21 +501,21 @@ We thus think that it is preferable to keep Section~4.1 within the main part of 
 \smallskip
 
 \emph{We had placed Figure~2 (depicting the flowchat for the policy, now Figure~3) directly before Section~5.1 which explains the policy,
-and agree that it should appear during or after Section~5.1 to avoid confusion.***}
+and agree that it should appear during or after Section~5.1 to avoid confusion.}
 
 \item A timeline sketch depicting the evolution of the policy on time, where the different elements of a time grid are illustrated, will be welcome.
 
 \smallskip
 
-\emph{We agree with Reviewer~2 that such a sketch is helpful, and provide it now as Figure~2.}
+\emph{We agree with Reviewer~2 that such a sketch is helpful, and now provide two such sketches in Figure~2.}
 
 \item Even though the use of the zero sub-indexed double struck capital N is correct for positive naturals and zero, I think that the simpler double struck capital N is enough. The context makes evident the inclusion of zero.
 
 \smallskip
 
-\emph{??? Reviewer~2 suggests to use $\naturals$ in place of $\naturals_0$.
-***I don't think this is a good idea, with $\naturals_0$ we emphasize that
-we evaluate the RLD for the first time directly at system startup time 0.***}
+\emph{By using $\naturals_0$ and not $\naturals$ as suggested by Reviewer 2,
+we intended to emphasize that the system RLD is evaluated for the first time directly at system startup time 0.
+***still keep it???***}
 
 \item In page 13, paragraph 2, line 7, please remove “is” from the sentence “is for the current off-grid time”.
 
@@ -514,15 +527,15 @@ we evaluate the RLD for the first time directly at system startup time 0.***}
 
 \smallskip
 
-\emph{***We rewrote the entire section as requested, and hope that this is now more clear.
-Our intention was to establish the cost rate function $g^{(\tnow)}(\cdot)$ as a generic function first
-and to explain the details of its calculation later***}
+\emph{***Our intention was to establish the cost rate function $g^{(\tnow)}(\cdot)$ as a generic function first
+and to explain the details of its calculation later.
+We rewrote the entire section as requested, and hope that also this is now more clear.***}
 
 \item As Section 8 concludes the manuscript, I will suggest to refer to it as “the conclusion” rather than Section 8; e.g. at the end of sections 5.1 and 5.2.
 
 \smallskip
 
-\emph{***Agreed, we now write ``the conclusion (Section~8)''.}
+\emph{Agreed, we now write ``the conclusion (Section~8)''.}
 \end{enumerate}
 
 

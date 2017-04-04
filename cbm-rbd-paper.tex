@@ -221,7 +221,7 @@
 \author[tue]{Simme Douwe Flapper}
 \ead{s.d.p.flapper@tue.nl}
 
-\address[tue]{School of Industrial Engineering, Eindhoven University of Technology, Eindhoven, Netherlands}
+\address[tue]{School of Industrial Engineering, Eindhoven University of Technology, Eindhoven, The Netherlands}
 
 
 \begin{abstract}
@@ -246,7 +246,7 @@ Each component type has a separate Weibull model that may also include test data
 The cost-optimal moment of replacement for the system is obtained by minimizing
 the expected cost rate per unit of time.
 The unit cost rate is recalculated when components fail
-or at the end of every (very short) fixed inter-inspection interval,
+or at the end of every (very short) fixed inter-inspection interval***,
 leading to a dynamic maintenance policy,
 since the aging of components and possible failures will change the cost-optimal moment of repair in the course of time.
 Via numerical experiments, some insight into the performance of the policy is given.
@@ -630,7 +630,9 @@ Our approach is different, as we get an exact formulation for the system RUL dir
 \section{Reliability function for complex systems using the survival signature}
 \label{sec:sysrel}
 
-Here we describe how the system reliability function, given the system reliability block diagram and arbitrary component models,
+Let $\Tsys$ be the time to failure of the system,
+and $\Rsys(t) := P(\Tsys > t)$ be the system reliability function.
+Here we describe how $\Rsys(t)$, given the system reliability block diagram and arbitrary component models,
 can be efficiently calculated using the survival signature.
 %We will show in Section~\ref{sec:adaptive-sysrel-weibull} how, for a certain choice of component model,
 %this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
@@ -740,8 +742,9 @@ P(\Tsys > t) &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} P(\Tsys > t \mid C^
              &= \sum_{l_1=0}^{N_1} \cdots \sum_{l_K=0}^{N_K} \Phi(l_1,\ldots,l_K) \prod_{k=1}^K P(C^k_t = l_k)\,,
 \label{eq:sysrel-survsign}
 \end{align}
-where $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$.
-The last equality holds as we assume that components fail independently.
+where $C^k_t$ is the number of type $k$ components functioning at time $t$,
+and $P(C^k_t = l_k)$ is the (predictive) probability that exactly $l_k$ components of type $k$ function at time $t$.
+The last equality holds as we assume that components of different types fail independently.
 Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is non-decreasing in each $l_k$.
 
 Continuing our example,
@@ -755,14 +758,15 @@ If the resulting row is not in Table~\ref{tab:brakesys-survsign}, then the corre
 \item Take a row, increase $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
 If the resulting row is not in Table~\ref{tab:brakesys-survsign}, then the corresponding $\Phi$ is $1$.
 \end{itemize} 
-***As an example, Consider the case $l_M = 0, l_H = 1, l_C = 0, l_P = 1$,
+The \textsf{R} package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
+provides a convenient function to calculate the survival signature table based on a given graph.
+***To illustrate how the table entries are generated,
+consider the case $l_M = 0, l_H = 1, l_C = 0, l_P = 1$,
 i.e., $M$ has failed, $H$ functions, $C_1$ -- $C_4$ have failed, and one of $P_1$ -- $P_4$ functions.
 The system functions only if the single functioning type $P$ component is either $P_3$ or $P_4$.
-As the type $P$ components are exchangeable, each has the same probability of being the functioning component,
-and so the probability of $P_3$ or $P_4$ being the functioning component is $0.5$, and $\Phi(0, 1, 0, 1) = 0.5$.
+As the type $P$ components are exchangeable, each of $P_1$ -- $P_4$ has the same probability of being the functioning component,
+and so the probability of $P_3$ or $P_4$ being the functioning component is $2 / 4$, thus $\Phi(0, 1, 0, 1) = 0.5$.
 
-The \textsf{R} package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
-provides a convenient function to calculate the survival signature based on a given graph.
 
 \begin{table}
 \centering
