@@ -447,7 +447,7 @@ and the total number of components in the system is $\sum_{k=1}^K N_k = N$.
 
 As a running example, we consider a simplified automotive braking system
 consisting of four component types $M$, $H$, $C$ and $P$,
-with reliability block diagram as depicted in Figure~\ref{fig:brakesys-layout}.
+with the reliability block diagram as depicted in Figure~\ref{fig:brakesys-layout}.
 The master brake cylinder ($M$) activates all four wheel brake cylinders ($C_1$ -- $C_4$),
 which in turn actuate a braking pad assembly each ($P_1$ -- $P_4$).
 The hand brake mechanism ($H$) directly actuates the brake pad assemblies $P_3$ and $P_4$;
@@ -552,22 +552,24 @@ Note that for coherent systems, the survival signature $\Phi(l_1,\ldots,l_K)$ is
 Continuing our example,
 the survival signature for the system in Figure~\ref{fig:brakesys-layout} is given in Table~\ref{tab:brakesys-survsign},
 omitting the entries for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_C, l_P) = 1$,
-because the full table would contain $\prod_{k=1}^K (N_k + 1) = 2 \times 2 \times 5 \times 5 = 100$ rows.
-***The omitted rows from Table~\ref{tab:brakesys-survsign} can be determined as follows:
-\begin{itemize}
-\item Take a row, decrease $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
-If the resulting row is not in Table~\ref{tab:brakesys-survsign}, then the corresponding $\Phi$ is $0$.
-\item Take a row, increase $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
-If the resulting row is not in Table~\ref{tab:brakesys-survsign}, then the corresponding $\Phi$ is $1$.
-\end{itemize} 
-The \textsf{R} package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
-provides a convenient function to calculate the survival signature table based on a given graph.
-***To illustrate how the table entries are generated,
+since the full table would contain $\prod_{k=1}^K (N_k + 1) = 2 \times 2 \times 5 \times 5 = 100$ rows.
+%
+To illustrate how the table entries are obtained,
 consider the case $l_M = 0, l_H = 1, l_C = 0, l_P = 1$,
 i.e., $M$ has failed, $H$ functions, $C_1$ -- $C_4$ have failed, and one of $P_1$ -- $P_4$ functions.
 The system functions only if the single functioning type $P$ component is either $P_3$ or $P_4$.
 As the type $P$ components are exchangeable, each of $P_1$ -- $P_4$ has the same probability of being the functioning component,
 and so the probability of $P_3$ or $P_4$ being the functioning component is $2 / 4$, thus $\Phi(0, 1, 0, 1) = 0.5$.
+%
+The omitted rows from Table~\ref{tab:brakesys-survsign} can be determined as follows:
+\begin{itemize}
+\item Take a row, decrease $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
+If the resulting row is not in Table~\ref{tab:brakesys-survsign}, then the corresponding value of $\Phi$ is $0$.
+\item Take a row, increase $l_k$ for one $k \in \{M, H, C, P\}$ by 1.
+If the resulting row is not in Table~\ref{tab:brakesys-survsign}, then the corresponding value of $\Phi$ is $1$.
+\end{itemize} 
+The \textsf{R} package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
+provides a convenient function to calculate the survival signature table based on any given graph.
 
 
 \begin{table}
@@ -606,14 +608,14 @@ can be calculated for a specific choice of component model.
 %Section~\ref{sec:policy} will then show how an adaptive maintenance policy
 %can be derived for a monitored system based on such a current system residual life distribution. 
 
-We consider the well-known Weibull model for component lifetimes,
+We consider the well-known Weibull model for the component lifetimes,
 which is used in a wide variety of reliability studies. 
 To keep things simple, we assume that the shape parameter of the Weibull distribution is known,
 and that only the scale parameter needs to be estimated.
 The model could be extended to learn also the shape parameter in a later step,
 using, e.g., the discretized approach by \cite{1969:soland}.
 
-By using a Bayesian approach, described in Section~\ref{sec:weibull},
+By using the Bayesian approach described in Section~\ref{sec:weibull},
 our component model allows to include both expert assessments and test data (if available),
 and furthermore can account for component lifetime information from the current operational cycle up to $\tnow$.
 %***component model: weibull with fixed shape,
@@ -635,8 +637,8 @@ resulting in a formula for $\Rsysnow(t)$.
 
 The model description below follows closely \cite[\S 2, \S 4.1 -- \S 4.3]{2016:walter-coolen},
 who presented the same residual life distribution model.
-However, \cite{2016:walter-coolen} did not consider maintenance policies,
-but focus instead on a generalization of the RLD model by using imprecise probability models*** for the component models.
+However, \cite{2016:walter-coolen} do not consider maintenance policies,
+but focus instead on a generalization of the RLD model by using imprecise probability models for the component lifetimes.
 %These sets of priors can be seen as parametric P-boxes,
 %a certain kind of imprecise probability model \citep[see, e.g.,][]{itip}.
 %Such models allow for vague and partial prior specifications,
@@ -784,7 +786,7 @@ and both types of observations can be used in the update step \eqref{eq:ig-updat
 %or stemming from the combination of expert information and test data.
 
 
-\subsection{Component posterior predictive distributions at $\tnow$}
+\subsection{Component posterior predictive distributions determined at $\tnow$}
 \label{sec:postpred}
 
 To calculate the current system reliability function $\Rsysnow(t)$,
@@ -803,8 +805,8 @@ thus accounts for all knowledge on component type $k$ that is available at syste
 
 Following our comments at the end of Section~\ref{sec:weibull},
 the component models can be further updated
-using information gained from the current run of the system until $\tnow$:
-Any failure times of failed components,
+using information gained from the current operational cycle as of $\tnow$: %run of the system until $\tnow$:
+failure times of failed components,
 and the right-censoring time $\tpnow$ for each non-failed component,
 can be used to update $\nkz$ and $\ykz$ according to \eqref{eq:ig-update}.
 We denote the resulting parameter values by $\nknow$ and $\yknow$.
@@ -814,8 +816,8 @@ We denote the resulting parameter values by $\nknow$ and $\yknow$.
 
 In analogue to the notation used in Section~\ref{sec:weibull},
 let $N_k = \eknow + \cknow$ be the number of type $k$ components in the monitored system,
-where $\eknow$ is the number of components that have failed by $\tnow$,
-and $\cknow$ is the number of components that have not failed by $\tnow$.
+where $\eknow$ denotes the number of type $k$ components that have failed by $\tnow$ during the current operational cycle,
+and $\cknow$ denotes the number of type $k$ components that have not failed by $\tnow$ during the current operational cycle.
 We can thus collect these observations, as of $\tnow$, in a vector
 $\vectknow = (t_{k,1}, \ldots, t_{k,\eknow}, \tpnow, \ldots, \tpnow)$,
 containing $\cknow$ right-censored observations $\tpnow$.
@@ -888,7 +890,7 @@ We thus have, for $l_k \in \{0,1,\ldots,\cknow\}$,
 %\end{align}
 
 
-\subsection{Conditional system reliability function at $\tnow$}
+\subsection{Conditional system reliability function determined at $\tnow$}
 \label{sec:sysreltnow}
 
 Now that we can calulate the component posterior predictive distributions at $\tnow$,
@@ -902,7 +904,7 @@ taking into account all information available at $\tnow$:
 \label{eq:sysrel-tnow}
 \end{align}
 Since this is the distribution of system reliability conditional on the system surviving until $\tnow$,
-we have that $\Rsysnow(\tnow) = 1$ for any $\tnow$.
+we have that $\Rsysnow(\tnow) = 1$ for any $\tnow$ before system failure.
 Note that if one or several components have failed by $\tnow$,
 the system reliability block diagram changes, and with it the survival signature $\Phi(l_1,\ldots,l_K)$.
 We denote the current survival signature by $\Phinow(l_1,\ldots,l_K)$.
