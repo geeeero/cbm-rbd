@@ -1,0 +1,225 @@
+\iffalse
+% ----------------------------------------------------------------------------------------------------
+\subsection*{---------------------}
+***general discussion on CBM as usual
+
+***Condition-based maintenance (CBM) has received considerable attention in the literature.
+The central idea is to maintain technical systems or components at just the right time,
+that is, before they fail,
+but not too early, in order to keep reliability high and operating costs low.
+%most fully use the component's or system's lifetime and to save on maintenance work
+
+***trade-off between risk of failure during operation
+(can lead to costly downtime: idle workforce, missed production, penalties, loss of reputation)
+and costs of premature maintenance
+(wasting potential component / system lifetime, downtime cost, cost of maintenance work)
+
+***so CBM must be based on some information about the state or health of the component / system.
+Two ways: continuous monitoring CBM and inspection-based CBM.
+
+***Continuous monitoring CBM policies are usually derived
+using a directly observable continuously measurable condition / degradation signal,
+or constructs such a signal or health status using indirect measurements.
+Estimated time till failure (RUL) \citep{2014:rul-review, 2011:rul-review-statistical}
+via distance of current signal level to a fixed known failure threshold.
+
+***Inspection-based CBM via delay time model, modeling the time between detectable degradation and failure,
+again time till failure via distance of current degradation level to fixed known failure threshold.
+
+***In both cases, maintenance decision via control limit / threshold for the signal
+(RUL not explicitely calculated)
+by minimizing the expected unit cost rate,
+which is often approximated using the renewal reward theorem.
+%but in practice threshold often not known
+\subsection*{---------------------}
+
+Here we propose a different approach to CBM
+for the case when no degradation signal for the system is available,
+but system components can be identified and their functioning status
+(working or not working) can be monitored.
+In this situation, one can use the system's layout in reliability terms
+(i.e., its reliability block diagram) and information on components' status
+to directly calculate the residual life distribution (RLD),
+and base the maintenance policy on this distribution.
+(In fact, our approach can be seen as CBM based on a multivariate degradation signal,
+where each component sends a binary signal, and the reliability block diagram is used
+for sensor fusion.)
+
+Our approach can also be seen as a generalization of policies for $k$ out of $N$ systems to arbitrary system layouts.
+Furthermore, our approach allows for multiple types of components in the system,
+with each component type having its own failure behaviour.
+
+%We use a parametric model not for a degradation signal of the system or for the delay time, but for component lifetimes:
+For each component type, we use the well-known Weibull distribution to model component lifetimes.
+To keep the model simple and to demonstrate its feasability, we assume the shape parameter for each component type to be known,
+focusing on learning of the scale parameter,
+and that components fail independently.
+These simplifying assumptions will often not hold in practice,
+then the model can serve as a first approximation.
+Generally, we see our contribution as opening up an entirely new way to derive CBM policies,
+and thus consider the model in this paper more as a proof of concept,
+where extension to more realistic models must happen in a second step.
+As an example, it is possible to extend the model to learn also the shape parameter along the lines of
+\cite{1969:soland},
+but this is not included here as it would complicate presentation.
+%need only to observe when a component fails,
+%and expert information about expected component failure times.
+
+The Bayesian approach to the Weibull model \citep[see, e.g.,][]{1996:mazzuchi-soyer} allows to integrate, for each component type,
+three sources of information: expert knowledge, data from component tests,
+and the status of components in the monitored system. %, i.e., current system condition.
+These information sources are integrated into a single component model
+using the iterative nature of Bayesian updating,
+leading to a so-called posterior predictive distribution for the number of components surviving at any time in the future.
+
+These predictive distributions are then used to calculate the exact distribution of system residual life
+using the survival signature \citep{2012:survsign}.
+(***we therefore accomplish the same as \cite{2013:si-et-al} for their situation.)
+
+By its Bayesian nature, the system residual life distribution adequately reflects the uncertainties %in RUL estimation
+related to modeling and prediction \citep{2015:sankararaman},
+readily adapting to any changes in component behaviour.
+The use of conjugate priors means that we get explicit formulas for the RLD,
+so no numerical integration or simulation techniques are necessary.
+This allows for a very frequent, or even real-time, update of the RLD,
+taking into account the changed structure when components have failed
+and the information gain from updating the component reliability distributions.
+
+Based on the RLD at any current time $\tnow$,
+the optimal moment of maintenance given all information available at $\tnow$
+is then determined by minimizing the expected one-cycle unit cost rate.
+The expected one-cycle unit cost rate, also known as one-cycle criterion
+\citep{1984:ansell-bendell-humble,1996:mazzuchi-soyer,2006:coolen-schrijner-coolen},
+makes the trade-off between preventive and corrective maintenance according to the current cycle only,
+unlike the usually employed renewal based criterion,
+which approximates the unit cost rate using a renewal argument \citep[p.~296]{1996:mazzuchi-soyer},
+but is not suited for situations where one may whish to change the strategy per cycle \citep{2006:coolen-schrijner-coolen}.
+
+Since the RLD changes with current time $\tnow$,
+the corresponding optimal moment of maintenance $\tausnow$ changes as well,
+leading to a dynamic adaptive maintenance policy,
+similar to a CBM policy based on a continuosly monitored degradation signal.
+However, unlike such threshold-based CBM policies,
+our approach allows to easily take into account the time needed to set up maintenance work (known as set-up time),
+since it gives the optimal moment of maintenance as a time beyond current time $\tnow$,
+and maintenance can be initiated as soon as $\tausnow$ equals the set-up time.
+
+In this paper, we assume that at the moment of maintenance,
+all components in the system are replaced,
+so the cost parameters in the unit cost rate must be determined accordingly.
+One could instead consider other replacement schemes (e.g., replacing only the failed components),
+or indeed optimize the unit cost rate over all possible replacement schemes,
+since our method for RLD calculation can handle differently aged components. 
+However, optimizing over replacement schemes opens up a full research programme on its own,
+and for situations with high set-up costs,
+as is typical for CBM applications,
+the replace-all scheme is most likely the cost-optimal strategy. 
+
+***figure of process: component priors $\to$ component posteriors $\to$ system RLD $\to$ $\gnow(\tau)$ $\to$ $\tausnow$
+
+***operation: recalculate $\tausnow$ at fixed dense grid of time points (quasi-continuous),
+this makes sense even when no failures happen because the fact that components in the system still function
+gives information on component distributions;
+alternatively, do the recalculation every time when a component fails (failures contain the most information)
+
+***model allows also to switch to corrective policy when $\gnow(\tau)$ monotonely decreasing (then $\tausnow \to \infty$)
+
+***Expert input in our model is, for each component type,
+Weibull shape parameter, expected failure time (translated to scale parameter),
+and expert info weight (how sure about mean failure time guess).
+Component test data (can include right-censored observations) is optional.
+Further input is system layout (reliability block diagram indicating which component belongs to which type)
+and the cost parameters $c_p$ and $c_u$.
+
+***here all expressed in time, but could also be in usage (number of cycles, etc).
+
+***compare to $M^*$ out of $N$ policy:
+we are dynamic (would mean for a $M^*$ out of $N$ policy that $M^*$ decreases over time due to component aging),
+we learn about component lifetimes,
+and we allow for set-up time
+\fi
+% ----------------------------------------------------------------------------------------------------
+
+
+% ----------------------------------------------------------------------------------------------------
+\iffalse
+***CBM via RUL/RLD, $M^*$ out of $N$ policies?
+***also generally Bayesian methods in maintenance optimization?
+***cite CBM review Olde Keizer, Flapper, Teunter, and other refs from it?
+
+Example for Bayesian method in CBM via inspections: \cite{2007:wang-jia}
+propose a model that uses Bayesian updating,
+but the model aims to identify an optimal inspection interval.
+%This is CBM via inspections, not CBM via continuous monitoring as we aim to do.
+
+\begin{scriptsize}
+Wang \& Jia (2007) have a model for defects arrival (homogeneous Poisson process with rate $\lambda$, so no aging),
+model for delay time (time between defect and failure) is Weibull $h \sim \wei(\alpha,\beta)$,
+and each of $\lambda, \alpha, \beta$ has a Gamma prior distribution.
+The expected overall cost rate is then used to find a cost-optimal inspection interval.
+For this they assume that failures are immediately repaired,
+and defects found in an inspection are repaired during inspection.
+
+They use prior predictive distributions for certain statistics (number of defects, number of failures, \ldots between $0$ and $T$)
+to obtain prior values for the Gamma hyperparameters,
+by solving prior predictive equations -- but give no detail on how they actually do this.
+
+In the end they actually do not advocate to calculate the posterior expected cost rate (15),
+but rather plug in posterior estimates for $\lambda, \alpha, \beta$,
+so neglecting uncertainty in estimation.
+(We do not assume a parametric distribution for delay time,
+it rather arises as a consequence of the system layout and component failure distributions.)
+
+\end{scriptsize}
+
+Example for Bayesian method in CBM with continuous monitoring: \cite{2011:elwany-et-al}
+(exponential degradation model, whose parameters $\theta'$ and $\beta$ each have a prior
+which is updated using the degradation signal history,
+and use total expected infinite-horizon discounted cost to determine the maintenance policy,
+RUL not explicitely calculated)
+
+Example for Bayesian method in prediction of system remaining useful life: \cite{2012:sun-et-al}
+(constructs health index for a system based on sensor measurements,
+health status prediction is updated sequentially,
+leads to RUL distribution like our method,
+but no link from RUL to maintenance decision)
+
+\cite{2013:si-et-al} do CBM with continuous monitoring for a single component,
+taking into account the whole degradation path history.
+The authors provide exact expressions for the RUL distribution, which is updated in an empirical Bayesian framework using conjugate priors.
+The RUL distribution is used to construct a replacement decision model using the unit cost rate via renewal reward
+(eq. 35)\\
+***this is most similar to what we do: exact RUL distribution $\to$ maintenance decision,
+but we have component status instead of degradation signal as basis for RUL,
+and we model epistemic uncertainties!\\
+
+\cite{2011:kim-et-al} develop a periodic monitoring CBM policy
+where a maintenance decision is triggered when
+a Bayesian control chart (a sequentially updated health indicator) %posterior probability that system is in a 'warning' state
+exceeds a control limit (threshold) that is determined
+by minimizing the expected average cost per time unit.
+(We use the same cost criterion, but base the maintenance decision directly on our exact RUL estimation.)
+
+***typical recent example for Bayesian network models in maintenance -- could also cover system reliabilty terrain***
+maybe Jones et al (RESS 95:3, 2010) ``The use of Bayesian network modelling for maintenance planning in a manufacturing industry'',
+or Bouaziz et al (2013) ``Towards Bayesian network methodology for predicting equipment health factor of complex semiconductor systems''
+
+\begin{scriptsize}
+Bayesian networks (BNs) are a very general method to jointly model multiple dependent random variables in a Bayesian way. 
+This needs assessments of conditional independece relations, and conditional probability models for each variable,
+the latter often in form of conditional probability tables (discrete variables).
+A Bayesian network models probabilistic relations between variables,
+unlike a reliability block diagram, which gives a deterministic relation
+between the status of components and the system state.
+
+One could model a system as a BN (each component is a variable),
+but that would add a lot of complications.
+Most algorithms for BNs assume discrete distributions,
+and do not scale well to large networks (many tasks are NP-hard).
+
+The above papers seem to use a BN to model a degradation signal or (system) health index (have to check again to be sure).
+Our approach is different, as we get an exact formulation for the system RUL directly.
+\end{scriptsize}
+\fi
+% ----------------------------------------------------------------------------------------------------
+
