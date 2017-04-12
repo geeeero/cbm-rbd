@@ -27,7 +27,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh = 
   ftschron <- sort(unlist(compfts)) # when something fails
   # initializing: initial arguments for gnowhor
   tnow <- 0 # tnow: can be set to failure times
-  cat("tnow =", tnow, ": ") #"failedcompsnow =", failedcompsnow, "\n")
+  #cat("tnow =", tnow, ": ") #"failedcompsnow =", failedcompsnow, "\n")
   m <- 0    # tnowstep counter, tnow grid = m * tnowstep
   sysnow <- sys
   signnow <- sign <- computeSystemSurvivalSignature(sysnow)
@@ -42,7 +42,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh = 
   taustarnow <- gnowvec$tau[which.min(gnowvec$gnow)] - tnow
   # initialize results data frame with entries for tnow = 0
   res <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow)
-  cat("failed =", failed, "taustar =", taustarnow, "\n")
+  #cat("failed =", failed, "taustar =", taustarnow, "\n")
   # stop already now if taustarnow smaller than tnowstep
   if (taustarnow < tnowstep){
     cost <- cp
@@ -52,7 +52,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh = 
     nextgridtime <- (m + 1) * tnowstep
     if (any((ftschron > tnow) & (ftschron <= nextgridtime))){ # failure before next tnow grid time
       tnow <- min(ftschron[ftschron > tnow])
-      cat("tnow =", tnow, ": ") #"failedcompsnow =", failedcompsnow, "\n")
+      #cat("tnow =", tnow, ": ") #"failedcompsnow =", failedcompsnow, "\n")
       # update all gnowvec inputs to current tnow
       failedcompsnow <- ftschron[ftschron <= tnow]
       sysnow <- induced_subgraph(sys, vids=V(sys)[!(name %in% names(failedcompsnow))])
@@ -89,7 +89,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh = 
       } # end failure before next grid time
     } else { # no failure before next grid time: go to this time and calculate taustarnow
       tnow <- nextgridtime
-      cat("tnow =", tnow, ": ") #"failedcompsnow =", failedcompsnow, "\n")
+      #cat("tnow =", tnow, ": ") #"failedcompsnow =", failedcompsnow, "\n")
       # no need to update gnowvec inputs to current tnow except tnow itself,
       # as no new failure has happened, and can use previous gnowvec inputs
       gnowvec <- gnowhor(signnow, n0y0[wctnow], beta[wctnow], ftsnow[wctnow], tnow, hor = hor,
@@ -105,7 +105,7 @@ sim1cycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh = 
     # write things from current while loop into results data.frame
     resnow <- data.frame(tnow = tnow, failed = failed, taustar = taustarnow)
     res <- rbind(res, resnow)
-    cat("failed =", failed, "taustar =", taustarnow, "\n")
+    #cat("failed =", failed, "taustar =", taustarnow, "\n")
   } # end while loop
   # update Weibull parameters (all component types!) for next operational cycle
   # get failure times from compftslist until tnow (time of planned / unplanned repair)
@@ -165,7 +165,7 @@ simNcycle <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, thresh = 
   n0y0i <- n0y0
   res <- res2 <- nnyn <- list()
   for (i in 1:N){
-    cat("Operational cycle", i, "\n")
+    #cat("Operational cycle", i, "\n")
     res[[i]] <- sim1cycle(sys = sys, ctypes = ctypes, compfts = compftsi, n0y0 = n0y0i, beta = beta,
                           tnowstep = tnowstep, hor = hor, thresh = thresh, seqlen = seqlen, prior = prior,
                           cc = cc, cp = cp, onecycle = onecycle)
@@ -206,12 +206,12 @@ sim1cycleAgebased <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, s
   ftschron <- sort(unlist(compfts)) # when something fails
   ftschroni <- 1
   # get taustar: initial arguments for gnowhor
-  cat("Calculating maintenance interval ... ")
+  #cat("Calculating maintenance interval ... ")
   sign <- computeSystemSurvivalSignature(sys)
   fts0 <- as.list(rep(list(NULL), K))
   gvec <- gnowhor(sign, n0y0, beta, fts0, tnow = 0, hor = hor, seqlen = seqlen, cu = cc, cp = cp, onecycle = onecycle)
   taustar <- gvec$tau[which.min(gvec$gnow)]
-  cat("taustar =", taustar, "\n")
+  #cat("taustar =", taustar, "\n")
   # set up loop over component failure times: assumes that system is not failed initially (before first component failure)
   gotonext <- TRUE
   failed <- FALSE
@@ -240,7 +240,7 @@ sim1cycleAgebased <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, s
         ftschroni <- ftschroni + 1
       }      
     }
-    cat("tnow =", tnow, ": failed =", failed, "\n")
+    #cat("tnow =", tnow, ": failed =", failed, "\n")
     # write all current things in results data frame
     resnow <- data.frame(tnow = tnow, failed = failed)
     res <- rbind(res, resnow) 
@@ -307,7 +307,7 @@ simNcycleAgebased <- function(sys, ctypes, compfts, n0y0, beta, tnowstep, hor, s
   n0y0i <- n0y0
   res <- res2 <- nnyn <- list()
   for (i in 1:N){
-    cat("Operational cycle", i, "\n")
+    #cat("Operational cycle", i, "\n")
     res[[i]] <- sim1cycleAgebased(sys = sys, ctypes = ctypes, compfts = compftsi, n0y0 = n0y0i, beta = beta, tnowstep = tnowstep,
                                   hor = hor, seqlen = seqlen, cc = cc, cp = cp, onecycle = onecycle, timeround = timeround)
     res2 <- rbind(res2, data.frame(cycle = i, res[[i]]$res))
@@ -389,7 +389,7 @@ simNcycleCorrective <- function(sys, ctypes, compfts, tnowstep, cc = 1, cp = 0.2
   compftsi <- lapply(compfts, function(x) x[1])
   res <- res2 <- list()
   for (i in 1:N){
-    cat("Operational cycle", i, "\n")
+    #cat("Operational cycle", i, "\n")
     res[[i]] <- sim1cycleCorrective(sys = sys, ctypes = ctypes, compfts = compftsi, tnowstep = tnowstep,
                                     cc = cc, cp = cp, timeround = timeround)
     res2 <- rbind(res2, data.frame(cycle = i, res[[i]]$res))

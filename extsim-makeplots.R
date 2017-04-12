@@ -17,36 +17,46 @@ source("cbm-sim2.R")
 source("plotdefs.R")
 source("extsim-summaryfunctions.R")
 
+
 # Case A: failure times as expected
 
 ## load simulation objects
-# load()
+load("extsim-a-objects.RData")
 
-## apply summary functions
-br1sim1Tt01summary <- simsummary(br1sim1Tt01)
-br1sim1prTt01summary <- simsummary(br1sim1prTt01)
-br1sim1prprTt01summary <- simsummary(br1sim1prprTt01)
+## apply summary functions & create joint data.frame
+AsimCBMcpuSummary <- simsummary(AsimCBMcpu)
+AsimCBMepuSummary <- simsummary(AsimCBMepu)
+AsimCBMnpuSummary <- simsummary(AsimCBMnpu)
+AsimABMepuSummary <- simsummary(AsimABMepu)
+AsimABMnpuSummary <- simsummary(AsimABMnpu)
+AsimCMSummary <- simsummary(AsimCM)
+AsimRes <- rbind(data.frame(sim = "CBM-cpu", AsimCBMcpuSummary),
+                 data.frame(sim = "CBM-epu", AsimCBMepuSummary),
+                 data.frame(sim = "CBM-npu", AsimCBMnpuSummary),
+                 data.frame(sim = "ABM-epu", AsimABMepuSummary),
+                 data.frame(sim = "ABM-npu", AsimABMnpuSummary),
+                 data.frame(sim = "CM", AsimCMSummary))
+names(AsimRes)[3:5] <- c(expression(e[sys]), expression(bar(r)[sys]), expression(bar(g)))
 
-br1sim1asummary <- simsummary(br1sim1a)
-br1sim1aprsummary <- simsummary(br1sim1apr)
-br1sim1csummary <- simsummary(br1sim1c)
-
-br1sim1Tt01acsummaryall <- rbind(data.frame(sim = "CBM-cpu", br1sim1Tt01summary),
-                                 data.frame(sim = "CBM-epu", br1sim1prTt01summary),
-                                 data.frame(sim = "CBM-npu", br1sim1prprTt01summary),
-                                 data.frame(sim = "ABM-epu", br1sim1asummary),
-                                 data.frame(sim = "ABM-npu", br1sim1aprsummary),
-                                 data.frame(sim = "CM", br1sim1csummary))
-names(br1sim1Tt01acsummaryall)[3:5] <- c(expression(e[sys]), expression(bar(r)[sys]), expression(bar(g)))
-
-## the plot
-br1sim1fig5Tt01ac <- ggplot(melt(br1sim1Tt01acsummaryall, c("id", "sim")), aes(x = id, y = value)) +
+## the plots
+### with lines like before (change sizes?)
+AsimPlotLines <- ggplot(melt(AsimRes, c("id", "sim")), aes(x = id, y = value)) +
   geom_line(aes(group = sim), size = 0.3) + geom_point(aes(group = sim), size = 0.5) + 
   facet_grid(variable ~ sim, scales = "free_y", labeller = label_parsed) +
-  xlab("5-cycle repetition number") + theme(axis.title.y = element_blank())
-pdf("br1sim1fig5Tt01ac.pdf", width = 6, height = 3)
-br1sim1fig5Tt01ac
+  xlab("25-cycle repetition number") + theme(axis.title.y = element_blank())
+pdf("AsimPlotLines.pdf", width = 6, height = 3)
+AsimPlotLines
 dev.off()
+### one boxplot per policy
+AsimPlotBoxplot <- ggplot(melt(AsimRes, c("id", "sim")), aes(x = sim, y = value)) + 
+  stat_boxplot(aes(group = sim))
+AsimPlotBoxplot
+### other way to display the results?
+#???
+
+# boxplot test
+ggplot(melt(br1sim1Tt01acsummaryall, c("id", "sim")), aes(x = sim, y = value)) + stat_boxplot(aes(group = sim)) +
+  facet_grid(variable ~ sim, scales = "free_y", labeller = label_parsed)
 
 
 # Case B: failure times earlier than expected

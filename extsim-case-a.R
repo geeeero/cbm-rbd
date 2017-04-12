@@ -50,11 +50,7 @@ for (i in 1:repetitions){
 # save result lists
 str1 <- "Asim"
 str2 <- c("CBMcpu", "CBMepu", "CBMnpu", "ABMepu", "ABMnpu", "CM")
+save(list = paste(str1, str2), file = "extsim-a-objects.RData", compression = TRUE)
 
-ststr <- paste("br1sim", 1:3, sep="")
-enstr <- c("Tt01", "prTt01", "prprTt01", "a", "apr", "c")
-savelist <- as.vector(sapply(ststr, function(brstr) paste(brstr, enstr, sep="")))
-save(list = savelist, file = "papersimobjects")
-load("papersimobjects")
 
 #
