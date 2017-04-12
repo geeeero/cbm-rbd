@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------- #
 # CBM systems paper - extended simulation study for revision -
-# Case A: failure times as expected
+# Case B: failure times earlier than expected
 # --------------------------------------------------------------------------- #
 
 # packages, code files, example system
@@ -10,47 +10,47 @@ source("extsim-setup.R")
 set.seed(2211)
 repetitions <- 100
 opcycles <- 25
-Asimdata <- list()
+Bsimdata <- list()
 for (i in 1:repetitions){
-  Asimdata[[i]] <- brWeibullData(opcycles, br1beta, br1mttf)
+  Bsimdata[[i]] <- brWeibullData(opcycles, br1beta, 0.5*br1mttf)
 }
 
 # result lists
-AsimCBMcpu <- list() # our model
-AsimCBMepu <- list() # do not update params during cycle, but at end of cycle 
-AsimCBMnpu <- list() # never update params
-AsimABMepu <- list() # age-based policy with parameter update
-AsimABMnpu <- list() # age-based policy without parameter update
-AsimCM <- list()     # corrective policy
+BsimCBMcpu <- list() # our model
+BsimCBMepu <- list() # do not update params during cycle, but at end of cycle 
+BsimCBMnpu <- list() # never update params
+BsimABMepu <- list() # age-based policy with parameter update
+BsimABMnpu <- list() # age-based policy without parameter update
+BsimCM <- list()     # corrective policy
 
 # run simulations (six separate loops possible - use plyr::llply or lapply instead?)
 for (i in 1:repetitions){
   #cat("Repetition", i, ": CBM-cpu\n")
-  AsimCBMcpu[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = Asimdata[[i]], n0y0 = br1n0y0,
+  BsimCBMcpu[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = Bsimdata[[i]], n0y0 = br1n0y0,
                                beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.1, seqlen = 401,
                                onecycle = FALSE)
   #cat("Repetition", i, ": CBM-epu\n")
-  AsimCBMepu[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = Asimdata[[i]], n0y0 = br1n0y0,
+  BsimCBMepu[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = Bsimdata[[i]], n0y0 = br1n0y0,
                                beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.1, seqlen = 401,
                                prior = TRUE, onecycle = FALSE)
   #cat("Repetition", i, ": CBM-npu\n")
-  AsimCBMnpu[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = Asimdata[[i]], n0y0 = br1n0y0,
+  BsimCBMnpu[[i]] <- simNcycle(sys = br, ctypes = brctypes, compfts = Bsimdata[[i]], n0y0 = br1n0y0,
                                beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.1, seqlen = 401,
                                prior = TRUE, cycleupdate = FALSE, onecycle = FALSE)
   #cat("Repetition", i, ": ABM-epu\n")
-  AsimABMepu[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = Asimdata[[i]], n0y0 = br1n0y0,
+  BsimABMepu[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = Bsimdata[[i]], n0y0 = br1n0y0,
                                        beta = br1beta, tnowstep = 0.1, hor = 4, seqlen = 401)
   #cat("Repetition", i, ": ABM-npu\n")
-  AsimABMnpu[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = Asimdata[[i]], n0y0 = br1n0y0,
+  BsimABMnpu[[i]] <- simNcycleAgebased(sys = br, ctypes = brctypes, compfts = Bsimdata[[i]], n0y0 = br1n0y0,
                                        beta = br1beta, tnowstep = 0.1, hor = 4, seqlen = 401, cycleupdate = FALSE)
   #cat("Repetition", i, ": CM\n")
-  AsimCM[[i]] <- simNcycleCorrective(sys = br, ctypes = brctypes, compfts = Asimdata[[i]], tnowstep = 0.1)
+  BsimCM[[i]] <- simNcycleCorrective(sys = br, ctypes = brctypes, compfts = Bsimdata[[i]], tnowstep = 0.1)
 }
 
 # save result lists
-str1 <- "Asim"
+str1 <- "Bsim"
 str2 <- c("CBMcpu", "CBMepu", "CBMnpu", "ABMepu", "ABMnpu", "CM")
-save(list = paste(str1, str2), file = "extsim-a-objects.RData", compression = TRUE)
+save(list = paste(str1, str2), file = "extsim-b-objects.RData", compression = TRUE)
 
 
 #

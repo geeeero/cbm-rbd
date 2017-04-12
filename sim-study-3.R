@@ -282,6 +282,7 @@ mean(br1sim3asummary$meancostrate); median(br1sim3asummary$meancostrate)
 mean(br1sim3aprsummary$meancostrate); median(br1sim3aprsummary$meancostrate)
 mean(br1sim3csummary$meancostrate); median(br1sim3csummary$meancostrate)
 
+#head(br1sim3Tt01acsummaryall$"bar(g)")
 
 # save stuff
 

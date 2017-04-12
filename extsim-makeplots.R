@@ -48,15 +48,21 @@ pdf("AsimPlotLines.pdf", width = 6, height = 3)
 AsimPlotLines
 dev.off()
 ### one boxplot per policy
-AsimPlotBoxplot <- ggplot(melt(AsimRes, c("id", "sim")), aes(x = sim, y = value)) + 
-  stat_boxplot(aes(group = sim))
+AsimPlotBoxplot <- ggplot(melt(AsimRes, c("id", "sim")), aes(x = sim, y = value, group = sim)) + stat_boxplot() +
+  facet_grid(variable ~ ., scales = "free_y", labeller = label_parsed) + theme(axis.title = element_blank())
+pdf("AsimPlotLines.pdf", width = 6, height = 3)
 AsimPlotBoxplot
+dev.off()
 ### other way to display the results?
 #???
 
 # boxplot test
-ggplot(melt(br1sim1Tt01acsummaryall, c("id", "sim")), aes(x = sim, y = value)) + stat_boxplot(aes(group = sim)) +
-  facet_grid(variable ~ sim, scales = "free_y", labeller = label_parsed)
+#ggplot(melt(br1sim1Tt01acsummaryall, c("id", "sim")), aes(x = sim, y = value, group = sim)) + stat_boxplot() +
+#  facet_grid(variable ~ ., scales = "free_y", labeller = label_parsed) + theme(axis.title = element_blank())
+
+## mean and median of average unit cost
+#mean(AsimCBMcpuSummary$meancostrate); median(AsimCBMcpuSummary$meancostrate) # there must be a more clever way
+#mean(AsimRes$"bar(g)", by = sim) # something like this
 
 
 # Case B: failure times earlier than expected
