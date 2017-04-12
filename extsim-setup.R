@@ -3,12 +3,12 @@
 # --------------------------------------------------------------------------- #
 
 # install packages if necessary
-install.packages(c("actuar", "ReliabilityTheory", "reshape2"))
+install.packages(c("actuar", "igraph", "ReliabilityTheory", "reshape2"))
 
 # load packages
 library(actuar)
 library(ReliabilityTheory)
-library(reshape2)
+library(reshape2) # might not be necessary
 
 # code files
 source("weibull-sys-functions.R") # contains also plotting functions that work only with ggplot2 and gridExtra

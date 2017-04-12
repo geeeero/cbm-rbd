@@ -272,10 +272,12 @@ plotfts <- function(compfts, maxtnow = NA, pointsize = 1, tlabelvjust = -1, labe
 # f        vector of density function values corresponding to tau
 # cu       cost of unplanned (corrective) repair action
 # cp       cost of planned (preventive) repair action, cp < cu
-# onecycle whether to use the one-cycle criterion or the renewal-based one
+# onecycle which one-cycle cost criterion to use
+#          (was: whether to use the one-cycle criterion or the renewal-based one)
 # tnow     one-cycle total cost criterion needs current tnow
 gnow <- function(tau, rel, f, cu = 1, cp = 0.2, onecycle = TRUE, tnow = 0){
   if (onecycle){
+    # one-cycle prospective cost criterion 
     gnow <- (cp / tau) * rel + cu * sapply(tau, function(ctau){
       sum(f[tau <= ctau] / tau[tau <= ctau])
     })
