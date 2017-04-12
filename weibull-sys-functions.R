@@ -4,11 +4,12 @@
 #       Author: Gero Walter (g.m.walter@tue.nl, gero@gmx.at)                  #
 ###############################################################################
 
-library(actuar) # provides dinvgamma(x, shape, scale) where shape = alpha and scale = beta
-library(ReliabilityTheory)
-library(ggplot2)
-library(reshape2)
-library(gridExtra)
+# load libraries if not yet loaded
+# library(actuar) # provides dinvgamma(x, shape, scale) where shape = alpha and scale = beta
+# library(ReliabilityTheory)
+# library(ggplot2)
+# library(reshape2)
+# library(gridExtra)
 
 # translate lambda parameter of weibull to expected failure time
 # lambda - scale parameter of weibull
