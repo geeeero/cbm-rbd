@@ -52,5 +52,9 @@ str1 <- "Asim"
 str2 <- c("CBMcpu", "CBMepu", "CBMnpu", "ABMepu", "ABMnpu", "CM")
 save(list = paste(str1, str2), file = "extsim-a-objects.RData", compression = TRUE)
 
-
+# test
+AsimCBMcpu[[1]] <- simNcycle(sys = br, ctypes = brctypes, compfts = Asimdata[[1]], n0y0 = br1n0y0,
+                             beta = br1beta, tnowstep = 0.1, hor = 4, thresh = 0.1, seqlen = 401,
+                             onecycle = FALSE)
+AsimCBMcpu[[1]]$costrate
 #

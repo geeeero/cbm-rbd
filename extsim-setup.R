@@ -4,6 +4,7 @@
 
 # install packages if necessary
 install.packages(c("actuar", "igraph", "ReliabilityTheory", "reshape2"))
+# on LISA, need to install "actuar", "igraph", "ReliabilityTheory"
 
 # load packages
 library(actuar)
