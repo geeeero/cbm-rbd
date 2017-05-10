@@ -936,6 +936,11 @@ the grid of prediction values can be very fine.
 
 Now we can derive the adaptive and dynamic maintenance policy
 that resembles a CBM policy.
+Figure~\ref{fig:timeline} shows two example time lines for the system,
+starting each with a new system (operational cycle) at t=0. 
+
+***explain figure, triggers 1, 2, 3***
+
 Consider a set of evaluation time points $\tnow$.
 Instead of determining a threshold for a degradation signal like in usual CBM approaches,
 we determine, for each present time $\tnow$,
@@ -974,9 +979,55 @@ and shows how $\tausnow$ is determined in this situation.
 \begin{figure}
 \centering
 \begin{tikzpicture}
-\node {exemplary timeline};
+%[tausnow/.style={|-|, line width=0.5mm}]
+[ tausnow/.style={line width=0.8mm},
+  pfeil/.style={-latex', line width=0.5mm, shorten >=1mm}] 
+\draw[-latex', very thick] (-0.2, -0.5) -- (5.5, -0.5) node[below] {$t$};
+\draw (0, -0.4) -- (0, -0.6) node[below] {$0$};
+\foreach \x in {1, 2, 3, 4, 5}
+ {\draw (\x, -0.4) -- (\x, -0.6) node[below] {$0.\x$};
+  \draw[dotted] (\x, -0.4) -- (\x, \x); }
+\draw[thick, decorate, decoration=brace] (1, -1) -- (0, -1) node[midway,below] {$\delta$};
+\draw[dashed] (0, 0) -- (5,5);
+\draw[tausnow] (0  , 0  ) -- (2.3, 0  ) node[at start, left] {$\tau_*^{(0)}$};
+\draw[tausnow] (1  , 1  ) -- (2.9, 1  ) node[at start, left] {$\tau_*^{(0.1)}$};
+\draw[tausnow] (2  , 2  ) -- (4.2, 2  ) node[at start, left] {$\tau_*^{(0.2)}$};
+\draw (2.4, -0.4) circle (0.8mm) edge[dotted] (2.4, 2.4);
+%\node[draw,shape=diamond] (f1) at (2.4, -0.4) {}; % edge[dotted] (2.4, 2.4);
+\draw[tausnow] (2.4, 2.4) -- (3.9, 2.4) node[at start, left] {$\tau_*^{(0.24)}$};
+\draw[tausnow] (3  , 3  ) -- (4.4, 3  ) node[at start, left] {$\tau_*^{(0.3)}$};
+\draw (3.6, -0.4) circle (0.8mm) edge[dotted] (3.6, 3.6);
+\draw[tausnow] (3.6, 3.6) -- (4.3, 3.6) node[at start, left] {$\tau_*^{(0.36)}$};
+\draw[tausnow] (4  , 4  ) -- (4.7, 4  ) node[at start, left] {$\tau_*^{(0.4)}$};
+\node (box1) at (1,4) {\parbox{12ex}{\small preventive\\ replacement\\ at $\tnow = 0.4$\\ as $\tau_*^{(0.4)} < \delta$}};
+\draw[pfeil] (box1) edge[out=20, in=120] (4,4);
+\begin{scope}[xshift=7cm]
+\draw[-latex', very thick] (-0.2, -0.5) -- (3.5, -0.5) node[below] {$t$};
+\draw (0, -0.4) -- (0, -0.6) node[below] {$0$};
+\foreach \x in {1, 2, 3}
+ {\draw (\x, -0.4) -- (\x, -0.6) node[below] {$0.\x$};
+  \draw[dotted] (\x, -0.4) -- (\x, \x); }
+\draw[thick, decorate, decoration=brace] (1, -1) -- (0, -1) node[midway,below] {$\delta$};
+\draw[dashed] (0, 0) -- (3,3);
+\draw[tausnow] (0  , 0  ) -- (2.3, 0  ) node[at start, left] {$\tau_*^{(0)}$};
+\draw[tausnow] (1  , 1  ) -- (2.9, 1  ) node[at start, left] {$\tau_*^{(0.1)}$};
+\draw (1.4, -0.4) circle (0.8mm) edge[dotted] (1.4, 1.4);
+\draw[tausnow] (1.4, 1.4) -- (2.8, 1.4) node[at start, left] {$\tau_*^{(0.14)}$};
+\draw[tausnow] (2  , 2  ) -- (3.3, 2  ) node[at start, left] {$\tau_*^{(0.2)}$};
+\draw[fill] (2.7, -0.4) circle (0.8mm) edge[dotted] (2.7, 2.7);
+\node (box2) at (1,4) {\parbox{13ex}{\small corrective\\ replacement\\ at $\tnow = 0.27$\\ due to system failure}};
+\draw[pfeil] (box2) edge[out=10, in=90] (2.7,2.7);
+\end{scope}
 \end{tikzpicture}
-\caption{***exemplary timeline sketch}
+\caption{Two exemplary timelines for the suggested maintenance policy.
+The horizontal bars depict, for subsequent times $\tnow$,
+the time to the next economically optimal inspection $\tausnow$.
+The times $\tnow$ for which $\tausnow$ is evaluated are
+at regular intervals $\delta, 2\delta, 3\delta,\ldots$ (trigger 1),
+and at the time of component failures (trigger 2),
+marked by a circle on the time axis.
+Failures that lead to the whole system failing (trigger 3) are marked by a filled circle.
+The calculation of $\tausnow$ is described in detail in Section~***.}
 \label{fig:timeline}
 \end{figure}
 
