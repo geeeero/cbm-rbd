@@ -265,8 +265,9 @@ condition-based maintenance \sep system reliability \sep remaining useful life \
 Both in practice and academics,
 there is a growing interest in condition-based maintenance (CBM), see e.g.,
 \citet{2017:oldekeizer}
-The central idea behind CBM is to maintain systems or components at the right time,
-i.e., before they fail, but not too early, in order to keep their reliability high and operating costs low.
+The central idea behind CBM is to maintain systems or components at exactly the right time,
+i.e., just before they fail, %but not too early,
+in order to keep their reliability high and operating costs low.
 In this context a trade-off is made between the risk of failure during operation
 (which can lead to costly downtime: idle workforce, missed production, penalties, loss of reputation)
 and the costs of premature maintenance (wasting potential component or system lifetime,
@@ -279,15 +280,16 @@ to estimate the condition of systems as a whole as well as their underlying comp
 whereas the cost for these technologies is decreasing rapidly,
 making the use of CBM policies even more feasible.
 
-Most CBM policies are based on a directly observable, continuously measurable condition or degradation signal.
+Most CBM policies are based on a directly observable, continuously measurable condition or degradation signal,
+e.g., the amount of vibration in case of rotating equipment.
 Alternatively, such a signal or health status is constructed
 using indirect measurements to determine the remaining useful life or time to failure of a system,
 see, e.g., \citet{2014:rul-review, 2011:rul-review-statistical}.
 
 In this paper, we propose a new kind of inspection-based CBM policy*** (drop inspection-based???***)
-for when no such usual degradation signal for the system is available,
-but where the status (working or not working) of the components can be monitored (quasi-) continuously,
-i.e., observed every $\delta$ time units, where $\delta$ is very small compared to the lifetimes of components. 
+for when no such \emph{usual} degradation signal for the system is available,
+but where the status (working or not working) of the system's components can be monitored (quasi-) continuously.
+%i.e., observed every $\delta$ time units, where $\delta$ is very small compared to the lifetimes of components. 
 In this situation, one can use the system's reliability block diagram
 and information with respect to the status of its components
 to directly calculate the system residual life distribution (RLD),
@@ -296,42 +298,51 @@ In fact, our CBM policy can also be seen as based on a multivariate degradation 
 where each component sends a binary signal, and the reliability block diagram is used for sensor fusion.
 
 In our new policy, there are three types of triggers to review the system:
-at the end of each very short time interval $\delta$ (1),
-directly after the failure of a component where the system still functions (2),
-and directly after the failure of a component due to which the system as a whole no longer can function (3). 
-We denote each review of the system in reaction to these triggers by `evaluation',
-since the system RLD is re-evaluated at each of these time points.
+(1) at the end of each very short time interval $\delta$ 
+(where $\delta$ is very short compared to the lifetimes of components),
+(2) directly after the failure of a component where the system still functions,
+and (3) directly after the failure of a component due to which the system as a whole no longer can function. 
+We denote each review of the system in reaction to triggers (1) and (2) by `evaluation',
+since the system RLD is re-evaluated at each of these time points,
+and a decision is made on whether preventive maintenance should be carried out or not.
 We use the term `evaluation' in place of the term `inspection',
 because the re-evaluation of the system RLD does not require a physical inspection,
 as we assume to learn of the exact failure times of components online via continuous monitoring.
 
 In case of a trigger of type (1),
-the currently used model for component failure times is updated
+the currently used models for component failure times are updated
 to account for the aging of components,
 and the extra lifetime observed for the components.
 The latter information is taken into account via right-censored observations
 in a Bayesian parameter update step.
-
 In case of a trigger of type (2),
-when a component has failed since the last observation but the system is still functioning,
-also the reliability block diagram of the system is updated.
+where a component has failed but the system is still functioning,
+in addition to the component models also the reliability block diagram of the system is updated.
 Based on the above changes,
 it is determined in both cases whether the system should be replaced now,
 or that this decision should be postponed until the next planned evaluation moment,
 accepting the risk of a system breakdown before.
 To determine the latter,
-we calculate the `optimal' next observation moment
+we calculate the `optimal' next evaluation moment %moment for system replacement***
 based on minimizing the expected maintenance-related cost per per unit of time for the present operational cycle,
 where an operational cycle starts with a new system, and ends after this system has been replaced by an as good as new system. 
 
-When the `optimal' next observation moment is before the next observation of the component status, we replace the system now;
-else we wait for the next component status observation moment.
-The reason behind this decision is that $\delta$ usually is the shortest inter-observation period
-that can be realized from a hardware point of view.
-Note that strictly speaking, this decision may not be optimal.
+When the `optimal' next evaluation moment is before the next planned evaluation moment, we replace the system now;
+else we wait for the next planned evaluation moment.
+The reason behind this decision is that $\delta$ is taken as %usually is 
+%the shortest interval for which re-evaluation of the system RLD will show any difference***
+%the shortest inter-observation period that can be realized from a hardware point of view.
+the shortest inter-evaluation period that can be realized from a hardware point of view*** / 
+the time granularity according to which maintenance actions can be reasonably triggered***.
+To illustrate, for component with lifetimes measuring in days,
+$\delta$ should be in the order of minutes;
+for components with lifetimes measuring in months,
+$\delta$ could be one day.
+
+Note that strictly speaking, this decision procedure may not be optimal.
 However, because $\delta$ is very small when compared to the prior estimates of the lifetime of the components,
 at the time that the next `optimal' observation moment is before the next observation of the status of the still active components,
-we usually already have done better than without updating as described in this paper.
+we usually already have done much better than without updating as described in this paper.
 
 In this context it is also important to realize that our method
 doesn't necessarily result in the actual optimal replacement solution for another reason,
@@ -342,13 +353,15 @@ a too pessimistic prior probability density function (pdf)
 may lead to an increase in system reliability over time without any intervention.
 Whether or not this will be the case, as well as until when this kind of increase can occur,
 is uncertain at every moment in time.
-(***This kind of uncertainty about the probabilistic behaviour itself is very often neglected in operations research literature.***)
-Determining the next `optimal' observation moment can thus only indicate wherther or not waiting with the replacement
+(***As a sidenote,
+this kind of uncertainty about the probabilistic behaviour itself is very often neglected in operations research literature.***)
+Determining the next `optimal' evaluation moment can thus only indicate whether or not waiting with the replacement
 may result in lower or higher cost per unit of time,
 i.e., only indicates a local optimum,
 but not necessarily a global one.
 
 In case of a trigger of type (3),
+where the failure of a component leads to the whole system failing,
 the currently used component failure time distributions are updated
 like in case of a trigger of type (1) and (2)
 to account for the information gained on components
@@ -934,10 +947,20 @@ the grid of prediction values can be very fine.
 \section{Dynamic and adaptive maintenance policy based on the current system residual life distribution}
 \label{sec:policy}
 
+%***start with $\tausnow$???
 Now we can derive the adaptive and dynamic maintenance policy
 that resembles a CBM policy.
 Figure~\ref{fig:timeline} shows two example time lines for the system,
-starting each with a new system (operational cycle) at t=0. 
+starting each with a new system (operational cycle) at t=0.
+As described in Section~\ref{intro},
+the health of the system is re-evaluated at 
+
+two kinds of triggers 
+
+health of system via $\tausnow$, which is described in detail in Section~***
+
+In the left timeline example, 
+
 
 ***explain figure, triggers 1, 2, 3***
 
@@ -992,11 +1015,11 @@ and shows how $\tausnow$ is determined in this situation.
 \draw[tausnow] (0  , 0  ) -- (2.3, 0  ) node[at start, left] {$\tau_*^{(0)}$};
 \draw[tausnow] (1  , 1  ) -- (2.9, 1  ) node[at start, left] {$\tau_*^{(0.1)}$};
 \draw[tausnow] (2  , 2  ) -- (4.2, 2  ) node[at start, left] {$\tau_*^{(0.2)}$};
-\draw (2.4, -0.4) circle (0.8mm) edge[dotted] (2.4, 2.4);
+\draw (2.4, -0.5) circle (0.8mm) edge[dotted] (2.4, 2.4);
 %\node[draw,shape=diamond] (f1) at (2.4, -0.4) {}; % edge[dotted] (2.4, 2.4);
 \draw[tausnow] (2.4, 2.4) -- (3.9, 2.4) node[at start, left] {$\tau_*^{(0.24)}$};
 \draw[tausnow] (3  , 3  ) -- (4.4, 3  ) node[at start, left] {$\tau_*^{(0.3)}$};
-\draw (3.6, -0.4) circle (0.8mm) edge[dotted] (3.6, 3.6);
+\draw (3.6, -0.5) circle (0.8mm) edge[dotted] (3.6, 3.6);
 \draw[tausnow] (3.6, 3.6) -- (4.3, 3.6) node[at start, left] {$\tau_*^{(0.36)}$};
 \draw[tausnow] (4  , 4  ) -- (4.7, 4  ) node[at start, left] {$\tau_*^{(0.4)}$};
 \node (box1) at (1,4) {\parbox{12ex}{\small preventive\\ replacement\\ at $\tnow = 0.4$\\ as $\tau_*^{(0.4)} < \delta$}};
@@ -1011,10 +1034,10 @@ and shows how $\tausnow$ is determined in this situation.
 \draw[dashed] (0, 0) -- (3,3);
 \draw[tausnow] (0  , 0  ) -- (2.3, 0  ) node[at start, left] {$\tau_*^{(0)}$};
 \draw[tausnow] (1  , 1  ) -- (2.9, 1  ) node[at start, left] {$\tau_*^{(0.1)}$};
-\draw (1.4, -0.4) circle (0.8mm) edge[dotted] (1.4, 1.4);
+\draw (1.4, -0.5) circle (0.8mm) edge[dotted] (1.4, 1.4);
 \draw[tausnow] (1.4, 1.4) -- (2.8, 1.4) node[at start, left] {$\tau_*^{(0.14)}$};
 \draw[tausnow] (2  , 2  ) -- (3.3, 2  ) node[at start, left] {$\tau_*^{(0.2)}$};
-\draw[fill] (2.7, -0.4) circle (0.8mm) edge[dotted] (2.7, 2.7);
+\draw[fill] (2.7, -0.5) circle (0.8mm) edge[dotted] (2.7, 2.7);
 \node (box2) at (1,4) {\parbox{13ex}{\small corrective\\ replacement\\ at $\tnow = 0.27$\\ due to system failure}};
 \draw[pfeil] (box2) edge[out=10, in=90] (2.7,2.7);
 \end{scope}
@@ -1028,6 +1051,7 @@ and at the time of component failures (trigger 2),
 marked by a circle on the time axis.
 Failures that lead to the whole system failing (trigger 3) are marked by a filled circle.
 The calculation of $\tausnow$ is described in detail in Section~***.}
+%\begin{tikzpicture}\draw (0,0) circle (0.8mm);\end{tikzpicture}
 \label{fig:timeline}
 \end{figure}
 
