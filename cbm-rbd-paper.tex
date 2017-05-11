@@ -203,6 +203,9 @@
 \newcommand{\esys}{e_\text{sys}}
 \newcommand{\mrsys}{\bar{r}_\text{sys}}
 
+\newcommand{\tausfun}[1]{\tau_*^{(#1)}}
+
+
 % ------------ options -------------
 
 \allowdisplaybreaks
@@ -334,8 +337,8 @@ The reason behind this decision is that $\delta$ is taken as %usually is
 %the shortest inter-observation period that can be realized from a hardware point of view.
 the shortest inter-evaluation period that can be realized from a hardware point of view*** / 
 the time granularity according to which maintenance actions can be reasonably triggered***.
-To illustrate, for component with lifetimes measuring in days,
-$\delta$ should be in the order of minutes;
+To illustrate, for components with lifetimes measuring in a few days,
+$\delta$ could be in the order of minutes;
 for components with lifetimes measuring in months,
 $\delta$ could be one day.
 
@@ -950,42 +953,30 @@ the grid of prediction values can be very fine.
 %***start with $\tausnow$???
 Now we can derive the adaptive and dynamic maintenance policy
 that resembles a CBM policy.
-Figure~\ref{fig:timeline} shows two example time lines for the system,
-starting each with a new system (operational cycle) at t=0.
-As described in Section~\ref{intro},
-the health of the system is re-evaluated at 
+Our idea is described here first in general terms,
+and then illustrated along two examplary timelines in Section~\ref{sec:policy-example}.
+Afterwards, we introduce the formal definition of the policy in Section~\ref{sec:operationalprocedure}***,
+and give further details on the involved computations in Sections~\ref{sec:costrate} and \ref{sec:optim}.***
 
-two kinds of triggers 
-
-health of system via $\tausnow$, which is described in detail in Section~***
-
-In the left timeline example, 
-
-
-***explain figure, triggers 1, 2, 3***
-
-Consider a set of evaluation time points $\tnow$.
+We denote by $\tnow$ the moment in time that the system is observed,
+measured from the moment the present operational cycle has started,
+which coincides with starting to use a new system.
 Instead of determining a threshold for a degradation signal like in usual CBM approaches,
-we determine, for each present time $\tnow$,
-the adaptive and dynamic time span $\tausnow$ which gives the time from $\tnow$ until the optimal moment of maintenance.
-Close to system startup, $\tausnow$ will be large;
-but as components in the system age and some indeed fail over time,
-$\tausnow$ will typically decrease.
-%Let $\tprep$ be the time span needed to prepare maintenance work.
-%Let $\tthresh$ be a threshold time span chosen for practical reasons.
-%used to decide when maintenance is initiated, i.e.,
+we determine, for $\tnow$, the adaptive and dynamic time span $\tausnow$
+which gives the time from $\tnow$ until the next optimal moment to re-evaluate the system.
+%Close to system startup, $\tausnow$ will be large;
+%but as components in the system age and some indeed fail over time,
+%$\tausnow$ will typically decrease.
 A preventive maintenance action is initiated
-as soon as $\tausnow$ decreases below the time span to the next evaluation time.
-%continuing to the the next evaluation point $\tnow$ would carry the risk 
-%a time span chosen to reflect operational practicalities.
-This dynamic and adaptive maintenance policy is described in more detail in Section~\ref{sec:operationalprocedure};
-a flow chart for the policy is given in Figure~\ref{fig:procedure}.
+when $\tnow + \tausnow$ would be earlier than the next planned evaluation time point.
+We describe this dynamic and adaptive maintenance policy in more detail in Section~\ref{sec:operationalprocedure}.
+%a flow chart for the policy is given in Figure~\ref{fig:procedure}.
 
-The optimal time to maintenance $\tausnow$ is determined based on $\Rsysnow(t)$
+The near*** optimal time to system re-evaluation $\tausnow$ is determined based on $\Rsysnow(t)$
 by minimizing $\gnow(\tau)$, the expected cost rate for the current operational cycle.
-An operational cycle begins with system start-up,
-and ends when either preventive maintenance is carried out,
-or a failure of the system occurs, with subsequent corrective maintenance.
+%An operational cycle begins with system start-up,
+%and ends when either preventive maintenance is carried out,
+%or a failure of the system occurs, with subsequent corrective maintenance.
 This criterion, as detailed in Section~\ref{sec:costrate},
 %only assumes that $\Rsysnow(t)$ is given,
 only assumes that a RLD is given,
@@ -995,7 +986,7 @@ when safety is paramount one could, e.g., determine $\tausnow$ such that
 the probability of system failure is at most at some very low pre-determined level.
 
 Section~\ref{sec:optim} then focuses on our choice for the component models and the resulting form for $\Rsysnow(t)$,
-and shows how $\tausnow$ is determined in this situation.
+and shows how $\tausnow$ is numerically determined in this situation.
 %Numerical examples comparing results for three exemplary failure histories are given in Section~\ref{sec:examples},
 %and a small simulation study is presented in Section~\ref{sec:sim}.
 
@@ -1043,17 +1034,115 @@ and shows how $\tausnow$ is determined in this situation.
 \end{scope}
 \end{tikzpicture}
 \caption{Two exemplary timelines for the suggested maintenance policy.
-The horizontal bars depict, for subsequent times $\tnow$,
-the time to the next economically optimal inspection $\tausnow$.
+The horizontal bars depict $\tausnow$,
+the time to the next economically optimal evaluation of the system RLD,
+for subsequent times $\tnow$.
 The times $\tnow$ for which $\tausnow$ is evaluated are
-at regular intervals $\delta, 2\delta, 3\delta,\ldots$ (trigger 1),
+at regular intervals $m \delta, m \in \naturals_0$ (trigger 1),
 and at the time of component failures (trigger 2),
-marked by a circle on the time axis.
-Failures that lead to the whole system failing (trigger 3) are marked by a filled circle.
-The calculation of $\tausnow$ is described in detail in Section~***.}
+which are marked by a circle on the time axis.
+Failures that lead to the whole system failing (trigger 3) are marked by a filled circle.}
+%The calculation of $\tausnow$ is described in detail in Section~***.}
 %\begin{tikzpicture}\draw (0,0) circle (0.8mm);\end{tikzpicture}
 \label{fig:timeline}
 \end{figure}
+
+
+\subsection{Two exemplary timelines}
+\label{sec:policy-example}
+
+Figure~\ref{fig:timeline} shows two examplary time lines,
+starting each with a new system (operational cycle) at $t=0$.
+The left timeline leads to preventive maintenance,
+the timeline on the right to corrective maintenance.
+
+As described in Section~\ref{intro},
+the health of the system is re-evaluated at three types of triggers.
+Triggers of type (1) are the evenly spaced planned evaluation time points $m\delta$, where $m \in \naturals_0$,
+giving the time granularity at which maintenance actions can be reasonably initiated.***
+%Let $\tthresh$ be a threshold time span chosen for practical reasons.
+%used to decide when maintenance is initiated, i.e.,
+%a time span chosen to reflect operational practicalities.
+The times $m\delta$ are indicated by vertical tick lines on the time axis in Figure~\ref{fig:timeline},
+where $\delta = 0.1$.
+The moments of failure of a component form the other two types of triggers.
+A component failure after which the system still functions is a trigger of type (2),
+depicted as a (non-filled) circle on the time axis.
+A filled circle indicates a trigger of type (3),
+which is a component failure that causes the whole system to fail.
+
+For each trigger of type (1) and (2),
+the system health is evaluated by calculating $\tausnow$,
+the currently optimal time to re-evaluation, %$\tausnow$ is %calculated,
+visualized by the thick horizontal bars in Figure~\ref{fig:timeline}.
+%The details of calculating $\tausnow$ are described in detail in Sections~\ref{sec:costrate} and \ref{sec:optim}.***
+For a type (3) trigger, the system health evaluation just corresponds to acknowledging that the system has failed.
+%/ to the diagnosis/insight*** of system failure.
+%and calculation of $\tausnow$ is 
+For triggers of type (1) and (2),
+the calculated $\tausnow$ is compared to the time to the next planned evaluation time point.
+When $\tausnow$ is shorter than this time,
+preventive maintenance of the system is initiated.
+
+In the timeline on the left of Figure~\ref{fig:timeline},
+$\tausnow$ is re-evaluated at times $\tnow = 0.1, 0.2, 0.24, 0.3, 0.36, 0.4$,
+where $0.24$ and $0.36$ correspond to component failure times.
+Note that the failure at $\tnow = 0.24$ substantially shortens $\tausfun{0.24}$,
+such that $0.24 + \tausfun{0.24} < 0.2 + \tausfun{0.2}$,
+i.e., the optimal moment of re-evaluation has moved backwards in time.
+This illustrates that new insights drawn from a component failure
+(regarding the reliability block diagram as well as the component model)
+may have considerable influence on the system RLD
+and the $\tausnow$ that is derived from it.
+The component failure at $\tnow = 0.36$ leads to a further shortened $\tausfun{0.36}$,
+such that $\tausfun{0.36} < 0.1 = \delta$.
+However, this does not lead to an immediate decision for preventive maintenance,
+since $\tausfun{0.36}$ is compared to the time to the next planned evaluation at $t = 0.4$.
+The decision for preventive maintenance is instead made at $\tnow = 0.4$,
+as only then it is not economical any more to wait for the next planned evaluation at $t = 0.5$.
+
+The timeline on the right of Figure~\ref{fig:timeline} illustrates an operational cycle ending with corrective maintenance.
+Here, the component failure at $\tnow = 0.27$ leads to system failure.
+The size of $\tausfun{0.2}$ indicates that the component failure that happens at $\tnow = 0.27$
+had been deemed very unlikely at time $\tnow = 0.2$.
+but then nevertheless occured at $t = 0.27$.
+
+
+\subsection{Formal*** / Detailed description of the policy}
+\label{sec:operationalprocedure}
+
+Each operational cycle starts with a system startup.
+At this point in time, the system is in an (as good as) new state,
+i.e., all components in the system are (as good as) new and have not aged.
+An operational cycle ends when the system is either maintained preventively, %at time $\tnow + \tausnow$ (on an absolute time scale),
+or the system fails, which triggers a corrective maintenance action.
+
+***below two pars towards the end? 
+
+We assume that both preventive and corrective maintenance result in an (as good as) new system state by replacing all components,
+such that the system begins a new operational cycle always under the same conditions.
+At first sight, replacing a complete system when only some parts of it are defective may seem strange.
+However, there are many real life examples, including from daily live.
+So called complete clustering \citep{2017:oldekeizer}
+may be optimal in case of a very strong economic dependence between the different parts of a system,
+e.g., due to a very high fixed set-up cost independent of the maintenance activities to be done,
+as is the case of installations/facilities*** used in the generation and distribution of oil and gas.
+Note that often for safety reasons, the latter installations/facilities*** are monitored continuously.
+There may be also technical dependencies between parts of a system that may require combined replacement:
+replacing the cassette of a bike often also requires to replace the chain,
+and the tires of an airplane are required to have the same thickness.
+But also complete systems are replaced because replacing one or more of its parts may take much longer,
+which may result in big production losses.
+Another reason can be that there may be a high probability that when individual parts are replaced,
+other parts will be damaged/have to be damaged***, requiring their replacement as well.
+
+Replacement schemes that do not replace all components during maintenance
+would require to account for the different ages of components in the system
+at the start of a new cycle.
+While this is in principle possible in our approach,
+exploring such selective replacement schemes is out of scope for this paper.
+Optimizing over replacement schemes is, in our view, a higly interesting topic that merits an investigation of its own.
+We will return to this in the conclusion (Section~\ref{sec:outlook}).
 
 \begin{figure}
 \centering
@@ -1130,16 +1219,12 @@ including the loop back to system startup that starts a new cycle as a dashed ar
 \label{fig:procedure}
 \end{figure}
 
-\subsection{Detailed description of the policy}
-\label{sec:operationalprocedure}
+Figure~\ref{fig:procedure} depicts the flow chart for the policy,
+indicating the decisions that are repeatedly encountered in a single operational cycle.
+The flow chart also contains the loop back to the start of a new operational cycle.
 
-Each operational cycle starts with a system startup.
-At this point in time, the system is in an (as good as) new state,
-i.e., all components in the system are (as good as) new and have not aged.
-An operational cycle ends when the system is either maintained preventively, %at time $\tnow + \tausnow$ (on an absolute time scale),
-or the system fails, which triggers a corrective maintenance action.
-
-Define a grid of planned evaluation time points as $\{m \delta : m \in \naturals_0\}$,
+%***Consider a set of evaluation time points $\tnow$.
+Consider a grid of planned evaluation time points $\{m \delta : m \in \naturals_0\}$,
 %where $m = 0, 1, 2, \ldots$,
 %and $\delta$ sufficiently small to be negligible on the system lifetime scale.
 with $\delta$ a sufficiently small time increment.
@@ -1154,15 +1239,22 @@ If the system has not failed, we calculate $\tausnow$ for the current off-grid t
 and move back onto the grid afterwards,
 unless there is another component failure before the next planned evaluation time.
 
-Frequent recalculation of $\tausnow$ is feasible
-when computation of the RLD is fast.
-Then, by evaluating the unit cost rate function $\gnow(\tau)$ on a discrete grid,
-$\tausnow$ can be approximated with a simple grid search.
+The calculation of $\tausnow$ for a fixed $\tnow$ resembles the calculation
+of the maintenance interval in an age based policy by trading off the costs of preventive and corrective maintenance
+(see Section~\ref{sec:costrate} below).
+However, because $\tausnow$ is derived from the current $\Rsysnow(t)$,
+our policy is adaptive and dynamic like a CBM policy. 
+When computation of the RLD is fast,
+frequent recalculation of $\tausnow$ is feasible,
+%Then, by evaluating the unit cost rate function $\gnow(\tau)$ (see Section~\ref{sec:costrate} below) on a discrete grid,
+%$\tausnow$ can be approximated with a simple grid search.
 %because we use a fast discrete approximation of the unit cost rate function $\gnow(\tau)$,
 %and determine $\tausnow$ with a simple grid search.
-Updating $\tausnow$ frequently is useful because,
+%Updating $\tausnow$ frequently is useful because,
+and it is useful because,
 even in absence of failures of system components,
-all components age, and also non-failure adds information to the component models.
+all components age, and also non-failure adds information to the component models,
+reducing uncertainty.
 %Both aspects influence $\Rsysnow(t)$ and thus $\tausnow$,
 %as is visible in the top panel of Figure~\ref{fig:tauhist1fig2T},
 %which gives a numerical example described in more detail in Section~\ref{sec:examples}.
@@ -1170,10 +1262,6 @@ all components age, and also non-failure adds information to the component model
 %but as a (near) real-time update of $\tausnow$ is possible and useful,
 %as non-failed components still can be used to update component models ($\nknow$ and $\yknow$) via right-censored observation $\tpnow$.
 %
-The calculation of $\tausnow$ for a fixed $\tnow$ resembles the calculation
-of the maintenance interval in an age based policy by trading off the costs of preventive and corrective maintenance.
-However, because $\tausnow$ is derived from the current $\Rsysnow(t)$,
-our policy is adaptive and dynamic like a CBM policy. 
 %As can happen for an age-based policy, the derived $\gnow(\tau)$ may also be monotonely decreasing.
 %In this case, it is, at the moment $\tnow$, optimal to correctively maintain the system.
 %This means that our approach is not only capable of finding the optimal moment for preventive maintenance,
@@ -1196,12 +1284,12 @@ If $\tausnow < (m + 1) \delta - t_{k,i}$, a preventive maintenance action is tri
 otherwise we attempt to move to the next planned evaluation point, which is still $(m + 1) \delta$.
 
 In both cases, we decide to maintain the system preventively
-when the optimal time to maintenance is closer to now than the next time we intend to re-evaluate $\tausnow$,
-since otherwise, in waiting to the next evaluation time,
+when the optimal time to re-evaluation is closer to now than the next time we intend to re-evaluate $\tausnow$,
+since otherwise, in waiting to the next planned evaluation time,
 one would exceed the optimal system failure risk 
-as determined by the trade-off made by $\gnow(\cdot)$.
+as determined by the trade-off made via $\gnow(\cdot)$.
 When $\tausnow$ is instead further in the future than the next planned evaluation time,
-we can safely continue to the next evaluation time,
+we can safely continue to the next planned evaluation time,
 without risking to miss the cost-optimal moment to preventively maintain the system.
 
 At the end of each operational cycle, i.e.,
@@ -1210,22 +1298,9 @@ the component information gained during the completed operational cycle is added
 by updating the parameters $\nk$ and $\yk$ accordingly,
 %using failure and censoring times as of the end of the cycle.
 such that $\nkz$ and $\ykz$ for the next operational cycle
-account for the (censored) lifetimes observed during the previous operational cycle.
+account for the (censored) lifetimes observed during the previous operational cycles.
 %We assume that both planned and unplanned maintenance action takes negligible time,
 
-Figure~\ref{fig:procedure} displays the flowchart for the policy,
-indicating the decisions that are repatedly encountered in a single operational cycle.
-The flowchart also contains the loop back to system startup that starts a new operational cycle.
-
-We assume that both preventive and corrective maintenance result in an (as good as) new system state by replacing all components,
-such that the system begins a new operational cycle always under the same conditions.
-Replacement schemes that do not replace all components would require to account for the different ages of components in the system
-at the start of a new cycle.
-While this is in principle possible in our approach,
-exploring such selective replacement schemes is out of scope for this paper,
-since optimizing over replacement schemes is, in our view, a higly interesting topic
-that merits an investigation of its own,
-and we will comment on this in the conclusion (Section~\ref{sec:outlook}).
 %
 %As we use a one-cycle criterion, the time both preventive and corrective maintenance actions require
 %does not matter directly for the determination of $\tausnow$.
@@ -1245,7 +1320,7 @@ Although a different, renewal theory based way to calculate the unit cost rate i
 in CBM literature \citep[e.g.,][]{2013:si-et-al,2011:kim-et-al},
 %As we discussed in the Introduction,
 we use the one-cycle cost rate as it is the most appropriate for our situation,
-where $\tausnow$ changes continuously.
+where $\tausnow$ changes frequently.
 
 Let $c_p$ be the cost of preventive maintenance, and $c_c$ the cost of corrective (unplanned, breakdown) maintenance, where $c_p < c_c$.
 Usually, set-up costs, the actual maintenance costs (labor, new components) and downtime costs are much higher for corrective maintenance,
