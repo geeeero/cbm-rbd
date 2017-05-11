@@ -1336,7 +1336,8 @@ also $\fsysnow(t)$ is a conditional probability density,
 with support $\{t \in \reals : t > \tnow \}$.
 %In particular, we have $\fsysnow(t) = 0$ for all $t \le \tnow$.
 
-Conditional on the realization $\tsysnow$ of $\Tsysnow$, the unit cost rate is 
+Conditional on the realization $\tsysnow$ of $\Tsysnow$, the unit cost rate 
+for planning maintenance at $\tau$ time units after $\tnow$ is 
 \begin{align}
 g(\tau \mid \Tsysnow = \tsysnow) &=
 \begin{cases}
@@ -1388,7 +1389,7 @@ as we use a discrete approximation of $\Rsysnow(t)$ and $\fsysnow(t)$, respectiv
 (see Section~\ref{sec:optim} below).
 
 $\tausnow := \arg\min \gnow(\tau)$
-is the cost-optimal time to maintenance as of $\tnow$,
+is the cost-optimal time to do maintenance as of $\tnow$,
 incorporating all that is known at current time $\tnow$.
 %The lower index $\tnow$ of $\tausnow$ emphasizes that
 %depends on $\tnow$, and also on the history of the system.
@@ -1397,7 +1398,7 @@ incorporating all that is known at current time $\tnow$.
 %the optimal moment of maintenance on a prospective time scale.
 The minimal expected operational cycle cost rate $\gstarnow := \gnow(\tausnow)$ corresponding to $\tausnow$
 thus is, as of $\tnow$, the lowest cost rate for the current operational cycle
-that we can expected to attain.
+that we can expect to attain.
 %attainable for the span of the remaining lifetime of the system,
 %i.e., for what happens beyond current time $\tnow$.
 %$\gstarnow$ increases over time since 
@@ -1414,7 +1415,8 @@ for continuous component lifetime distributions,
 $\tausnow$ is a smooth function of $\tnow$ during periods where no component fails,
 with discrete jumps at component failure times.
 The size of the jump depends on the relevance of the failed component for the current system reliability.
-Common cause failures, i.e., failures of several components at the same time due to a shared root cause,
+
+Note that common cause failures, i.e., failures of several components at the same time due to a shared root cause,
 are currently not accounted for in our model. %, as we assume component failures to be mutually independent
 %given the component model parameters.
 Such simulatenous failures will seriously influence the RLD and thus $\tausnow$.
@@ -1430,7 +1432,7 @@ We will return to this in the conclusion (Section~\ref{sec:outlook}).
 %and the total unit cost rate $\gtotalnow$ as functions of $\tnow$
 for the system depicted in Figure~\ref{fig:brakesys-layout},
 assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$,
-and $c_u = 1$, $c_p = 0.2$.}
+and costs $c_u = 1$, $c_p = 0.2$.}
 \label{fig:tauhist1fig2T}
 \end{figure}
 
@@ -1461,7 +1463,7 @@ evaluations of $\Rsysnow(t)$ and $\fsysnow(t)$ only for $\tnow < t \le \tnow + \
 The choice of $t_h$ is thus not critical,
 in the sense that $\gnow(\tau)$ evaluations will be correct even if $t_h < \tausnow$.
 
-We have implememted our method in \textsf{R} \citep{R},
+We have implemented our method in \textsf{R} \citep{R},
 using the package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
 to calculate survival signatures.
 As the parameter update step is closed-form,
