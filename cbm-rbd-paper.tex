@@ -471,6 +471,9 @@ the vehicle brakes when at least one brake pad assembly is actuated.
 Note that because of the `handbrake shortcut', this system cannot be described as a nesting of series and parallel subsystems.
 %This system is observed until time $\tnow$,
 %leading to censored observation of certain component lifetimes within the system.
+***Our example system is deliberately kept quite simple for didactical reasons.
+The survival signature allows to analyze much larger systems ***citations***,
+and our approach is able to deal with such systems.***
 
 \begin{figure}
 \centering
@@ -1912,11 +1915,11 @@ for systems based on monitoring of the functioning of components.
 We use the survival signature to compute system reliability functions
 for given component models, and propose to use Weibull component models
 with conjugate priors to express expert knowledge.
-The resulting policy shows promising results in
+The resulting policy shows promising results for
 different numerical examples and a small simulation study.
 
 There are several aspects in our modelling that warrant further investigation.
-So far, we assume that component failure times are observed precisely via monitoring.
+In this paper, we assume that component failure times are observed precisely via monitoring.
 However, in many applications, the component status can only be determined
 at inspections, leading to interval-censored failure time observations.
 Extending the model to account for interval-censored failure times
@@ -1925,13 +1928,24 @@ which could also determine the optimal moment for the next inspection of the sys
 %*** extend the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 %we would need to add interval-censored data (failure has happened between last and current inspection)
 
-***estimate and update also Weibull shape parameter***
+***Another way to relax the assumption of precise component monitoring
+is to consider unreliable detection of component failures.
+Our approach may be quite sensitive to the non-detection of component failures,
+and one could tackle this by including a probabilistic observation model,
+which assigns probabilities to false positives and false negatives in the component monitoring.***
+
+***We also assume that the component-specific Weibull shape parameters are known,
+and update only the scale parameters.
+We restricted ourselves to this simplistic modelling
+to allow for a clear and straight-forward demonstration of the general approach.
+In a practical application, the shape parameters should be jointly updated together with the scale parameters.
+This could be implemented by adopting the discretized approach by \cite{1969:soland}.***
 
 As mentioned at the end of Section~\ref{sec:costrate},
 we currently disregard the possibility of common cause failures,
 i.e., simultaneous failures with a shared root cause.
-Common cause failures seriously reduce the system reliability,
-and can lead to sudden system failures.
+Common cause failures can drastically reduce the system reliability
+by leading to sudden system failures.
 To offer a realistic estimation of the optimal time to maintenance $\tausnow$,
 the system RLD $\Rsys(t)$ needs to account for such failures when they are possible.
 %This needs to be implemented on the level of component models,
@@ -1943,11 +1957,11 @@ cannot be obtained as a product of component posterior predictive probabilities 
 We think that by combining ideas from \cite{2015:coolen-coolen-maturi} and \cite{Troffaes2014a},
 the proposed policy could be extended to accomodate common cause failures.
 
-In our policy, we assumed that in both preventive and corrective repair
+In our policy, we assumed that in both preventive and corrective replacement
 all components are restored to an as good as new state.
 An obvious alternative is to only replace the failed components,
 but would this offer any advantage?
-Furthermore, could it be even optimal to repair a subset of the failed components only?
+Furthermore, could it be even optimal to replace a subset of the failed components only?
 Such selective component replacement schemes
 seem to be a promising area for research.
 To account for different ages of components at system startup,
@@ -1967,9 +1981,17 @@ or all components of one type.
 %$P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
 %which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
 
-***different cost structures, let repair costs depend on number of failed components?***
-
-***non-detection of component failures***
+***A further simplifying assumption relates to the cost of preventive and corrective replacements,
+which we consider as fixed.
+In many real-life applications, maintenance costs vary over time
+(e.g., increased labour cost due to overtime or night shift premiums),
+and may depend on the number of failed components, or even on the exact system state.
+In our approach, time-dependent cost structures can be easily accounted for,
+by letting $c_p$ and $c_c$ in \eqref{eq:gtau} depend on $\tau$.
+It will be more complex to account for costs that are dependent on the system state,
+but our approach already provides the necessary information
+in form of the posterior predictive distributions derived in Section~\ref{sec:postpred}.***
+%since the calculation of $\Rsysnow(t)$ involves  
 
 Another promising extension would be to use sets of conjugate priors for the component models.
 This approach is described in \cite{2016:walter-coolen},

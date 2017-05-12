@@ -313,9 +313,9 @@ However, our survival signature based method is also applicable for larger syste
 where the keystone method is usually not practical anymore.***\\
 ***find surv sign papers with complex systems and add citations***
 Furthermore, the \textsf{R} package \texttt{ReliabilityTheory} allows to automatically calculate the
-survival signature from any given system graph.\\
+survival signature from any given system graph.}
 %no one component can be singled out as the reliability-limiting force.\\
-***add a note on simplicity (to understand what's going on) at example intro in Section~3?***}
+%***add a note on simplicity (to understand what's going on) at example intro in Section~3?***}
 \end{enumerate}
 
 
@@ -342,33 +342,40 @@ More specific comments are summarised in the two following sections:
 
 \smallskip
 
-\emph{***This conflicts with our approach that evaluates the RLD and $\tausnow$ also at the exact times of component failures!***\\
-maybe something like
-$\big\{ t_j: (t_j = m\delta, m \in \naturals_0) \cup (t_j = t_{k,i}, k \in \{1,\ldots,K\}, i \in \{1,\ldots, N_k\}) \big\}$ ???
-But this is also quite complex!***}
+\emph{***Our approach evaluates the RLD and $\tausnow$ not only at a regular grid,
+but also at the exact times of component failures.
+The reviewer's suggestion would thus have us describe the set of re-evaluation times as
+$\big\{ t_j: (t_j = m\delta, m \in \naturals_0) \cup (t_j = t_{k,i}, k \in \{1,\ldots,K\}, i \in \{1,\ldots, N_k\}) \big\}$.
+We think this adds unneccessary complexity at the early parts of the manuscript,
+and thus prefer to keep $\tnow$ as a generic evaluation point.}
 
 \item The claim in the first paragraph of Section 5 is a strong one and should be properly proved or, at least, a reference must be provided.
 
 \smallskip
 
-\emph{***unclear which claim exactly he refers to, maybe to
+\emph{***unclear which claim exactly the reviewer refers to, maybe to
 ``Close to system startup, $\tausnow$ will be large;
 but as components in the system age and some indeed fail over time, $\tausnow$ will typically decrease.'' ???
-It will be hard to prove this formally, as $\tausnow$ is a result of an optimization over the re-estimated RLD.
-But informally, this is clear: when a component fails, this is taken up by the RLD calculation,
-such the probability mass of the RLD is moving closer to $\tnow$,
-which leads to $\tausnow$ being closer to $\tnow$ as well.***}
+In the rewrite of Section~5, this sentence was dropped.}
+%(It will be hard to prove this formally, as $\tausnow$ is a result of an optimization over the re-estimated RLD.
+%But informally, this is clear: when a component fails, this is taken up by the RLD calculation,
+%such the probability mass of the RLD is moving closer to $\tnow$,
+%which leads to $\tausnow$ being closer to $\tnow$ as well.)***}
 
 \item In Section 5.1, the authors indicate that if, for a given time $\tnow$, $\tau_*^{\tnow}<\delta$, then a preventive maintenance is triggered. I wonder if it will not be better to wait until $\tau_*^{\tnow}$? Given that $\tau_*^{\tnow}$ is---by definition---the optimal intervention time, it seems that the best action is to intervene precisely at that time.
 
 \smallskip
 
-\emph{***Hmmm, yes, currently we have that the system is repaired at $\tnow$ when $\tausnow < \delta$.
-I could change the simulations to execute repair at time $\tnow + \tausnow$,
-but then one needs to check whether there is a component failure (and with it, a system failure)
-between time $\tnow$ and $\tnow + \tausnow$, making the policy flow chart even more complex.
-If we keep it as it is, we need to explain $\delta$ better as being very small such that repair at $\tnow$ or $\tnow + \tausnow$
-do not make a big difference and that without $\delta$, we get a situation like in the paradox of Achilles and the tortoise.}
+\emph{***Our reasoning, now better explained in the Introduction and in the rewritten Section~5,
+is that $\delta$ gives the time granularity according to which maintenance actions can be reasonably triggered,
+and preventive maintenance is initiated only when $\tausnow < \delta$.
+Therefore, initiating maintenance at $\tnow$ or $\tnow + \tausnow$ is practically equivalent.***}
+%Hmmm, yes, currently we have that the system is repaired at $\tnow$ when $\tausnow < \delta$.
+%I could change the simulations to execute repair at time $\tnow + \tausnow$,
+%but then one needs to check whether there is a component failure (and with it, a system failure)
+%between time $\tnow$ and $\tnow + \tausnow$, making the policy flow chart even more complex.
+%If we keep it as it is, we need to explain $\delta$ better as being very small such that repair at $\tnow$ or $\tnow + \tausnow$
+%do not make a big difference and that without $\delta$, we get a situation like in the paradox of Achilles and the tortoise.}
 
 \item It seems that the authors assume constant preventive and corrective maintenance costs. However, in practice one finds that maintenance costs are often state dependent. Is their model suitable for this? Is it robust to different cost structures? How will their results be affected?
 
@@ -529,7 +536,7 @@ we intended to emphasize that the system RLD is evaluated for the first time dir
 
 \emph{***Our intention was to establish the cost rate function $g^{(\tnow)}(\cdot)$ as a generic function first
 and to explain the details of its calculation later.
-In rewriting Section~5, we now mention this more explicitely.}
+In the rewritten Section~5, we now mention this more explicitely.}
 
 \item As Section 8 concludes the manuscript, I will suggest to refer to it as “the conclusion” rather than Section 8; e.g. at the end of sections 5.1 and 5.2.
 
