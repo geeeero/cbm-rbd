@@ -1284,10 +1284,10 @@ If $\tausnow < (m + 1) \delta - t_{k,i}$, a preventive maintenance action is tri
 otherwise we attempt to move to the next planned evaluation point, which is still $(m + 1) \delta$.
 
 In both cases, we decide to maintain the system preventively
-when the optimal time to re-evaluation is closer to now than the next time we intend to re-evaluate $\tausnow$,
+when the optimal time to re-evaluation is closer to now than the next time we intend to re-evaluate the system RLD, %$\tausnow$,
 since otherwise, in waiting to the next planned evaluation time,
 one would exceed the optimal system failure risk 
-as determined by the trade-off made via $\gnow(\cdot)$.
+as determined by the trade-off made via $\gnow(\cdot)$. ***drop $\gnow(\cdot)$ here, like: ...trade-off that results in $\tausnow$.
 When $\tausnow$ is instead further in the future than the next planned evaluation time,
 we can safely continue to the next planned evaluation time,
 without risking to miss the cost-optimal moment to preventively maintain the system.
