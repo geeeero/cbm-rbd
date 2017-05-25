@@ -249,7 +249,7 @@ Each component type has a separate Weibull model that may also include test data
 The cost-optimal moment of replacement for the system is obtained by minimizing
 the expected cost rate per unit of time.
 The unit cost rate is recalculated when components fail
-or at the end of every (very short) fixed inter-inspection interval***,
+or at the end of every (very short) fixed inter-monitoring*** interval,
 leading to a dynamic maintenance policy,
 since the aging of components and possible failures will change the cost-optimal moment of replacement in the course of time.
 Via numerical experiments, some insight into the performance of the policy is given.
@@ -270,7 +270,8 @@ there is a growing interest in condition-based maintenance (CBM), see e.g.,
 \citet{2017:oldekeizer}
 The central idea behind CBM is to maintain systems or components at exactly the right time,
 i.e., just before they fail, %but not too early,
-in order to keep their reliability high and operating costs low.
+in order to keep their reliability high and operating costs low,
+using information about the actual condition of the systems or components.
 In this context a trade-off is made between the risk of failure during operation
 (which can lead to costly downtime: idle workforce, missed production, penalties, loss of reputation)
 and the costs of premature maintenance (wasting potential component or system lifetime,
@@ -289,7 +290,7 @@ Alternatively, such a signal or health status is constructed
 using indirect measurements to determine the remaining useful life or time to failure of a system,
 see, e.g., \citet{2014:rul-review, 2011:rul-review-statistical}.
 
-In this paper, we propose a new kind of inspection-based CBM policy*** (drop inspection-based???***)
+In this paper, we propose a new kind of CBM policy
 for when no such \emph{usual} degradation signal for the system is available,
 but where the status (working or not working) of the system's components can be monitored (quasi-) continuously.
 %i.e., observed every $\delta$ time units, where $\delta$ is very small compared to the lifetimes of components. 
@@ -310,13 +311,12 @@ since the system RLD is re-evaluated at each of these time points,
 and a decision is made on whether preventive maintenance should be carried out or not.
 We use the term `evaluation' in place of the term `inspection',
 because the re-evaluation of the system RLD does not require a physical inspection,
-as we assume to learn of the exact failure times of components online via continuous monitoring.
+as we assume to learn of the exact failure times of components online via (quasi-) continuous monitoring.
 
 In case of a trigger of type (1),
 the currently used models for component failure times are updated
-to account for the aging of components,
-and the extra lifetime observed for the components.
-The latter information is taken into account via right-censored observations
+to account for the extra lifetime observed for the components.
+This information is taken into account via right-censored observations
 in a Bayesian parameter update step.
 In case of a trigger of type (2),
 where a component has failed but the system is still functioning,
@@ -328,36 +328,36 @@ accepting the risk of a system breakdown before.
 To determine the latter,
 we calculate the `optimal' next evaluation moment %moment for system replacement***
 based on minimizing the expected maintenance-related cost per per unit of time for the present operational cycle,
-where an operational cycle starts with a new system, and ends after this system has been replaced by an as good as new system. 
+where an operational cycle starts with a new system, and ends after this system has been replaced by a new system. 
 
 When the `optimal' next evaluation moment is before the next planned evaluation moment, we replace the system now;
 else we wait for the next planned evaluation moment.
 The reason behind this decision is that $\delta$ is taken as %usually is 
 %the shortest interval for which re-evaluation of the system RLD will show any difference***
 %the shortest inter-observation period that can be realized from a hardware point of view.
-the shortest inter-evaluation period that can be realized from a hardware point of view*** / 
-the time granularity according to which maintenance actions can be reasonably triggered***.
-To illustrate, for components with lifetimes measuring in a few days,
+the shortest inter-evaluation period that can be realized from a hardware point of view. 
+%the time granularity according to which maintenance actions can be reasonably triggered***.
+To illustrate, for components with lifetimes amounting to a few days,
 $\delta$ could be in the order of minutes;
 for components with lifetimes measuring in months,
 $\delta$ could be one day.
 
 Note that strictly speaking, this decision procedure may not be optimal.
 However, because $\delta$ is very small when compared to the prior estimates of the lifetime of the components,
-at the time that the next `optimal' observation moment is before the next observation of the status of the still active components,
+at the time that the next `optimal' evaluation moment is before the next planned evaluation moment,
 we usually already have done much better than without updating as described in this paper.
 
 In this context it is also important to realize that our method
 doesn't necessarily result in the actual optimal replacement solution for another reason,
 inherent to using updated information for decisions,
-when these updates can indicate that the former estimates were too optimistic or pessimistic.
+when these updates can indicate that the former estimates were too optimistic or too pessimistic.
 The reason for this is that for some components,
 a too pessimistic prior probability density function (pdf)
 may lead to an increase in system reliability over time without any intervention.
 Whether or not this will be the case, as well as until when this kind of increase can occur,
 is uncertain at every moment in time.
-(***As a sidenote,
-this kind of uncertainty about the probabilistic behaviour itself is very often neglected in operations research literature.***)
+As a sidenote,
+this kind of uncertainty about the probabilistic behaviour itself is very often neglected in operations research literature.
 Determining the next `optimal' evaluation moment can thus only indicate whether or not waiting with the replacement
 may result in lower or higher cost per unit of time,
 i.e., only indicates a local optimum,
@@ -408,7 +408,7 @@ also known as RUL (remaining useful lifetime) distribution,
 which is updated in an empirical Bayesian framework using conjugate priors.
 The RLD is used to construct a replacement decision model using a cost rate.
 
-***While we also use a Bayesian approach to provide exact expressions for the RLD,***
+While we also use a Bayesian approach with conjugate priors to provide exact expressions for the RLD,
 one of the main differences between \citet{2013:si-et-al} and our paper
 is that we use component status data and the system reliability block diagram instead of a continuous degradation signal
 as basis for calculating the system RLD.
@@ -459,21 +459,22 @@ can be efficiently calculated using the survival signature.
 We can analyze systems with an arbitrary reliability block diagram,
 consisting of components of $K$ different types,
 where there are $N_k$ exchangeable components of type $k$ in the system,
-and the total number of components in the system is $\sum_{k=1}^K N_k = N$.
+and $N$, the total number of components in the system, is given by $\sum_{k=1}^K N_k = N$.
 
 As a running example, we consider a simplified automotive braking system
 consisting of four component types $M$, $H$, $C$ and $P$,
 with the reliability block diagram as depicted in Figure~\ref{fig:brakesys-layout}.
 The master brake cylinder ($M$) activates all four wheel brake cylinders ($C_1$ -- $C_4$),
 which in turn actuate a braking pad assembly each ($P_1$ -- $P_4$).
-The hand brake mechanism ($H$) directly actuates the brake pad assemblies $P_3$ and $P_4$;
-the vehicle brakes when at least one brake pad assembly is actuated.
+The hand brake mechanism ($H$) directly actuates the brake pad assemblies $P_3$ and $P_4$,
+and the vehicle brakes when at least one brake pad assembly is actuated.
 Note that because of the `handbrake shortcut', this system cannot be described as a nesting of series and parallel subsystems.
 %This system is observed until time $\tnow$,
 %leading to censored observation of certain component lifetimes within the system.
-***Our example system is deliberately kept quite simple for didactical reasons.
-The survival signature allows to analyze much larger systems ***citations***,
-and our approach is able to deal with such systems.***
+Our example system is deliberately kept quite simple for didactical reasons.
+The survival signature allows to analyze much larger systems,
+see, e.g., the examples in \citet{2017:reed},
+and our approach is able to deal with such systems.
 
 \begin{figure}
 \centering
@@ -623,7 +624,7 @@ omitting the rows for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_
 \label{sec:adaptive-sysrel-weibull}
 
 In this section, we describe how the system reliability function $\Rsysnow(t)$ at current time $\tnow$ 
-can be calculated for a specific choice of component model.
+can be calculated for a specific component model.
 %Section~\ref{sec:policy} will then show how an adaptive maintenance policy
 %can be derived for a monitored system based on such a current system residual life distribution. 
 
@@ -636,7 +637,8 @@ using, e.g., the discretized approach by \cite{1969:soland}.
 
 By using the Bayesian approach described in Section~\ref{sec:weibull},
 our component model allows to include both expert assessments and test data (if available),
-and furthermore can account for component lifetime information from the current operational cycle up to $\tnow$.
+and furthermore can account for component lifetime information from previous operational cycles
+and the current operational cycle up to $\tnow$.
 %***component model: weibull with fixed shape,
 %inverse gamma prior on scale parameter,
 %fix priors via expected lifetime and prior strength,
@@ -645,7 +647,7 @@ and furthermore can account for component lifetime information from the current 
 %
 In Section~\ref{sec:postpred} we derive the posterior predictive distribution
 for the Weibull component model as needed for the current system reliability calculation.
-Finally, in Section~\ref{sec:sysreltnow}, we adapt the method from Section~\ref{sec:sysrel} for the adaptive setting,
+Finally, in Section~\ref{sec:sysreltnow}, we adapt the method from Section~\ref{sec:sysrel} to the dynamic setting,
 resulting in a formula for $\Rsysnow(t)$.
 %***output is $\Rsysnow(t)$, the current (at time $\tnow$) system reliability function
 %(residual life distribution, RLD)
@@ -914,7 +916,7 @@ We thus have, for $l_k \in \{0,1,\ldots,\cknow\}$,
 
 Now that we can calulate the component posterior predictive distributions at $\tnow$,
 we can use the method from Section~\ref{sec:sysrel}
-to determine the system residual life distribution (RLD) $\Rsysnow(t)$,
+to determine the dynamic system residual life distribution (RLD) $\Rsysnow(t)$,
 giving us the probability that the system functions at times $t > \tnow$,
 taking into account all information available at $\tnow$:
 \begin{align}
@@ -958,8 +960,8 @@ Now we can derive the adaptive and dynamic maintenance policy
 that resembles a CBM policy.
 Our idea is described here first in general terms,
 and then illustrated along two examplary timelines in Section~\ref{sec:policy-example}.
-Afterwards, we introduce the formal definition of the policy in Section~\ref{sec:operationalprocedure}***,
-and give further details on the involved computations in Sections~\ref{sec:costrate} and \ref{sec:optim}.***
+Afterwards, we give a detailed description of the policy in Section~\ref{sec:operationalprocedure},
+and expand on the involved computations in Sections~\ref{sec:costrate} and \ref{sec:optim}.
 
 We denote by $\tnow$ the moment in time that the system is observed,
 measured from the moment the present operational cycle has started,
@@ -975,7 +977,7 @@ when $\tnow + \tausnow$ would be earlier than the next planned evaluation time p
 We describe this dynamic and adaptive maintenance policy in more detail in Section~\ref{sec:operationalprocedure}.
 %a flow chart for the policy is given in Figure~\ref{fig:procedure}.
 
-The near*** optimal time to system re-evaluation $\tausnow$ is determined based on $\Rsysnow(t)$
+The optimal time to system re-evaluation $\tausnow$ is determined based on $\Rsysnow(t)$
 by minimizing $\gnow(\tau)$, the expected cost rate for the current operational cycle.
 %An operational cycle begins with system start-up,
 %and ends when either preventive maintenance is carried out,
@@ -1056,13 +1058,13 @@ Failures that lead to the whole system failing (trigger 3) are marked by a fille
 
 Figure~\ref{fig:timeline} shows two examplary time lines,
 starting each with a new system (operational cycle) at $t=0$.
-The left timeline leads to preventive maintenance,
+The timeline on the left leads to preventive maintenance,
 the timeline on the right to corrective maintenance.
 
 As described in Section~\ref{intro},
 the health of the system is re-evaluated at three types of triggers.
-Triggers of type (1) are the evenly spaced planned evaluation time points $m\delta$, where $m \in \naturals_0$,
-giving the time granularity at which maintenance actions can be reasonably initiated.***
+Triggers of type (1) are the evenly spaced planned evaluation time points $m\delta$, where $m \in \naturals_0$.
+%giving the time granularity at which maintenance actions can be reasonably initiated.***
 %Let $\tthresh$ be a threshold time span chosen for practical reasons.
 %used to decide when maintenance is initiated, i.e.,
 %a time span chosen to reflect operational practicalities.
