@@ -995,6 +995,60 @@ and shows how $\tausnow$ is numerically determined in this situation.
 %Numerical examples comparing results for three exemplary failure histories are given in Section~\ref{sec:examples},
 %and a small simulation study is presented in Section~\ref{sec:sim}.
 
+
+\subsection{Two exemplary timelines}
+\label{sec:policy-example}
+
+Figure~\ref{fig:timeline} shows two examplary time lines,
+starting each with a new system (operational cycle) at $t=0$.
+The timeline on the left leads to preventive maintenance,
+the timeline on the right to corrective maintenance.
+
+As described in Section~\ref{intro},
+the health of the system is re-evaluated at three types of triggers.
+Triggers of type (1) are the evenly spaced planned evaluation time points $m\delta$, where $m \in \naturals_0$.
+%giving the time granularity at which maintenance actions can be reasonably initiated.***
+%Let $\tthresh$ be a threshold time span chosen for practical reasons.
+%used to decide when maintenance is initiated, i.e.,
+%a time span chosen to reflect operational practicalities.
+The times $m\delta$ are indicated by vertical tick lines on the time axis in Figure~\ref{fig:timeline},
+where $\delta = 0.1$.
+The moments of failure of a component form the other two types of triggers.
+A component failure after which the system still functions is a trigger of type (2),
+depicted as a (non-filled) circle on the time axis.
+A filled circle indicates a trigger of type (3),
+which is a component failure that causes the whole system to fail.
+
+For each trigger of type (1) and (2),
+the system health is evaluated by calculating $\tausnow$,
+the currently optimal time to re-evaluation, %$\tausnow$ is %calculated,
+visualized by the thick horizontal bars in Figure~\ref{fig:timeline}.
+%The details of calculating $\tausnow$ are described in detail in Sections~\ref{sec:costrate} and \ref{sec:optim}.***
+For a type (3) trigger, the system health evaluation just corresponds to acknowledging that the system has failed.
+%/ to the diagnosis/insight*** of system failure.
+%and calculation of $\tausnow$ is 
+For triggers of type (1) and (2),
+the calculated $\tausnow$ is compared to the time to the next planned evaluation time point.
+When $\tausnow$ is shorter than this time,
+preventive maintenance of the system is initiated.
+
+In the timeline on the left of Figure~\ref{fig:timeline},
+$\tausnow$ is re-evaluated at times $\tnow = 0.1, 0.2, 0.24, 0.3, 0.36, 0.4$,
+where $0.24$ and $0.36$ correspond to component failure times.
+Note that the failure at $\tnow = 0.24$ substantially shortens $\tausfun{0.24}$,
+such that $0.24 + \tausfun{0.24} < 0.2 + \tausfun{0.2}$,
+i.e., the optimal moment of re-evaluation has moved backwards in time.
+This illustrates that new insights drawn from a component failure
+(regarding the reliability block diagram as well as the component model)
+may have considerable influence on the system RLD
+and the $\tausnow$ that is derived from it.
+The component failure at $\tnow = 0.36$ leads to a further shortened $\tausfun{0.36}$,
+such that $\tausfun{0.36} < 0.1 = \delta$.
+However, this does not lead to an immediate decision for preventive maintenance,
+since $\tausfun{0.36}$ is compared to the time to the next planned evaluation at $t = 0.4$.
+The decision for preventive maintenance is instead made at $\tnow = 0.4$,
+as only then it is not economical any more to wait for the next planned evaluation at $t = 0.5$.
+
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -1052,68 +1106,14 @@ Failures that lead to the whole system failing (trigger 3) are marked by a fille
 \label{fig:timeline}
 \end{figure}
 
-
-\subsection{Two exemplary timelines}
-\label{sec:policy-example}
-
-Figure~\ref{fig:timeline} shows two examplary time lines,
-starting each with a new system (operational cycle) at $t=0$.
-The timeline on the left leads to preventive maintenance,
-the timeline on the right to corrective maintenance.
-
-As described in Section~\ref{intro},
-the health of the system is re-evaluated at three types of triggers.
-Triggers of type (1) are the evenly spaced planned evaluation time points $m\delta$, where $m \in \naturals_0$.
-%giving the time granularity at which maintenance actions can be reasonably initiated.***
-%Let $\tthresh$ be a threshold time span chosen for practical reasons.
-%used to decide when maintenance is initiated, i.e.,
-%a time span chosen to reflect operational practicalities.
-The times $m\delta$ are indicated by vertical tick lines on the time axis in Figure~\ref{fig:timeline},
-where $\delta = 0.1$.
-The moments of failure of a component form the other two types of triggers.
-A component failure after which the system still functions is a trigger of type (2),
-depicted as a (non-filled) circle on the time axis.
-A filled circle indicates a trigger of type (3),
-which is a component failure that causes the whole system to fail.
-
-For each trigger of type (1) and (2),
-the system health is evaluated by calculating $\tausnow$,
-the currently optimal time to re-evaluation, %$\tausnow$ is %calculated,
-visualized by the thick horizontal bars in Figure~\ref{fig:timeline}.
-%The details of calculating $\tausnow$ are described in detail in Sections~\ref{sec:costrate} and \ref{sec:optim}.***
-For a type (3) trigger, the system health evaluation just corresponds to acknowledging that the system has failed.
-%/ to the diagnosis/insight*** of system failure.
-%and calculation of $\tausnow$ is 
-For triggers of type (1) and (2),
-the calculated $\tausnow$ is compared to the time to the next planned evaluation time point.
-When $\tausnow$ is shorter than this time,
-preventive maintenance of the system is initiated.
-
-In the timeline on the left of Figure~\ref{fig:timeline},
-$\tausnow$ is re-evaluated at times $\tnow = 0.1, 0.2, 0.24, 0.3, 0.36, 0.4$,
-where $0.24$ and $0.36$ correspond to component failure times.
-Note that the failure at $\tnow = 0.24$ substantially shortens $\tausfun{0.24}$,
-such that $0.24 + \tausfun{0.24} < 0.2 + \tausfun{0.2}$,
-i.e., the optimal moment of re-evaluation has moved backwards in time.
-This illustrates that new insights drawn from a component failure
-(regarding the reliability block diagram as well as the component model)
-may have considerable influence on the system RLD
-and the $\tausnow$ that is derived from it.
-The component failure at $\tnow = 0.36$ leads to a further shortened $\tausfun{0.36}$,
-such that $\tausfun{0.36} < 0.1 = \delta$.
-However, this does not lead to an immediate decision for preventive maintenance,
-since $\tausfun{0.36}$ is compared to the time to the next planned evaluation at $t = 0.4$.
-The decision for preventive maintenance is instead made at $\tnow = 0.4$,
-as only then it is not economical any more to wait for the next planned evaluation at $t = 0.5$.
-
 The timeline on the right of Figure~\ref{fig:timeline} illustrates an operational cycle ending with corrective maintenance.
 Here, the component failure at $\tnow = 0.27$ leads to system failure.
 The size of $\tausfun{0.2}$ indicates that the component failure that happens at $\tnow = 0.27$
-had been deemed very unlikely at time $\tnow = 0.2$.
+had been deemed very unlikely at time $\tnow = 0.2$,
 but then nevertheless occured at $t = 0.27$.
 
 
-\subsection{Formal*** / Detailed description of the policy}
+\subsection{Detailed description of the policy}
 \label{sec:operationalprocedure}
 
 Each operational cycle starts with a system startup.
@@ -1122,8 +1122,6 @@ i.e., all components in the system are (as good as) new and have not aged.
 An operational cycle ends when the system is either maintained preventively, %at time $\tnow + \tausnow$ (on an absolute time scale),
 or the system fails, which triggers a corrective maintenance action.
 
-***below two pars towards the end? 
-
 We assume that both preventive and corrective maintenance result in an (as good as) new system state by replacing all components,
 such that the system begins a new operational cycle always under the same conditions.
 At first sight, replacing a complete system when only some parts of it are defective may seem strange.
@@ -1131,15 +1129,15 @@ However, there are many real life examples, including from daily live.
 So called complete clustering \citep{2017:oldekeizer}
 may be optimal in case of a very strong economic dependence between the different parts of a system,
 e.g., due to a very high fixed set-up cost independent of the maintenance activities to be done,
-as is the case of installations/facilities*** used in the generation and distribution of oil and gas.
-Note that often for safety reasons, the latter installations/facilities*** are monitored continuously.
+as is the case of installations used in the generation and distribution of oil and gas.
+Note that often for safety reasons, the latter installations are monitored continuously.
 There may be also technical dependencies between parts of a system that may require combined replacement:
 replacing the cassette of a bike often also requires to replace the chain,
 and the tires of an airplane are required to have the same thickness.
 But also complete systems are replaced because replacing one or more of its parts may take much longer,
 which may result in big production losses.
 Another reason can be that there may be a high probability that when individual parts are replaced,
-other parts will be damaged/have to be damaged***, requiring their replacement as well.
+other parts will be damaged, requiring their replacement as well.
 
 Replacement schemes that do not replace all components during maintenance
 would require to account for the different ages of components in the system
@@ -1148,81 +1146,6 @@ While this is in principle possible in our approach,
 exploring such selective replacement schemes is out of scope for this paper.
 Optimizing over replacement schemes is, in our view, a higly interesting topic that merits an investigation of its own.
 We will return to this in the conclusion (Section~\ref{sec:outlook}).
-
-\begin{figure}
-\centering
-\begin{tikzpicture}
-[node distance=6mm,
- font=\footnotesize,
- box/.style={draw, rectangle, thick, minimum height=6mm, minimum width=15mm},
- box2/.style={draw, rectangle, thick, minimum height=6mm, minimum width=28mm, rounded corners=2mm},
- dec/.style={draw, shape=diamond, thick, minimum height=4mm, minimum width=4mm},
- pfeil/.style={-latex', very thick}]
-\node (startup) [box] {\parbox{18ex}{\centering system start-up\\ $\tnow = 0, m= 0$\\ initial params.\\ $\nkz, \ykz$}};
-\node (mincrem) [box, below=57mm of startup] {$m = m + 1$};
-\node (cptfail) [dec, below right=9mm and 17mm] {\parbox{10ex}{\centering $\exists\, t_{k,i}$ s.t.\\ \rule{0ex}{2ex} \\ ?}};
-%$(m-1)\delta$\\ $ < t_{k,i} < $\\ $m\delta$}};
-\node at (cptfail) {$\scriptstyle \tnow < t_{k,i} < (m+1)\delta$};
-%\coordinate (mcoord) at ($(startup) * (0, -2)$) {};
-\node (nfltnow) [box, below=of cptfail] {\parbox{21ex}{\centering $\tnow = (m + 1)\delta$,\\ update parameters\\ to $\nknow, \yknow$}};
-\node (yfltnow) [box, right=of cptfail] {\parbox{21ex}{\centering $\tnow = t_{k,i}$,\\ update parameters\\ to $\nknow, \yknow$}};
-\node (sysfail) [dec, below=5.6mm of yfltnow] {\parbox{8ex}{\centering system\\ failed?}};
-\node (tausmde) [box, below=of nfltnow] {\parbox{21ex}{\centering determine $\tausnow$}};
-\node (taustki) [box, below=of sysfail] {\parbox{21ex}{\centering determine $\tausnow$}};
-\node (tausdel) [dec, below=of tausmde] {\parbox{10ex}{\centering $\tausnow$\\ \rule{2ex}{0ex}$< \delta$?}};
-\node (taudtki) [dec, below=of taustki] {\parbox{10ex}{$\tausnow <$\\ \phantom{?}}};
-\node at ($(taudtki) + (0,-2mm)$) {$\scriptstyle (m + 1) \delta - t_{k,i}$?};
-\node (corrmnt) [box, right=8.5mm of sysfail] {\parbox{21ex}{\centering corrective repair\\ at $\tnow$ (cost $c_c$)}};
-\node (prevmnt) [box, right=of taudtki] {\parbox{21ex}{\centering preventive repair\\ at $\tnow$ (cost $c_p$)}};
-\node (updatep) [box, below=7.5mm of corrmnt] {\parbox{21ex}{\centering set initial params.\\ for next cycle as\\ $\nkz = \nknow$\\ $\ykz = \yknow$}};
-%\coordinate (nocoord) at ($(taudtki) + (-1.8,-1.3)$) {};
-\coordinate (nocoord) at ($(taudtki) + (-1.8, 1.6)$) {};
-\coordinate (yscoord) at ($(tausdel) + ( 0  ,-1.5)$) {};
-\coordinate (nxtcoor) at ($(updatep) + ( 1.8, 0  )$) {};
-\draw[pfeil] (startup) |- ($(cptfail.west) + (0.1, 0.1)$);
-\draw[pfeil] (mincrem) |- ($(cptfail.west) + (0.1,-0.1)$);
-\draw[pfeil] (cptfail) -- (nfltnow) node[midway, left] {no};
-\draw[pfeil] (cptfail) -- (yfltnow) node[midway, above] {yes};
-\draw[pfeil] (yfltnow) -- (sysfail);
-\draw[pfeil] (nfltnow) -- (tausmde);
-\draw[pfeil] (sysfail) -- (taustki) node[midway, left] {no};
-\draw[pfeil] (sysfail) -- (corrmnt) node[midway, above] {yes};
-\draw[pfeil] (tausmde) -- (tausdel);
-\draw[pfeil] (taustki) -- (taudtki);
-\draw[pfeil] (tausdel) -| (mincrem) node[at start, above left] {no};
-\draw[very thick] (taudtki) -| (nocoord) node[near start, above] {no} -| (mincrem);
-\draw[pfeil] (taudtki) -- (prevmnt) node[midway, above] {yes};
-\draw[pfeil] (tausdel) -- (yscoord) -| (prevmnt) node[at start, above right] {yes};
-\draw[pfeil] (prevmnt) -- (updatep);
-\draw[pfeil] (corrmnt) -- (updatep);
-\draw[pfeil, dotted] (updatep) -- (nxtcoor) |- (startup) node[midway, above left] {start new cycle};
-%
-%\node (startup) [box]                       {\parbox{20ex}{\centering system start-up\\ (all comp.\ new)}};
-%\node (sysfail) [box, right=of startup]     {system failed?};
-%\node (tauchck) [box, below=6mm of sysfail] {$\tausnow < \delta$?};
-%\node (gotonxt) [box, below=6mm of tauchck] {\parbox{17ex}{\centering continue to\\ $\tnow = (m+1)\delta$}};
-%\draw [thick, dashed, rounded corners=2mm] ($(gotonxt.south east) + (2mm,-1mm)$) rectangle ($(sysfail.north west) + (-5mm,1mm)$) node[above left=0mm and -33mm] {each $\tnow = m \delta, m \in \naturals_0$};
-%\node [above left=0mm and -8mm of startup] {$t=0$};
-%\node (correct) [box, right=of sysfail, minimum width=18mm] {\parbox{14ex}{\centering corrective\\ maintenance\\ (cost $c_c$)}};
-%\node (prevent) [box, right=of tauchck, minimum width=18mm] {\parbox{14ex}{\centering preventive\\ maintenance\\ (cost $c_p$)}};
-%\node (update) [box, below right=10mm and -4mm of prevent, minimum width=10mm] {\parbox{12ex}{\centering update parameters}};
-%\draw[pfeil] (startup) -- (sysfail);
-%\draw[pfeil] (sysfail) -- (tauchck) node[midway, right] {no};
-%\draw[pfeil] (tauchck) -- (gotonxt) node[midway, right] {no};
-%\draw[very thick] (gotonxt.west) -| ($(sysfail.west) + (-3mm,0mm)$);
-%\draw[pfeil] (sysfail) -- (correct) node[midway, above] {yes};
-%\draw[pfeil] (tauchck) -- (prevent) node[midway, above] {yes};
-%\draw[pfeil] (correct) -| (update);
-%\draw[pfeil] (prevent) -| (update);
-%\draw[pfeil, dotted] (update) -| (startup) node[midway, below right] {start new cycle};
-\end{tikzpicture}
-\caption{Flowchart for the proposed maintenance policy,
-showing a single operational cycle,
-including the loop back to system startup that starts a new cycle as a dashed arrow.}
-%For simplicity of presentation, we exclude the possibility that several component failure times
-%happen between the evaluation times $(m-1) \delta$ and $m \delta$.}
-\label{fig:procedure}
-\end{figure}
 
 Figure~\ref{fig:procedure} depicts the flow chart for the policy,
 indicating the decisions that are repeatedly encountered in a single operational cycle.
@@ -1236,7 +1159,7 @@ with $\delta$ a sufficiently small time increment.
 During an operational cycle,
 $\tausnow$ is usually recalculated at times $\tnow = m \delta$, $m = 0, 1, 2, \ldots$.
 %where the time increment $\delta$ should be small enough to be negligible on the scale of system lifetime.
-However, if a component fails before the next $\tnow$ on the grid,
+However, if a component $i$ of type $k$ fails before the next $\tnow$ on the grid,
 $\tnow$ is set instead to the exact failure time $t_{k,i}$.
 Next, we check whether the system has failed due to this component failure.
 If the system has failed, a corrective maintenance action is carried out, incurring cost $c_c$.
@@ -1280,7 +1203,8 @@ and we compare $\tausnow$ to $\delta$.
 If $\tausnow < \delta$, a preventive maintenance action is triggered, incurring cost $c_p$,
 otherwise we attempt to move to the next planned evaluation point, by setting $m =  (m + 1)$.
 
-If the current $\tnow$ is instead an off-grid time corresponding to a component failure time $t_{k,i}$,
+If the current $\tnow$ is instead an off-grid time corresponding to failure of component $i$ of type $k$ at time $t_{k,i}$,
+after which the system still functions,
 then the next planned evaluation time is the next time on the grid.
 Let $m$ be such that $m \delta < t_{k,i} < (m + 1) \delta$,
 so the next time on the grid is $(m + 1) \delta$,
@@ -1292,10 +1216,85 @@ In both cases, we decide to maintain the system preventively
 when the optimal time to re-evaluation is closer to now than the next time we intend to re-evaluate the system RLD, %$\tausnow$,
 since otherwise, in waiting to the next planned evaluation time,
 one would exceed the optimal system failure risk 
-as determined by the trade-off made via $\gnow(\cdot)$. ***drop $\gnow(\cdot)$ here, like: ...trade-off that results in $\tausnow$.
+as determined by the trade-off made via $\gnow(\cdot)$. %***drop $\gnow(\cdot)$ here, like: ...trade-off that results in $\tausnow$.
 When $\tausnow$ is instead further in the future than the next planned evaluation time,
 we can safely continue to the next planned evaluation time,
 without risking to miss the cost-optimal moment to preventively maintain the system.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+[node distance=6mm,
+ font=\footnotesize,
+ box/.style={draw, rectangle, thick, minimum height=6mm, minimum width=15mm},
+ box2/.style={draw, rectangle, thick, minimum height=6mm, minimum width=28mm, rounded corners=2mm},
+ dec/.style={draw, shape=diamond, thick, minimum height=4mm, minimum width=4mm},
+ pfeil/.style={-latex', very thick}]
+\node (startup) [box] {\parbox{18ex}{\centering system start-up\\ $\tnow = 0, m= 0$\\ initial params.\\ $\nkz, \ykz$}};
+\node (mincrem) [box, below=57mm of startup] {$m = m + 1$};
+\node (cptfail) [dec, below right=9mm and 17mm] {\parbox{10ex}{\centering $\exists\, t_{k,i}$ s.t.\\ \rule{0ex}{2ex} \\ ?}};
+%$(m-1)\delta$\\ $ < t_{k,i} < $\\ $m\delta$}};
+\node at (cptfail) {$\scriptstyle \tnow < t_{k,i} < (m+1)\delta$};
+%\coordinate (mcoord) at ($(startup) * (0, -2)$) {};
+\node (nfltnow) [box, below=of cptfail] {\parbox{21ex}{\centering $\tnow = (m + 1)\delta$,\\ update parameters\\ to $\nknow, \yknow$}};
+\node (yfltnow) [box, right=of cptfail] {\parbox{21ex}{\centering $\tnow = t_{k,i}$,\\ update parameters\\ to $\nknow, \yknow$}};
+\node (sysfail) [dec, below=5.6mm of yfltnow] {\parbox{8ex}{\centering system\\ failed?}};
+\node (tausmde) [box, below=of nfltnow] {\parbox{21ex}{\centering determine $\tausnow$}};
+\node (taustki) [box, below=of sysfail] {\parbox{21ex}{\centering determine $\tausnow$}};
+\node (tausdel) [dec, below=of tausmde] {\parbox{10ex}{\centering $\tausnow$\\ \rule{2ex}{0ex}$< \delta$?}};
+\node (taudtki) [dec, below=of taustki] {\parbox{10ex}{$\tausnow <$\\ \phantom{?}}};
+\node at ($(taudtki) + (0,-2mm)$) {$\scriptstyle (m + 1) \delta - t_{k,i}$?};
+\node (corrmnt) [box, right=8.5mm of sysfail] {\parbox{21ex}{\centering corrective repair\\ at $\tnow$ (cost $c_c$)}};
+\node (prevmnt) [box, right=of taudtki] {\parbox{21ex}{\centering preventive repair\\ at $\tnow$ (cost $c_p$)}};
+\node (updatep) [box, below=7.5mm of corrmnt] {\parbox{21ex}{\centering set initial params.\\ for next cycle as\\ $\nkz = \nknow$\\ $\ykz = \yknow$}};
+%\coordinate (nocoord) at ($(taudtki) + (-1.8,-1.3)$) {};
+\coordinate (nocoord) at ($(taudtki) + (-1.8, 1.6)$) {};
+\coordinate (yscoord) at ($(tausdel) + ( 0  ,-1.5)$) {};
+\coordinate (nxtcoor) at ($(updatep) + ( 1.8, 0  )$) {};
+\draw[pfeil] (startup) |- ($(cptfail.west) + (0.1, 0.1)$);
+\draw[pfeil] (mincrem) |- ($(cptfail.west) + (0.1,-0.1)$);
+\draw[pfeil] (cptfail) -- (nfltnow) node[midway, left] {no};
+\draw[pfeil] (cptfail) -- (yfltnow) node[midway, above] {yes};
+\draw[pfeil] (yfltnow) -- (sysfail);
+\draw[pfeil] (nfltnow) -- (tausmde);
+\draw[pfeil] (sysfail) -- (taustki) node[midway, left] {no};
+\draw[pfeil] (sysfail) -- (corrmnt) node[midway, above] {yes};
+\draw[pfeil] (tausmde) -- (tausdel);
+\draw[pfeil] (taustki) -- (taudtki);
+\draw[pfeil] (tausdel) -| (mincrem) node[at start, above left] {no};
+\draw[pfeil] (taudtki) -| (nocoord) node[near start, above] {no} -- ($(mincrem) + (0,7mm)$); %($(0,1cm)*(nocoord) + (1cm,0)*(mincrem)$); %
+\draw[pfeil] (taudtki) -- (prevmnt) node[midway, above] {yes};
+\draw[pfeil] (tausdel) -- (yscoord) -| (prevmnt) node[at start, above right] {yes};
+\draw[pfeil] (prevmnt) -- (updatep);
+\draw[pfeil] (corrmnt) -- (updatep);
+\draw[pfeil, dotted] (updatep) -- (nxtcoor) |- (startup) node[midway, above left] {start new cycle};
+%
+%\node (startup) [box]                       {\parbox{20ex}{\centering system start-up\\ (all comp.\ new)}};
+%\node (sysfail) [box, right=of startup]     {system failed?};
+%\node (tauchck) [box, below=6mm of sysfail] {$\tausnow < \delta$?};
+%\node (gotonxt) [box, below=6mm of tauchck] {\parbox{17ex}{\centering continue to\\ $\tnow = (m+1)\delta$}};
+%\draw [thick, dashed, rounded corners=2mm] ($(gotonxt.south east) + (2mm,-1mm)$) rectangle ($(sysfail.north west) + (-5mm,1mm)$) node[above left=0mm and -33mm] {each $\tnow = m \delta, m \in \naturals_0$};
+%\node [above left=0mm and -8mm of startup] {$t=0$};
+%\node (correct) [box, right=of sysfail, minimum width=18mm] {\parbox{14ex}{\centering corrective\\ maintenance\\ (cost $c_c$)}};
+%\node (prevent) [box, right=of tauchck, minimum width=18mm] {\parbox{14ex}{\centering preventive\\ maintenance\\ (cost $c_p$)}};
+%\node (update) [box, below right=10mm and -4mm of prevent, minimum width=10mm] {\parbox{12ex}{\centering update parameters}};
+%\draw[pfeil] (startup) -- (sysfail);
+%\draw[pfeil] (sysfail) -- (tauchck) node[midway, right] {no};
+%\draw[pfeil] (tauchck) -- (gotonxt) node[midway, right] {no};
+%\draw[very thick] (gotonxt.west) -| ($(sysfail.west) + (-3mm,0mm)$);
+%\draw[pfeil] (sysfail) -- (correct) node[midway, above] {yes};
+%\draw[pfeil] (tauchck) -- (prevent) node[midway, above] {yes};
+%\draw[pfeil] (correct) -| (update);
+%\draw[pfeil] (prevent) -| (update);
+%\draw[pfeil, dotted] (update) -| (startup) node[midway, below right] {start new cycle};
+\end{tikzpicture}
+\caption{Flowchart for the proposed maintenance policy,
+showing a single operational cycle,
+including the loop back to system startup that starts a new cycle as a dashed arrow.}
+%For simplicity of presentation, we exclude the possibility that several component failure times
+%happen between the evaluation times $(m-1) \delta$ and $m \delta$.}
+\label{fig:procedure}
+\end{figure}
 
 At the end of each operational cycle, i.e.,
 after maintaining the system either preventively or correctively,
@@ -1321,11 +1320,11 @@ To determine the optimal time to maintenance $\tausnow$,
 we use the expected one-cycle cost rate 
 \citep{1984:ansell-bendell-humble,1996:mazzuchi-soyer,2006:coolen-schrijner-coolen}
 as the unit cost rate.
-Although a different, renewal theory based way to calculate the unit cost rate is often used
-in CBM literature \citep[e.g.,][]{2013:si-et-al,2011:kim-et-al},
-%As we discussed in the Introduction,
-we use the one-cycle cost rate as it is the most appropriate for our situation,
-where $\tausnow$ changes frequently.
+As discussed in the literature review (Section~\ref{sec:literature}),
+we cannot use the renewal theory based way to calculate the unit cost rate as often encountered
+in CBM literature \citep[e.g.,][]{2013:si-et-al,2011:kim-et-al}.
+%we use the one-cycle cost rate as it is the most appropriate for our situation,
+%where $\tausnow$ changes frequently.
 
 Let $c_p$ be the cost of preventive maintenance, and $c_c$ the cost of corrective (unplanned, breakdown) maintenance, where $c_p < c_c$.
 Usually, set-up costs, the actual maintenance costs (labor, new components) and downtime costs are much higher for corrective maintenance,
@@ -1353,10 +1352,10 @@ c_c /  \tsysnow      & \text{if }        \tnow < \tsysnow  <  \tnow + \tau \,.
 \end{cases}
 \label{eq:gtau}
 \end{align}
-Note that here, $\tau$ is a time span starting from $\tnow$,
+Note that here $\tau$ is a time span starting from $\tnow$,
 and so is a time on a prospective time scale, where $0$ corresponds to $\tnow$.
 In contrast, $\tnow$ and $\tsysnow$ are times on an absolute time scale,
-where $0$ corresponds to the time of system start-up.
+where $0$ corresponds to the time of a new system start-up.
 Taking the expectation over $\Tsysnow$ in \eqref{eq:gtau} leads to the expected operational cycle cost rate
 \begin{align}
 \gnow(\tau) &= \E[g(\tau \mid \Tsysnow)] \nonumber\\ 
@@ -1419,12 +1418,13 @@ As can be seen there and in the numerical examples in Section~\ref{sec:examples}
 for continuous component lifetime distributions,
 $\tausnow$ is a smooth function of $\tnow$ during periods where no component fails,
 with discrete jumps at component failure times.
-The size of the jump depends on the relevance of the failed component for the current system reliability.
+The size of the jump depends on the relevance of the failed component
+for the reliability of the system at the moment that the component failure occurs.
 
 Note that common cause failures, i.e., failures of several components at the same time due to a shared root cause,
 are currently not accounted for in our model. %, as we assume component failures to be mutually independent
 %given the component model parameters.
-Such simulatenous failures will seriously influence the RLD and thus $\tausnow$.
+Such simultaneous failures will seriously influence the RLD and thus $\tausnow$.
 We will return to this in the conclusion (Section~\ref{sec:outlook}).
 %
 %Next, we describe how to numerically evaluate \eqref{eq:gtnowtau} and determine $\tausnow$
@@ -1470,9 +1470,10 @@ in the sense that $\gnow(\tau)$ evaluations will be correct even if $t_h < \taus
 
 We have implemented our method in \textsf{R} \citep{R},
 using the package \texttt{ReliabilityTheory} \citep{2016:aslett-RT}
-to calculate survival signatures.
+to calculate survival signatures
+(code available on request).
 As the parameter update step is closed-form,
-recalculation of $\tausnow$ is a matter of one or two seconds,
+recalculation of $\tausnow$ is a matter of seconds,
 allowing for a near real-time update.
 %
 %***calculations in \textsf{R} can be vectorized and are thus fast.
