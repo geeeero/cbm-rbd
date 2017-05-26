@@ -524,8 +524,8 @@ and now have placed it within Section~5.2.}
 \smallskip
 
 \emph{By using $\naturals_0$ and not $\naturals$ as suggested by Reviewer 2,
-we intended to emphasize that the system RLD is evaluated for the first time directly at system startup time 0.
-***still keep it???***}
+we intended to emphasize that the system RLD is evaluated for the first time directly at system startup time 0,
+and thus prefer to keep using $\naturals_0$.}
 
 \item In page 13, paragraph 2, line 7, please remove “is” from the sentence “is for the current off-grid time”.
 
@@ -537,7 +537,7 @@ we intended to emphasize that the system RLD is evaluated for the first time dir
 
 \smallskip
 
-\emph{***Our intention was to establish the cost rate function $g^{(\tnow)}(\cdot)$ as a generic function first
+\emph{Our intention was to establish the cost rate function $g^{(\tnow)}(\cdot)$ as a generic function first
 and to explain the details of its calculation later.
 In the rewritten Section~5, we now mention this more explicitely.}
 
@@ -555,6 +555,12 @@ The paper is well structured, well written and technically accurate. The numeric
 
 The weak point of the work is related to the different hypothesis which significantly simplify the modeling framework. More precisely:
 
+\smallskip
+
+\emph{In the revision of our manuscript, we have aimed to emphasize the pilot character of our approach,
+which should be seen as a first step towards a completely new class of CBM policies.
+We now discuss these and other restricting assumptions more prominently in the Introduction, Section~5, and in the conclusion (Section~8).}
+
 \begin{enumerate}
 \item All the components have the same lifetime model (namely the Weibull distribution) with a known fixed shape parameter which is not discussed. Only the scale parameter is updated and directly associated with the mean lifetime if the shape parameter is known.
 
@@ -563,55 +569,45 @@ The weak point of the work is related to the different hypothesis which signific
 \emph{Yes, each component type has an individual Weibull model assigned,
 where the (component type specific) shape parameter is assumed to be fixed and known.
 We agree that the assumption of a fixed known shape parameter is a serious limitation of our approach. 
-We added a comment on this in the conclusion,
+We have added a comment on this in the conclusion,
 repeating a comment from the beginning of Section~4, where we wrote:
 ``The model could be extended to learn also the shape parameter in a later step,
 using, e.g., the discretized approach by Soland (1969).''
 We now also emphasize in the introduction and the conclusion that the method as described in the manuscript is deliberately kept simple
 to allow for a clear and straight-forward demonstration of the general approach.
 For a practical application, one should indeed update the shape parameter as well,
-but in our view, adding this conceptually simple but notationally cumbersome feature would obstruct the goal of this manuscript.***}
+but in our view, adding this conceptually simple but notationally cumbersome feature would obstruct the goal of this manuscript.}
 
 \item In the introduction the authors claim that ``the system RLD does not require a physical inspection’’ because the failure time of each component is detected online via continuous monitoring. This hypothesis seems to be very strong as it requires a costly related instrumentation. Most of the time, systems with redundancies are not monitored in a such way. if a specific application field is inferred, please give it explicitly. It could be interesting to discuss shortly the sensitivity of the proposed maintenance policy to non-detection of some components failures. 
 
 \smallskip
 
-\emph{***We have added a short discussion related to the non-detection of component failures in the conclusion.
+\emph{We have added a short discussion related to the non-detection of component failures in the conclusion.
 We were mostly thinking of systems where a failure of a component is immediately eminent,
 but the measurement of the component's health degree is very difficult or too costly.
 This is, e.g., the case for components in power systems, where failure of a certain component
 is usually reflected in a loss of current (detectable from the control centre),
-but proper health monitoring (going beyond working yes/no) is cumbersome and costly.
-***}
+but proper health monitoring (going beyond working yes/no) is cumbersome and costly.}
 
 \item The maintenance of the system is always a replacement of the whole system by an as good as new one. This hypothesis is hard to accept especially if all the components are continuously monitored. 
 
 \smallskip
 
-\emph{***new text by SDF in email 2017-04-05:\\
-{\scriptsize
-At first sight, replacing a complete system when only some parts of it are defective may seem strange.
+\emph{In the rewritten Section~5, we discuss this point now extensively in Section~5.2:
+``At first sight, replacing a complete system when only some parts of it are defective may seem strange.
 However, there are many real life examples, including from daily life.
 So called complete clustering (Olde Keizer et al, 2017)
 may be optimal in case of a very strong economic dependence between the different parts of a system,
-e.g., due to a very high fixed set-up cost independent of the maintenance activities to be done
-as is the case of installations/facilities used in the generation and distribution of oil and gas.
-Note that often for safety reasons, the latter installations/facilities are monitored continuously.
-There also may be technical dependencies between parts of a system that may require combined replacement,
-like in the case of replacing the cassette of a bike often also requiring to replace the chain,
-or the tires of an airplane which are required to have the same thickness.
+e.g., due to a very high fixed set-up cost independent of the maintenance activities to be done,
+as is the case of installations used in the generation and distribution of oil and gas.
+Note that often for safety reasons, the latter installations are monitored continuously.
+There may be also technical dependencies between parts of a system that may require combined replacement:
+replacing the cassette of a bike often also requires to replace the chain,
+and the tires of an airplane are required to have the same thickness.
 But also complete systems are replaced because replacing one or more of its parts may take much longer,
-which may result in large production losses.
+which may result in big production losses.
 Another reason can be that there may be a high probability that when individual parts are replaced,
-other parts will be damaged/have to be damaged, requiring their replacement too.
-}\\
-***2 references to M.Shafiee et al (???)***\\
-***Agreed, this is another important simplifying assumption that we needed to make in this manuscript,
-which should be seen as a first step towards a completely new class of CBM policies.
-We originally mentioned this in the description of the policy but only at the end of Section~5.1,
-and commented on this in the fourth paragraph of the conclusion (Section~8), bottom of p.~25.
-In the introduction and the complete re-write of Section~5, we tried to emphasize the pilot character of our approach,
-mentioning the restricting assumptions more prominently.***}
+other parts will be damaged, requiring their replacement as well.''}
 \end{enumerate}
 
 Some additional comments or remarks are given hereafter to help improving the paper. 
@@ -621,21 +617,22 @@ Some additional comments or remarks are given hereafter to help improving the pa
 
 \smallskip
 
-\emph{***We did mention right in the first paragraph of the discussion of Si et al.~(2013)
+\emph{We did mention right in the first paragraph of the discussion of Si et al.~(2013)
 that they use an empirical Bayesian framework,
-but now also state explicitely that the use of a Bayesian approach is a main reason why we consider this paper relevant for the discussion.}
+but we now also state explicitely that the use of a Bayesian approach is a main reason why we consider this paper relevant for the discussion.}
 
 \item Page 1, last line: Maintaining systems or components at the right time is the central idea of all the maintenance policies, not only for CBM. The specificity of CBM is to take the decision about maintenance on the basis of the on-line system condition. 
 
 \smallskip
 
-\emph{***??? rewrite???}
+\emph{Agreed. We now give a better definition of CBM, as
+``using information about the actual condition of the systems or components''.}
 
 \item Page 2, line 18 from top: The phrase ``a kind of inspection-based CBM policy’’ is maladjusted. The paper does not deal with inspection. The system is supposed to be continuously monitored (and re-evaluated from times to times). It would also be interesting to give in details the specific points which make the proposed policy a ``kind of’’ CBM policy.
 
 \smallskip
 
-\emph{Agreed, we deleted that notion, and hope to be more clear now here.***}
+\emph{Agreed, we deleted that notion, and hope to be more clear now here.}
 
 \item Page 2, line 15 from bottom: Please explain the acronym ``RLD’’ the first time it is used. 
 
@@ -667,29 +664,26 @@ A tool to help answering that question are prior predictive distributions.
 They give a distribution for the failure times that can be expected according to the expert's choice of prior
 (here: inverse Gamma with specific parameters)
 \textbf{in combination with the assumed sample model} (here: Weibull).
-Figure~6 (previously Figure~5)*** depicts prior predictive reliability functions for the priors in the case study of Section~6,
+Figure~6 (previously Figure~5) depicts prior predictive reliability functions for the priors in the case study of Section~6,
 as a way to visualize the choice of prior parameters given in Table~2 in the context of the Weibull model.
 When an expert feels that these prior predictive reliability functions do not correspond to the failure time distribution (s)he postulates,
 and no change of prior parameters can approximate the postulated failure time distribution,
 then the prior family would seem inappropriate,
 under the condition that the sample model is indeed correct.
-(Methods for checking the sample model are discussed, e.g., in
-Bayarri and Berger (2000), ``P values for composite null models'',
-Journal of the American Statistical Association 95(452): 1127–1142.)\\
-***add this reference to the paper?***}
+We now briefly discuss this issue in Section~6.1,
+also giving a reference to methods for checking the correctness of the sampling model.}
 
 \item Page 13, section 5.1: The grid of planned evaluation time points is defined with a ``sufficiently small’’ time increment. What does it mean quantitatively? It seems that if $\delta$ is very small the maintenance time will be almost given by $\tau_*^{(\tnow)}$.
 
 \smallskip
 
-\emph{We have completely rewritten Section~5 and now address the role of $\delta$ in more detail there, as well as in the Introduction.
-***not sure what is meant by the second sentence.}
+\emph{We have completely rewritten Section~5 and now address the role of $\delta$ in more detail there, as well as in the Introduction.}
 
 \item Page 14, first paragraph: Is it possible to determine the number of operational cycles which is necessary to improve significantly the values of the parameters? It seems that after a certain amount of time the updates will have a negligible effect. 
 
 \smallskip
 
-\emph{***Indeed, due to the weigthed average update in Equation (7),
+\emph{Indeed, due to the weigthed average update in Equation (7),
 it is possible that the parameter $y_k$ (the expected value of the Weibull scale parameter $\lambda_k$)
 will not change by much once it has approached the 'true' value.
 However, the strength parameter $n_k$ will continue to increase,
@@ -706,7 +700,7 @@ Updating allows to automatically adapt to any changes in the failure behaviour.}
 
 \smallskip
 
-\emph{***??? In Equation~(15), the unit cost rate $\gnow(\tau)$ is defined as
+\emph{In Equation~(15), the unit cost rate $\gnow(\tau)$ is defined as
 $\gnow(\tau) = \E[g(\tau \mid \Tsysnow)]$,
 i.e., as expectation of the conditioned unit cost rate $g(\tau \mid \Tsysnow)$ from Equation~(14).
 We do not think the variance of the conditioned unit cost rate,
@@ -717,7 +711,7 @@ $\text{V}[g(\tau \mid \Tsysnow)]$ is instructive for the purposes of our manuscr
 \smallskip
 
 \emph{We wrote ``$\gnow(\tau)$ gives the cost rate that we expect to incur [...]'',
-which includes the notion of mean via ``expect'', and we hope this is clear enough.*** (???)}
+which includes the notion of mean via ``expect'', and we hope this is clear enough.}
 \end{enumerate}
 
 \end{document}

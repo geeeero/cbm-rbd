@@ -249,7 +249,7 @@ Each component type has a separate Weibull model that may also include test data
 The cost-optimal moment of replacement for the system is obtained by minimizing
 the expected cost rate per unit of time.
 The unit cost rate is recalculated when components fail
-or at the end of every (very short) fixed inter-monitoring*** interval,
+or at the end of every (very short) fixed inter-evaluation interval,
 leading to a dynamic maintenance policy,
 since the aging of components and possible failures will change the cost-optimal moment of replacement in the course of time.
 Via numerical experiments, some insight into the performance of the policy is given.
@@ -1433,7 +1433,7 @@ Note that common cause failures, i.e., failures of several components at the sam
 are currently not accounted for in our model. %, as we assume component failures to be mutually independent
 %given the component model parameters.
 Such simultaneous failures will seriously influence the RLD and thus $\tausnow$.
-We will return to this in the Conclusion (Section~\ref{sec:outlook}).
+We will return to this in the conclusion (Section~\ref{sec:outlook}).
 %
 %Next, we describe how to numerically evaluate \eqref{eq:gtnowtau} and determine $\tausnow$
 %for our choice of component model.
@@ -1561,7 +1561,9 @@ is visualized in Figure~\ref{fig:compprior1fig1},
 showing the prior predictive reliability function for a single component of each type.
 Note that these functions are not plain Weibull reliability functions,
 but weighted averages over Weibull reliability functions according to the prior distribution over the scale parameter $\lambda_k$.
-We see that, e.g., the median prior expected failure times are
+Judging the adequacy of the prior parameter choices thus requires the sampling model to be correct.
+Methods for checking the sampling model are discussed, e.g., in \citet{2000:bayarri-berger}.
+Figure~\ref{fig:compprior1fig1} indicates that, e.g., the median prior expected failure times are
 $2.2$, $4.1$, $6.3$, and $3.1$ for type $C$, $H$, $M$, and $P$ components, respectively.
 While it is a priori quite unlikely that any type $C$ component will survive past time $6$,
 we expect 25\% of type $H$ components to survive past time $10$.
@@ -1744,9 +1746,10 @@ We conducted a small simulation study to illustrate the performance of our polic
 as compared to corrective and age-based policies.
 To be able to discern the effect of parameter learning over several operational cycles,
 we simulated component failure times for five subsequent operational cycles for each simulation repetition.
-We thus can compare policies that carry information gained in one operational cycle to the next operational cycle
+We thus can compare policies that use information gained in previous operational cycles
+%We thus can compare policies that carry information gained in one operational cycle to the next operational cycle
 with policies that do not update component parameters at the end of an operational cycle.
-We also distinguish the condition-based maintenance policies with and without continuous parameter update
+We also distinguish condition-based maintenance policies with and without continuous parameter update
 as in Section~\ref{sec:examples}.
 In total, we compare the six maintenance policies listed in Table~\ref{tab:sim-abbrev},
 which also gives the abbreviations used in Figures~\ref{fig:br1sim1fig5Tt01}, \ref{fig:br1sim2fig5Tt01} and \ref{fig:br1sim3fig5Tt01}.
@@ -1837,7 +1840,8 @@ i.e., $\lambda_k = 0.5 \ykz$ for all $k =$ C, H, M, P.
 %($0.5 \times$ MTTF) than expected.
 The results are depicted in Figure~\ref{fig:br1sim2fig5Tt01}.
 
-Here, most condition-based and all age-based policies cannot avoid system failures entirely.
+%Here, most condition-based and all age-based policies cannot avoid system failures entirely.
+Here, only CBM-cpu can avoid system failures entirely.
 Both CBM-epu and CBM-npu result in one system failure in the $20 \times 5 = 100$ system runs,
 whereas the two age-based policies each result in ten system failures.
 System runtimes are less variable for the age-based policies
@@ -1936,8 +1940,9 @@ In this paper, we assume that component failure times are observed precisely via
 However, in many applications, the component status can only be determined
 at inspections, leading to interval-censored failure time observations.
 Extending the model to account for interval-censored failure times
-would allow to derive a condition-based maintenance policy with wider-spaced inspections,
-which could also determine the optimal moment for the next inspection of the system.
+would allow to derive a condition-based maintenance policy with wider-spaced inspections
+by determining the optimal moment for the next inspection of the system.
+%which could also determine the optimal moment for the next inspection of the system.
 %*** extend the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 %we would need to add interval-censored data (failure has happened between last and current inspection)
 
@@ -2008,9 +2013,9 @@ in form of the posterior predictive distributions derived in Section~\ref{sec:po
 
 Another promising extension would be to use sets of conjugate priors for the component models.
 This approach is described in \cite{2016:walter-coolen},
-resulting in sets of residual life distributions $\Rsysnow(t)$,
-%Consequently, we would obtain a set of expected operational cycle cost rate functions $\gnow(\tau)$.
-and this would lead to sets of expected operational cycle cost rate functions $\gnow(\tau)$.
+leading to sets of residual life distributions $\Rsysnow(t)$.
+Consequently, we would obtain a set of expected operational cycle cost rate functions $\gnow(\tau)$.
+%and this would lead to sets of expected operational cycle cost rate functions $\gnow(\tau)$.
 The determination of the (set of) optimal time(s) to maintenance $\tausnow$
 is then non-trivial,
 and would involve decision criteria discussed in the imprecise probability literature,
@@ -2021,7 +2026,7 @@ like E-admissibility, maximality, or maximin \citep[see, e.g., \S 8][]{itip}.
 
 Gero Walter was supported by the DINALOG project CAMPI
 (``Coordinated Advanced Maintenance and Logistics Planning for the Process Industries'').
-
+%
 Both authors would like to thank Frank Coolen for inspiring discussions
 and valuable hints on maintenance optimization criteria.
 
