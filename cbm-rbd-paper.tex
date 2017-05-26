@@ -1484,7 +1484,8 @@ allowing for a near real-time update.
 \section{Further elaboration of the case study}
 \label{sec:examples}
 
-We now explain in more detail the case study used for the previous illustrative figures.
+We now explain in more detail the case study used for the previous illustrative figures
+(Figures~\ref{fig:ghist1fig2T} and \ref{fig:tauhist1fig2T}).
 We use the simplified automotive brake system as introduced in Section~\ref{sec:sysrel},
 see Figure~\ref{fig:brakesys-layout} for the reliability block diagram.
 
@@ -1626,7 +1627,7 @@ and maintenance is scheduled too early,
 %$\tausnow$ (left panel) is consistently lower for the non-adaptive algorithm,
 %same with $\tstarnow$ (center panel).
 %This is because the adaptive algorithm recognizes that system components are more reliable than expected,
-leading to lower expected operational cycle cost rates $\gstarnow$ (right panel).
+leading to higher expected operational cycle cost rates $\gstarnow$ (right panel).
 $\tausnow$ for the policy without parameter update drops below $\delta = 0.1$ at $\tnow = 4$,
 while maintenance is triggered for the algorithm with parameter update at $\tnow = 6$.
 The parameter update thus allows to run the system for two more time units,
@@ -1828,17 +1829,18 @@ i.e., $\lambda_k = 0.5 \ykz$ for all $k =$ C, H, M, P.
 %($0.5 \times$ MTTF) than expected.
 The results are depicted in Figure~\ref{fig:br1sim2fig5Tt01}.
 
-Here, both corrective and age-based policies cannot avoid system failures entirely.
-The condition-based policies result in two to three system failures in the $20 \times 5 = 100$ system runs,
-whereas the age-based policies result in nine to ten system failures.
+Here, most condition-based and all age-based policies cannot avoid system failures entirely.
+Both CBM-epu and CBM-npu result in one system failure in the $20 \times 5 = 100$ system runs,
+whereas the two age-based policies each result in ten system failures.
 System runtimes are less variable for the age-based policies
 since they do not use the current system structure information, %available information on the component level,
 i.e., which components have failed and which not. %during operational cycles
 System runtimes are more variable for the condition-based policies,
 but longer on average, leading to lower realized cost rates.
 Again, CBM-cpu performs slightly better than CBM-epu
-as it has the possibility to learn within an operational cycle as well.
-CBM-npu does surprisingly well, considering that it never updates prior component parameters. 
+as it has the possibility to learn within an operational cycle as well,
+managing to avoid system failures entirely. 
+Still, CBM-npu does surprisingly well, considering that it never updates prior component parameters. 
 This confirms the observation from Section~\ref{sec:ex-3}
 that current system structure information delivers a major part of the gains for our CBM policy.
 
@@ -1931,18 +1933,18 @@ which could also determine the optimal moment for the next inspection of the sys
 %*** extend the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
 %we would need to add interval-censored data (failure has happened between last and current inspection)
 
-***Another way to relax the assumption of precise component monitoring
+Another way to relax the assumption of precise component monitoring
 is to consider unreliable detection of component failures.
 Our approach may be quite sensitive to the non-detection of component failures,
 and one could tackle this by including a probabilistic observation model,
-which assigns probabilities to false positives and false negatives in the component monitoring.***
+which assigns probabilities to false positives and false negatives in the component monitoring.
 
-***We also assume that the component-specific Weibull shape parameters are known,
+We also assume that the component-specific Weibull shape parameters are known,
 and update only the scale parameters.
 We restricted ourselves to this simplistic modelling
 to allow for a clear and straight-forward demonstration of the general approach.
 In a practical application, the shape parameters should be jointly updated together with the scale parameters.
-This could be implemented by adopting the discretized approach by \cite{1969:soland}.***
+This could be implemented by adopting the discretized approach by \cite{1969:soland}.
 
 As mentioned at the end of Section~\ref{sec:costrate},
 we currently disregard the possibility of common cause failures,
@@ -1984,7 +1986,7 @@ or all components of one type.
 %$P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
 %which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
 
-***A further simplifying assumption relates to the cost of preventive and corrective replacements,
+A further simplifying assumption relates to the cost of preventive and corrective replacements,
 which we consider as fixed.
 In many real-life applications, maintenance costs vary over time
 (e.g., increased labour cost due to overtime or night shift premiums),
@@ -1993,13 +1995,14 @@ In our approach, time-dependent cost structures can be easily accounted for,
 by letting $c_p$ and $c_c$ in \eqref{eq:gtau} depend on $\tau$.
 It will be more complex to account for costs that are dependent on the system state,
 but our approach already provides the necessary information
-in form of the posterior predictive distributions derived in Section~\ref{sec:postpred}.***
+in form of the posterior predictive distributions derived in Section~\ref{sec:postpred}.
 %since the calculation of $\Rsysnow(t)$ involves  
 
 Another promising extension would be to use sets of conjugate priors for the component models.
 This approach is described in \cite{2016:walter-coolen},
-leading to sets of current residual life distributions $\Rsys(t)$.
-Consequently, we would obtain a set of expected operational cycle cost rate functions $\gnow(\tau)$.
+resulting in sets of residual life distributions $\Rsysnow(t)$,
+%Consequently, we would obtain a set of expected operational cycle cost rate functions $\gnow(\tau)$.
+and this would lead to sets of expected operational cycle cost rate functions $\gnow(\tau)$.
 The determination of the (set of) optimal time(s) to maintenance $\tausnow$
 is then non-trivial,
 and would involve decision criteria discussed in the imprecise probability literature,
