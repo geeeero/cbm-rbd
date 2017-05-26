@@ -301,6 +301,12 @@ and base the maintenance policy for the system on this distribution.
 In fact, our CBM policy can also be seen as based on a multivariate degradation signal,
 where each component sends a binary signal, and the reliability block diagram is used for sensor fusion.
 
+To calculate the system RLD, we use the survival signature,
+which allows to deal with different types of components each having an individual failure time model
+(see Section~\ref{sec:sysrel}).
+Here we assume that components of different types fail independently,
+and that failure times of components of the same type are independent given the model parameters.
+
 In our new policy, there are three types of triggers to review the system:
 (1) at the end of each very short time interval $\delta$ 
 (where $\delta$ is very short compared to the lifetimes of components),
@@ -327,8 +333,10 @@ or that this decision should be postponed until the next planned evaluation mome
 accepting the risk of a system breakdown before.
 To determine the latter,
 we calculate the `optimal' next evaluation moment %moment for system replacement***
-based on minimizing the expected maintenance-related cost per per unit of time for the present operational cycle,
-where an operational cycle starts with a new system, and ends after this system has been replaced by a new system. 
+based on minimizing the expected maintenance-related cost per unit of time for the present operational cycle.
+An operational cycle spans the time between two consecutive system maintenance actions.
+We assume that in both preventive and corrective maintenance, the entire system is replaced or brought to an as good as new state,
+and thus optimize the unit cost rate calculated over the time since the last system replacement.
 
 When the `optimal' next evaluation moment is before the next planned evaluation moment, we replace the system now;
 else we wait for the next planned evaluation moment.
@@ -976,7 +984,7 @@ A preventive maintenance action is initiated
 when $\tnow + \tausnow$ would be earlier than the next planned evaluation time point.
 We describe this dynamic and adaptive maintenance policy in more detail in Section~\ref{sec:operationalprocedure}.
 %a flow chart for the policy is given in Figure~\ref{fig:procedure}.
-
+%
 The optimal time to system re-evaluation $\tausnow$ is determined based on $\Rsysnow(t)$
 by minimizing $\gnow(\tau)$, the expected cost rate for the current operational cycle.
 %An operational cycle begins with system start-up,
@@ -989,7 +997,7 @@ and thus is not tied to our choice for the component models.
 One could also consider alternative optimality criteria to determine $\tausnow$;
 when safety is paramount one could, e.g., determine $\tausnow$ such that
 the probability of system failure is at most at some very low pre-determined level.
-
+%
 Section~\ref{sec:optim} then focuses on our choice for the component models and the resulting form for $\Rsysnow(t)$,
 and shows how $\tausnow$ is numerically determined in this situation.
 %Numerical examples comparing results for three exemplary failure histories are given in Section~\ref{sec:examples},
@@ -1139,7 +1147,7 @@ which may result in big production losses.
 Another reason can be that there may be a high probability that when individual parts are replaced,
 other parts will be damaged, requiring their replacement as well.
 
-Replacement schemes that do not replace all components during maintenance
+Replacing not all components during maintenance
 would require to account for the different ages of components in the system
 at the start of a new cycle.
 While this is in principle possible in our approach,
@@ -1425,7 +1433,7 @@ Note that common cause failures, i.e., failures of several components at the sam
 are currently not accounted for in our model. %, as we assume component failures to be mutually independent
 %given the component model parameters.
 Such simultaneous failures will seriously influence the RLD and thus $\tausnow$.
-We will return to this in the conclusion (Section~\ref{sec:outlook}).
+We will return to this in the Conclusion (Section~\ref{sec:outlook}).
 %
 %Next, we describe how to numerically evaluate \eqref{eq:gtnowtau} and determine $\tausnow$
 %for our choice of component model.
@@ -1867,7 +1875,7 @@ and within these two groups a clear effect of the parameter update strategy.
 Here, CBM-cpu obtains the longest system runtimes, and thus the lowest cost rates,
 with a clear advantage over CBM-epu and CBM-npu.
 
-Overall, it seems that CBM-cpu can play its adaptive strengths most effectively
+Overall, it seems that CBM-cpu can exert its adaptive strengths most effectively
 when prior assumptions are too pessimistic,
 while also performing well when prior assumptions are correct or too optimistic.
 %This means that experts may confidently tend towards pessimistic specifications
