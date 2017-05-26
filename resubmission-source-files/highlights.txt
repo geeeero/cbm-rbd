@@ -1,0 +1,5 @@
+* Presents a new class of condition-based maintenance policies for complex systems
+* Uses the reliability block diagram and the status (working/defective) of components
+* Closed-form Bayesian update of system reliability using all available information
+* Separate Weibull model for each component type using expert knowledge and test data
+* Maintenance decision via minimization of the expected one-cycle cost rate 

@@ -1,0 +1,23 @@
+We propose a new condition-based maintenance policy for complex systems,
+based on the status (working, defective) of all components within a system,
+and the system's reliability block diagaram.
+Via the survival signature,
+we obtain a predictive distribution for the system survival time,
+also known as residual life distribution,
+based on which of the system's components currently function or not,
+and the current age of the functioning components.
+
+The time to failure of the system components
+is modeled by a Weibull distribution with fixed shape parameter.
+The scale parameter is iteratively updated in a Bayesian fashion
+using the current (censored and non-censored) component lifetimes.
+Each component type has a separate Weibull model that may also include test data.
+
+The cost-optimal moment of replacement for the system is obtained by minimizing
+the expected cost rate per unit of time.
+The unit cost rate is recalculated when components fail
+or at the end of every (very short) fixed inter-evaluation interval,
+leading to a dynamic maintenance policy,
+since the ageing of components and possible failures will change the cost-optimal moment of replacement over time.
+Numerical experiments provide some insight into the performance of the policy.
+

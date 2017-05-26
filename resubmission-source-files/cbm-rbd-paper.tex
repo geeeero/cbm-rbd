@@ -330,7 +330,7 @@ it is determined in both cases whether the system should be replaced now,
 or that this decision should be postponed until the next planned evaluation moment,
 accepting the risk of a system breakdown before.
 To determine the latter,
-we calculate the `optimal' next evaluation moment %moment for system replacement***
+we calculate the `optimal' next evaluation moment
 based on minimizing the expected maintenance-related cost per unit of time for the present operational cycle.
 An operational cycle spans the time between two consecutive system maintenance actions.
 We assume that in both preventive and corrective maintenance, the entire system is replaced or brought to an as good as new state,
@@ -338,11 +338,8 @@ and thus optimize the unit cost rate calculated over the time since the last sys
 
 When the `optimal' next evaluation moment is before the next planned evaluation moment, we replace the system now;
 else we wait for the next planned evaluation moment.
-The reason behind this decision is that $\delta$ is taken as %usually is 
-%the shortest interval for which re-evaluation of the system RLD will show any difference***
-%the shortest inter-observation period that can be realized from a hardware point of view.
+The reason behind this decision is that $\delta$ is taken as 
 the shortest inter-evaluation period that can be realized from a hardware point of view. 
-%the time granularity according to which maintenance actions can be reasonably triggered***.
 To illustrate, for components with lifetimes amounting to a few days,
 $\delta$ could be in the order of minutes;
 for components with lifetimes measuring in months,
@@ -458,9 +455,6 @@ Let $\Tsys$ be the time to failure of the system,
 and $\Rsys(t) := P(\Tsys > t)$ be the system reliability function.
 Here we describe how $\Rsys(t)$, given the system reliability block diagram and arbitrary component models,
 can be efficiently calculated using the survival signature.
-%We will show in Section~\ref{sec:adaptive-sysrel-weibull} how, for a certain choice of component model,
-%this method can be used to find the system reliability function $\Rsysnow(t)$ at current time $\tnow$ for a monitored system,
-%giving us the residual life distribution on which we base our adaptive maintenance policy.
 
 We can analyze systems with an arbitrary reliability block diagram,
 consisting of components of $K$ different types,
@@ -475,8 +469,6 @@ which in turn actuate a braking pad assembly each ($P_1$ -- $P_4$).
 The hand brake mechanism ($H$) directly actuates the brake pad assemblies $P_3$ and $P_4$,
 and the vehicle brakes when at least one brake pad assembly is actuated.
 Note that because of the `handbrake shortcut', this system cannot be described as a nesting of series and parallel subsystems.
-%This system is observed until time $\tnow$,
-%leading to censored observation of certain component lifetimes within the system.
 Our example system is deliberately kept quite simple for didactical reasons.
 The survival signature allows to analyze much larger systems,
 see, e.g., the examples in \citet{2017:reed},
@@ -541,8 +533,6 @@ and our approach is able to deal with such systems.
 \end{tikzpicture}
 \caption{Reliability block diagram for a simplified automotive brake system
 with four component types $M$, $H$, $C$ and $P$.}
-%Note that this system layout cannot be expressed as a nesting of series and parallel layouts.
-%The corresponding survival signature $\Phi(l_M,l_H,l_C,l_P)$ is given in Table~\ref{tab:brakesys-survsign}.}
 \label{fig:brakesys-layout}
 \end{figure}
 
@@ -631,8 +621,6 @@ omitting the rows for which $\Phi(l_M, l_H, l_C, l_P) = 0$ or $\Phi(l_M, l_H, l_
 
 In this section, we describe how the system reliability function $\Rsysnow(t)$ at current time $\tnow$ 
 can be calculated for a specific component model.
-%Section~\ref{sec:policy} will then show how an adaptive maintenance policy
-%can be derived for a monitored system based on such a current system residual life distribution. 
 
 We consider the well-known Weibull model for the component lifetimes,
 which is used in a wide variety of reliability studies. 
@@ -645,31 +633,16 @@ By using the Bayesian approach described in Section~\ref{sec:weibull},
 our component model allows to include both expert assessments and test data (if available),
 and furthermore can account for component lifetime information from previous operational cycles
 and the current operational cycle up to $\tnow$.
-%***component model: weibull with fixed shape,
-%inverse gamma prior on scale parameter,
-%fix priors via expected lifetime and prior strength,
-%test data inclusion
-%with noninformatiove right-censoring
 %
 In Section~\ref{sec:postpred} we derive the posterior predictive distribution
 for the Weibull component model as needed for the current system reliability calculation.
 Finally, in Section~\ref{sec:sysreltnow}, we adapt the method from Section~\ref{sec:sysrel} to the dynamic setting,
 resulting in a formula for $\Rsysnow(t)$.
-%***output is $\Rsysnow(t)$, the current (at time $\tnow$) system reliability function
-%(residual life distribution, RLD)
-%taking into account the current system state,
-%including the current ages of system components, 
-%and the lifetime histories of all component types,
-%including test data (if available) and expert assessments.
 
 The model description below follows closely \cite[\S 2, \S 4.1 -- \S 4.3]{2016:walter-coolen},
 who presented the same residual life distribution model.
 However, \cite{2016:walter-coolen} do not consider maintenance policies,
 but focus instead on a generalization of the RLD model by using imprecise probability models for the component lifetimes.
-%These sets of priors can be seen as parametric P-boxes,
-%a certain kind of imprecise probability model \citep[see, e.g.,][]{itip}.
-%Such models allow for vague and partial prior specifications,
-%and provide sensitivity to prior-data conflict \cite[\S 2.2.3.3]{diss}.
 
 
 \subsection{Bayesian update of the Weibull component models}
@@ -723,8 +696,6 @@ f(\lambda_k\mid a_k,b_k) &= \frac{(b_k)^{a_k}}{\Gamma(a_k)} \lambda_k^{-a_k -1} 
 \label{eq:ig-def}
 \end{align}
 in short, $\lambda_k \mid a_k, b_k \sim \ig(a_k,b_k)$.
-%Here, we have added the prior parameters $a_k$ and $b_k$ in notation
-%to indicate that the prior over $\lambda$ depends on their values.
 
 The inverse Gamma distribution is convenient because it is a conjugate prior,
 i.e., the posterior obtained by Bayes' rule is again an inverse Gamma distribution and thus easily tractable
@@ -735,7 +706,6 @@ as indicated below.
 
 Instead of the usual parametrization in terms of $a_k$ and $b_k$,
 we use the parameters $\nk > 1$ and $\yk > 0$
-%(the upper index ${}\uz$ is used to indicate that these are prior parameters)
 because they are more easy to interpret.
 They are defined as
 \begin{align}
@@ -771,8 +741,6 @@ Then, the updated, posterior parameters are
 \label{eq:ig-update}
 \end{align}
 where $\tautk = \sum_{i=1}^{e_k} (t_{k,i})^\beta + \sum_{i=1}^{c_k} (t^+_{k,i})^\beta$.
-%The upper index ${}\un$ indicates that these are posterior parameters resulting from an update with $n_k$ observations,
-%where we leave out the index $k$ for $n_k$ in the upper index to increase legibility.
 
 From the simple update rule \eqref{eq:ig-update}, we see that
 $\ykp$ is a weighted average of the prior parameter $\yk$ and the maximum likelihood estimator (ML) $\tautk/e_k$,
@@ -788,8 +756,6 @@ Using \eqref{eq:abtony} and \eqref{eq:ig-update}, the posterior distribution ove
 \lambda_k \mid \nk, \yk, \vec{t}_k \sim \ig(\nk + e_k + 1, \nk \yk + \tautk)\,.
 \label{eq:ig-update-alpha}
 \end{align}
-%where we have added the prior parameters $\nkz$ and $\ykz$ in notation
-%to emphasize that the posterior is a synthesis of prior information and data.
 As this posterior can be defined in terms of
 the updated, posterior parameters $\nkp$ and $\ykp$,
 we may also write
@@ -804,13 +770,6 @@ At any time $\tnow > 0$,
 all non-failed components contribute a right censored observation $\tpnow$;
 any failed components instead contribute a fully observed, non-censored lifetime,
 and both types of observations can be used in the update step \eqref{eq:ig-update}.
-%Before we write this out formally in Section~\ref{sec:postpred},
-%we will first present how system reliability functions can be derived based on component models.
-
-%To keep notation simple,
-%we will below denote the parameters of the inverse Gamma distribution by $\nkz$ and $\ykz$,
-%regardless of them expressing expert information alone,
-%or stemming from the combination of expert information and test data.
 
 
 \subsection{Component posterior predictive distributions determined at $\tnow$}
@@ -832,14 +791,11 @@ thus accounts for all knowledge on component type $k$ that is available at syste
 
 Following our comments at the end of Section~\ref{sec:weibull},
 the component models can be further updated
-using information gained from the current operational cycle as of $\tnow$: %run of the system until $\tnow$:
+using information gained from the current operational cycle as of $\tnow$:
 failure times of failed components,
 and the right-censoring time $\tpnow$ for each non-failed component,
 can be used to update $\nkz$ and $\ykz$ according to \eqref{eq:ig-update}.
 We denote the resulting parameter values by $\nknow$ and $\yknow$.
-%(It is of course possible to update $\nkz$ and $\ykz$ directly to $\nknow$ and $\yknow$ if no test data is available.)
-%Furthermore, the fact that the components in the system that still function have reached the age $\tnow$
-%must be used when calculating the posterior predictive distribution.
 
 In analogue to the notation used in Section~\ref{sec:weibull},
 let $N_k = \eknow + \cknow$ be the number of type $k$ components in the monitored system,
@@ -951,17 +907,11 @@ We will evaluate \eqref{eq:sysrel-tnow} on a dense grid of prediction times $t >
 thus discretely approximating the RLD.
 As the evaluation of \eqref{eq:sysrel-tnow} for each $t$ does not involve any complex numeric calculations or Monte Carlo sampling,
 the grid of prediction values can be very fine.
-%
-%Next, we will describe an adaptive maintenance policy based on %\eqref{eq:sysrel-tnow}
-%a current residual life distribution,
-%first in general, then for our implementation,
-%where a fine discrete approximation of the RLD is obtained.
 
 
 \section{Dynamic and adaptive maintenance policy based on the current system residual life distribution}
 \label{sec:policy}
 
-%***start with $\tausnow$???
 Now we can derive the adaptive and dynamic maintenance policy
 that resembles a CBM policy.
 Our idea is described here first in general terms,
@@ -975,21 +925,13 @@ which coincides with starting to use a new system.
 Instead of determining a threshold for a degradation signal like in usual CBM approaches,
 we determine, for $\tnow$, the adaptive and dynamic time span $\tausnow$
 which gives the time from $\tnow$ until the next optimal moment to re-evaluate the system.
-%Close to system startup, $\tausnow$ will be large;
-%but as components in the system age and some indeed fail over time,
-%$\tausnow$ will typically decrease.
 A preventive maintenance action is initiated
 when $\tnow + \tausnow$ would be earlier than the next planned evaluation time point.
 We describe this dynamic and adaptive maintenance policy in more detail in Section~\ref{sec:operationalprocedure}.
-%a flow chart for the policy is given in Figure~\ref{fig:procedure}.
 %
 The optimal time to system re-evaluation $\tausnow$ is determined based on $\Rsysnow(t)$
 by minimizing $\gnow(\tau)$, the expected cost rate for the current operational cycle.
-%An operational cycle begins with system start-up,
-%and ends when either preventive maintenance is carried out,
-%or a failure of the system occurs, with subsequent corrective maintenance.
 This criterion, as detailed in Section~\ref{sec:costrate},
-%only assumes that $\Rsysnow(t)$ is given,
 only assumes that a RLD is given,
 and thus is not tied to our choice for the component models.
 One could also consider alternative optimality criteria to determine $\tausnow$;
@@ -998,8 +940,6 @@ the probability of system failure is at most at some very low pre-determined lev
 %
 Section~\ref{sec:optim} then focuses on our choice for the component models and the resulting form for $\Rsysnow(t)$,
 and shows how $\tausnow$ is numerically determined in this situation.
-%Numerical examples comparing results for three exemplary failure histories are given in Section~\ref{sec:examples},
-%and a small simulation study is presented in Section~\ref{sec:sim}.
 
 
 \subsection{Two exemplary timelines}
@@ -1013,10 +953,6 @@ the timeline on the right to corrective maintenance.
 As described in Section~\ref{intro},
 the health of the system is re-evaluated at three types of triggers.
 Triggers of type (1) are the evenly spaced planned evaluation time points $m\delta$, where $m \in \naturals_0$.
-%giving the time granularity at which maintenance actions can be reasonably initiated.***
-%Let $\tthresh$ be a threshold time span chosen for practical reasons.
-%used to decide when maintenance is initiated, i.e.,
-%a time span chosen to reflect operational practicalities.
 The times $m\delta$ are indicated by vertical tick lines on the time axis in Figure~\ref{fig:timeline},
 where $\delta = 0.1$.
 The moments of failure of a component form the other two types of triggers.
@@ -1027,12 +963,9 @@ which is a component failure that causes the whole system to fail.
 
 For each trigger of type (1) and (2),
 the system health is evaluated by calculating $\tausnow$,
-the currently optimal time to re-evaluation, %$\tausnow$ is %calculated,
+the currently optimal time to re-evaluation,
 visualized by the thick horizontal bars in Figure~\ref{fig:timeline}.
-%The details of calculating $\tausnow$ are described in detail in Sections~\ref{sec:costrate} and \ref{sec:optim}.***
 For a type (3) trigger, the system health evaluation just corresponds to acknowledging that the system has failed.
-%/ to the diagnosis/insight*** of system failure.
-%and calculation of $\tausnow$ is 
 For triggers of type (1) and (2),
 the calculated $\tausnow$ is compared to the time to the next planned evaluation time point.
 When $\tausnow$ is shorter than this time,
@@ -1107,8 +1040,6 @@ at regular intervals $m \delta, m \in \naturals_0$ (trigger 1),
 and at the time of component failures (trigger 2),
 which are marked by a circle on the time axis.
 Failures that lead to the whole system failing (trigger 3) are marked by a filled circle.}
-%The calculation of $\tausnow$ is described in detail in Section~***.}
-%\begin{tikzpicture}\draw (0,0) circle (0.8mm);\end{tikzpicture}
 \label{fig:timeline}
 \end{figure}
 
@@ -1125,7 +1056,7 @@ but then nevertheless occured at $t = 0.27$.
 Each operational cycle starts with a system startup.
 At this point in time, the system is in an (as good as) new state,
 i.e., all components in the system are (as good as) new and have not aged.
-An operational cycle ends when the system is either maintained preventively, %at time $\tnow + \tausnow$ (on an absolute time scale),
+An operational cycle ends when the system is either maintained preventively, 
 or the system fails, which triggers a corrective maintenance action.
 
 We assume that both preventive and corrective maintenance result in an (as good as) new system state by replacing all components,
@@ -1157,14 +1088,10 @@ Figure~\ref{fig:procedure} depicts the flow chart for the policy,
 indicating the decisions that are repeatedly encountered in a single operational cycle.
 The flow chart also contains the loop back to the start of a new operational cycle.
 
-%***Consider a set of evaluation time points $\tnow$.
 Consider a grid of planned evaluation time points $\{m \delta : m \in \naturals_0\}$,
-%where $m = 0, 1, 2, \ldots$,
-%and $\delta$ sufficiently small to be negligible on the system lifetime scale.
 with $\delta$ a sufficiently small time increment.
 During an operational cycle,
 $\tausnow$ is usually recalculated at times $\tnow = m \delta$, $m = 0, 1, 2, \ldots$.
-%where the time increment $\delta$ should be small enough to be negligible on the scale of system lifetime.
 However, if a component $i$ of type $k$ fails before the next $\tnow$ on the grid,
 $\tnow$ is set instead to the exact failure time $t_{k,i}$.
 Next, we check whether the system has failed due to this component failure.
@@ -1180,27 +1107,10 @@ However, because $\tausnow$ is derived from the current $\Rsysnow(t)$,
 our policy is adaptive and dynamic like a CBM policy. 
 When computation of the RLD is fast,
 frequent recalculation of $\tausnow$ is feasible,
-%Then, by evaluating the unit cost rate function $\gnow(\tau)$ (see Section~\ref{sec:costrate} below) on a discrete grid,
-%$\tausnow$ can be approximated with a simple grid search.
-%because we use a fast discrete approximation of the unit cost rate function $\gnow(\tau)$,
-%and determine $\tausnow$ with a simple grid search.
-%Updating $\tausnow$ frequently is useful because,
 and it is useful because,
 even in absence of failures of system components,
 all components age, and also non-failure adds information to the component models,
 reducing uncertainty.
-%Both aspects influence $\Rsysnow(t)$ and thus $\tausnow$,
-%as is visible in the top panel of Figure~\ref{fig:tauhist1fig2T},
-%which gives a numerical example described in more detail in Section~\ref{sec:examples}.
-%An alternative would be to update $\tausnow$ only when a component fails,
-%but as a (near) real-time update of $\tausnow$ is possible and useful,
-%as non-failed components still can be used to update component models ($\nknow$ and $\yknow$) via right-censored observation $\tpnow$.
-%
-%As can happen for an age-based policy, the derived $\gnow(\tau)$ may also be monotonely decreasing.
-%In this case, it is, at the moment $\tnow$, optimal to correctively maintain the system.
-%This means that our approach is not only capable of finding the optimal moment for preventive maintenance,
-%but also capable of indicating when corrective maintenance is the better option.
-%i.e., capable of choosing the maintenance policy.
 
 Once $\tausnow$ is calculated, it is compared to the time span from the current $\tnow$ to the next planned evaluation time.
 If the current $\tnow$ is a time on the grid, then $\tnow = m \delta$ for some $m \in \naturals_0$.
@@ -1219,10 +1129,10 @@ If $\tausnow < (m + 1) \delta - t_{k,i}$, a preventive maintenance action is tri
 otherwise we attempt to move to the next planned evaluation point, which is still $(m + 1) \delta$.
 
 In both cases, we decide to maintain the system preventively
-when the optimal time to re-evaluation is closer to now than the next time we intend to re-evaluate the system RLD, %$\tausnow$,
+when the optimal time to re-evaluation is closer to now than the next time we intend to re-evaluate the system RLD,
 since otherwise, in waiting to the next planned evaluation time,
 one would exceed the optimal system failure risk 
-as determined by the trade-off made via $\gnow(\cdot)$. %***drop $\gnow(\cdot)$ here, like: ...trade-off that results in $\tausnow$.
+as determined by the trade-off made via $\gnow(\cdot)$.
 When $\tausnow$ is instead further in the future than the next planned evaluation time,
 we can safely continue to the next planned evaluation time,
 without risking to miss the cost-optimal moment to preventively maintain the system.
@@ -1297,8 +1207,6 @@ without risking to miss the cost-optimal moment to preventively maintain the sys
 \caption{Flowchart for the proposed maintenance policy,
 showing a single operational cycle,
 including the loop back to system startup that starts a new cycle as a dashed arrow.}
-%For simplicity of presentation, we exclude the possibility that several component failure times
-%happen between the evaluation times $(m-1) \delta$ and $m \delta$.}
 \label{fig:procedure}
 \end{figure}
 
@@ -1306,17 +1214,8 @@ At the end of each operational cycle, i.e.,
 after maintaining the system either preventively or correctively,
 the component information gained during the completed operational cycle is added to the component knowledge base
 by updating the parameters $\nk$ and $\yk$ accordingly,
-%using failure and censoring times as of the end of the cycle.
 such that $\nkz$ and $\ykz$ for the next operational cycle
 account for the (censored) lifetimes observed during the previous operational cycles.
-%We assume that both planned and unplanned maintenance action takes negligible time,
-
-%
-%As we use a one-cycle criterion, the time both preventive and corrective maintenance actions require
-%does not matter directly for the determination of $\tausnow$.
-%Longer downtime and other negative effects of corrective maintenance
-%are instead accounted for through the costs parameters $c_p$ and $c_c$ used in the trade-off leading to $\tausnow$,
-%as described next.
 
 
 \subsection{Expected operational cycle cost rate}
@@ -1329,8 +1228,6 @@ as the unit cost rate.
 As discussed in the literature review (Section~\ref{sec:literature}),
 we cannot use the renewal theory based way to calculate the unit cost rate as often encountered
 in CBM literature \citep[e.g.,][]{2013:si-et-al,2011:kim-et-al}.
-%we use the one-cycle cost rate as it is the most appropriate for our situation,
-%where $\tausnow$ changes frequently.
 
 Let $c_p$ be the cost of preventive maintenance, and $c_c$ the cost of corrective (unplanned, breakdown) maintenance, where $c_p < c_c$.
 Usually, set-up costs, the actual maintenance costs (labor, new components) and downtime costs are much higher for corrective maintenance,
@@ -1344,7 +1241,6 @@ Note that due to the conditional nature of $\Rsysnow(t)$,
 which gives the probability that the system functions at time $t$ given that it functions at $\tnow$,
 also $\fsysnow(t)$ is a conditional probability density,
 with support $\{t \in \reals : t > \tnow \}$.
-%In particular, we have $\fsysnow(t) = 0$ for all $t \le \tnow$.
 
 Conditional on the realization $\tsysnow$ of $\Tsysnow$, the unit cost rate 
 for planning maintenance at $\tau$ time units after $\tnow$ is 
@@ -1380,7 +1276,8 @@ Figure~\ref{fig:ghist1fig2T} shows $\Rsysnow(t)$ and the corresponding $\gnow(\t
 in a numeric example which is described in more detail in Section~\ref{sec:examples}.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{ghist1fig2T}
+%\includegraphics[width=\textwidth]{ghist1fig2T}
+\includegraphics[width=\textwidth]{fig4}
 \caption{System reliability and unit cost rate functions for $\tnow = 0,2,4,6,8$
 for the system depicted in Figure~\ref{fig:brakesys-layout}
 and prior component models as given in Table~\ref{tab:priorparams},
@@ -1390,10 +1287,8 @@ and costs $c_u = 1$, $c_p = 0.2$.}
 \end{figure}
 
 Note that for the integral in \eqref{eq:gtnowtau} to exist,
-%$\E[1/\Tsysnow \mid \Tsysnow > \tnow]$ must exist,
 $\E[1/(\Tsysnow - \tnow)]$ must exist,
 which is a condition for $\fsysnow(\tnow + \theta)$ for values of $\theta$ close to $0$ \citep{2006:coolen-schrijner-coolen}.
-%This restriction probably plays a role in the CBM literature's reluctance to adopt the one-cycle criterion.
 For our approach, however, this condition is not relevant,
 as we use a discrete approximation of $\Rsysnow(t)$ and $\fsysnow(t)$, respectively
 (see Section~\ref{sec:optim} below).
@@ -1401,20 +1296,9 @@ as we use a discrete approximation of $\Rsysnow(t)$ and $\fsysnow(t)$, respectiv
 $\tausnow := \arg\min \gnow(\tau)$
 is the cost-optimal time to do maintenance as of $\tnow$,
 incorporating all that is known at current time $\tnow$.
-%The lower index $\tnow$ of $\tausnow$ emphasizes that
-%depends on $\tnow$, and also on the history of the system.
-%illustrates the derivation of $\tausnow$ .
-%Minimizing $\gnow(\tau)$ leads to $\tausnow$,
-%the optimal moment of maintenance on a prospective time scale.
 The minimal expected operational cycle cost rate $\gstarnow := \gnow(\tausnow)$ corresponding to $\tausnow$
 thus is, as of $\tnow$, the lowest cost rate for the current operational cycle
 that we can expect to attain.
-%attainable for the span of the remaining lifetime of the system,
-%i.e., for what happens beyond current time $\tnow$.
-%$\gstarnow$ increases over time since 
-%***Also of interest is the total expected cost rate as of $\tnow$, denoted by $\gtotalnow$.
-%This gives the expected unit cost rate calculated over the full time since system start-up,
-%under the assumption that maintenance is scheduled for $\tstarnow := \tnow + \tausnow$.
 $\gstarnow$ generally decreases with $\tnow$ since for larger $\tnow$, maintenance costs are spread over a longer time period.
 However, when many (or few but critical) components fail, $\gstarnow$ may increase,
 since then, system failure becomes much more likely, leading to a higher risk of incurring the corrective maintenance cost $c_c$.
@@ -1428,19 +1312,14 @@ The size of the jump depends on the relevance of the failed component
 for the reliability of the system at the moment that the component failure occurs.
 
 Note that common cause failures, i.e., failures of several components at the same time due to a shared root cause,
-are currently not accounted for in our model. %, as we assume component failures to be mutually independent
-%given the component model parameters.
+are currently not accounted for in our model.
 Such simultaneous failures will seriously influence the RLD and thus $\tausnow$.
 We will return to this in the conclusion (Section~\ref{sec:outlook}).
-%
-%Next, we describe how to numerically evaluate \eqref{eq:gtnowtau} and determine $\tausnow$
-%for our choice of component model.
 
 \begin{figure}
-%\centering
-\includegraphics[width=\textwidth]{tauhist1fig2T}
+%\includegraphics[width=\textwidth]{tauhist1fig2T}
+\includegraphics[width=\textwidth]{fig5}
 \caption[t]{$\tausnow$, $\tstarnow = \tnow + \tausnow$ and $\gstarnow = \gnow(\tausnow)$
-%and the total unit cost rate $\gtotalnow$ as functions of $\tnow$
 for the system depicted in Figure~\ref{fig:brakesys-layout},
 assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$,
 and costs $c_u = 1$, $c_p = 0.2$.}
@@ -1457,17 +1336,14 @@ is closed-form, but not tractable analytically.
 Therefore,
 we evaluate $\Rsysnow(t)$ on a dense grid of time points $t$
 covering the time span from $\tnow$ to some horizon time $\tnow + t_h$.
-%(The choice of $t_h$ is discussed in more detail below.)
 We calculate $\gnow(\tau)$ on the same grid,
 and determine $\tausnow$ by minimizing over this grid.
 Here, we approximate the integral in \eqref{eq:gtnowtau} numerically by a sum,
 where $\fsysnow(t)$ is calculated via differences of $\Rsysnow(t)$.
-%$\gnow(\tau)$ is likewise evaluated on a dense grid,
-%and $\tausnow = \arg\min \gnow(\tau)$ is determined as the minimum over the grid.
 
 The horizon time span $t_h$ can be determined by practical considerations,
 but generally should reach far enough into the tail of $\Rsysnow(t)$
-such that $\gnow(\tau)$ is not cut off before it reaches its minimum. %one can be sure to find $\tausnow$.
+such that $\gnow(\tau)$ is not cut off before it reaches its minimum.
 Note that according to \eqref{eq:gtnowtau},
 the calculation of $\gnow(\tau)$ requires
 evaluations of $\Rsysnow(t)$ and $\fsysnow(t)$ only for $\tnow < t \le \tnow + \tau$.
@@ -1481,10 +1357,6 @@ to calculate survival signatures
 As the parameter update step is closed-form,
 recalculation of $\tausnow$ is a matter of seconds,
 allowing for a near real-time update.
-%
-%***calculations in \textsf{R} can be vectorized and are thus fast.
-%***if min $\gnow(\tau)$ at $\tnow + t_h$, corrective maintenance is optimal: policy switch!
-%***if $\tau_*^{(\tnow)}$ larger than certain horizon, than conclude corrective policy
 
 
 \section{Further elaboration of the case study}
@@ -1495,13 +1367,10 @@ We now explain in more detail the case study used for the previous illustrative 
 We use the simplified automotive brake system as introduced in Section~\ref{sec:sysrel},
 see Figure~\ref{fig:brakesys-layout} for the reliability block diagram.
 
-The cost parameters are chosen as $c_c = 1$, $c_p = 0.2$, % in all examples,
+The cost parameters are chosen as $c_c = 1$, $c_p = 0.2$,
 i.e., corrective maintenance is five times more costly than preventive maintenance.
 This makes it worthwile to aim for a preventive repair of the system,
 but corrective maintenance will not be avoided at all cost.
-%Indeed, $c_u / c_p = 5$ means that risking corrective maintenance is worthwile
-%if one can expect to run the system five times longer
-%than the preventive maintenance interval.
 
 The choice of prior parameters for the four component models are discussed in Section~\ref{sec:ex-prior}.
 Then, our maintenance policy is illustrated under three different exemplary failure time histories,
@@ -1526,7 +1395,6 @@ P & $1.5$ & $ 5$\rule{1.5ex}{0ex} & $ 13.0$ & $1$\rule{1ex}{0ex} \\
   \bottomrule
 \end{tabular}
 \caption{Prior parameters for the four component types as used in the numerical examples.}
-%The corresponding expected failure behaviour is visualized in Figure~\ref{fig:compprior1fig1}.}
 \label{tab:priorparams}
 \end{table}
 
@@ -1548,7 +1416,6 @@ Observed failure times thus have a strong influence on the updating of $\ykz$,
 such that component models are primarily data-driven.
 This offers the advantage of quick adaption
 for the case that an expert's assessment of the component MTTF turns out to be inadequate.
-%things could look different for stronger expert information!
 When $\nkz$ and $\ykz$ also include test data,
 then $\nkz$ will typically be larger,
 since the update of $n_k$ involves the number of observed failures
@@ -1568,9 +1435,9 @@ we expect 25\% of type $H$ components to survive past time $10$.
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{compprior1fig1}
+%\includegraphics[width=\textwidth]{compprior1fig1}
+\includegraphics[width=\textwidth]{fig6}
 \caption{Prior predictive reliability functions corresponding to the values from Table~\ref{tab:priorparams},
-%for the four component types of the system depicted in Figure~\ref{fig:brakesys-layout},
 showing the expected failure behaviour.}
 \label{fig:compprior1fig1}
 \end{figure}
@@ -1606,9 +1473,6 @@ steadily increases, with small drops corresponding to drops in $\tausnow$,
 showing that as time progresses, accumulated information indicates that maintenance can be postponed.
 Consequently, $\gstarnow$ (right panel) is steadily decreasing,
 with small upward jumps at the failures of $P_2$ and $P_3$.
-%so the drops in $\tausnow$ do not entirely outweigh the higher likelihood of system failure
-%due to the failure of these components.
-%\textbf{***show $\Rsysnow(\tausnow)$???}
 At $\tnow = 6$, the expected operational cycle cost rate is $0.033$,
 and so considerably lower than the operational cycle cost rate of $0.2 / 1.6 = 0.125$
 that one obtains by maintaining the system preventively at time 1.6,
@@ -1616,7 +1480,8 @@ as suggested by the age-based policy that disregards the information from compon
 In this example, using the component failure information allows to lower the cost rate by 73\%.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{tauhist1fig3T}
+%\includegraphics[width=\textwidth]{tauhist1fig3T}
+\includegraphics[width=\textwidth]{fig7}
 \caption{Illustration of the gains due to the parameter update at each $\tnow$,
 assuming the failure history $P_2 = 3$, $P_3 = 4$, $C_2 = 6$, $C_3 = 7$, $H = 8$.}
 \label{fig:tauhist1fig3T}
@@ -1627,14 +1492,10 @@ There, the results as seen already in Figure~\ref{fig:tauhist1fig2T} are compare
 to the case when component parameters are not updated during the operation of the system,
 while still accounting for the fact that components age,
 and that a failed component changes the system layout.
-%***so dynamic but not adaptive?***
 We see that $\tausnow$ (left panel) is decreasing more quickly in the no update case,
 with the jumps at component failure times being less pronounced than in the update case.
 Without the continuous update, residual system lifetime continues to be underestimated,
 and maintenance is scheduled too early,
-%$\tausnow$ (left panel) is consistently lower for the non-adaptive algorithm,
-%same with $\tstarnow$ (center panel).
-%This is because the adaptive algorithm recognizes that system components are more reliable than expected,
 leading to higher expected operational cycle cost rates $\gstarnow$ (right panel).
 $\tausnow$ for the policy without parameter update drops below $\delta = 0.1$ at $\tnow = 4$,
 while maintenance is triggered for the algorithm with parameter update at $\tnow = 6$.
@@ -1651,7 +1512,6 @@ and follow the system until $\tnow = 2.5$.
 Here, components of type $C$ behave more or less as expected,
 while type $P$ components fail slightly earlier than expected.
 Overall, prior assumptions are reasonably in line with observed failure behaviour.
-%with a slight tendency to earlier failures.
 Consequently, the difference between the continuous update case and the no update case is small,
 as visualized in Figure~\ref{fig:tauhist2fig3T}.
 There, $\tausnow$ values for the policy with parameter updates vary around those obtained for the policy without parameter updates,
@@ -1664,10 +1524,10 @@ in case of the first failure history
 (note the differing vertical and horizontal scales in Figures~\ref{fig:tauhist1fig3T} and \ref{fig:tauhist2fig3T}).
 
 \begin{figure}
-\includegraphics[width=\textwidth]{tauhist2fig3T}
+%\includegraphics[width=\textwidth]{tauhist2fig3T}
+\includegraphics[width=\textwidth]{fig8}
 \caption{Effect of the continuous parameter update for the second failure history ($C_2 = 1$, $C_2 = 3$, $P_2 = 0.5$, $P_3 = 1.5$)
 which is more or less in line with expectations.
-%containing slightly early failures of type $P$ components.
 With observed failure behaviour more or less in line with expectations,
 both the policies with and without continuous update perform similarly,
 unlike in case of the first failure history as depicted in Figure~\ref{fig:tauhist1fig3T},
@@ -1679,28 +1539,6 @@ where updating gave considerable gains.}
 \subsection{Failure history 3: failures earlier than expected}
 \label{sec:ex-3}
 
-%The third failure history contains very late failures for all component types
-%by assuming $C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$,
-%and following the system until $\tnow = 14$.
-%The late failure times for type $C$ components are especially surprising,
-%with the prior predictive reliability being $0.01$ at time $10$
-%(see top left panel of Figure~\ref{fig:compprior1fig1}).
-%Here, the situation is more extreme than in the first failure history.
-%Figure~\ref{fig:tauhist3fig3} shows that, after a first short dip,
-%$\tausnow$ for the continuous update model steadily increases until the first observed failure at $\tnow = 8$.
-%For the model without update, $\tausnow$ steadily decreases instead,
-%ignoring any information on component behaviour to be gained during the current system run.
-%Assuming $\tthresh = 0.5$, the method without parameter update would recommend to maintain the system preventively at $\tnow = 8.4$,
-%with only $P_2$ having failed by then, and all other components up and running,
-%corresponding to a considerable waste of component lifetime.
-%
-%\begin{figure}
-%\includegraphics[width=\textwidth]{tauhist3fig3}
-%\caption{Effect of the continuous parameter update for the third failure history,
-%containing very late failures for all component types ($C_2 = 10$, $C_3 = 12$, $H = 14$, $P_2 = 8$, $P_3 = 9$).}
-%\label{fig:tauhist3fig3}
-%\end{figure}
-%
 The third failure history contains very early failures
 with $C_2 = 0.1$, $C_3 = 0.2$, $C_4 = 0.8$ $H = 1$, $P_2 = 0.3$, $P_3 = 0.4$,
 and we follow the system until $\tnow = 1$,
@@ -1720,7 +1558,6 @@ but it is very unlikely that the system will still function by that time.
 If the system fails between time 1 and time 1.6,
 then the age-based policy would lead to an operational cycle cost of $0.625$ to $1$,
 much higher than for our policy.
-%expected cycle costs are underestimated without update***
 
 Like in failure history 2, the structural information (which components still function?)
 seems to deliver a major part of the gains for our CBM policy,
@@ -1729,7 +1566,8 @@ component failures happen later than expected.
 These findings are confirmed by results from a small simulation study described next.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{tauhist4fig3T}
+%\includegraphics[width=\textwidth]{tauhist4fig3T}
+\includegraphics[width=\textwidth]{fig9}
 \caption{Effect of the continuous parameter update for the third failure history,
 containing very early failures ($C_2 = 0.1$, $C_3 = 0.2$, $C_4 = 0.8$ $H = 1$, $P_2 = 0.3$, $P_3 = 0.4$).}
 \label{fig:tauhist4fig3T}
@@ -1739,13 +1577,11 @@ containing very early failures ($C_2 = 0.1$, $C_3 = 0.2$, $C_4 = 0.8$ $H = 1$, $
 \section{A small simulation study}
 \label{sec:sim}
 
-%A systematic study based on simulation failure times is subsequently presented in Section~\ref{sec:sim}.
 We conducted a small simulation study to illustrate the performance of our policy
 as compared to corrective and age-based policies.
 To be able to discern the effect of parameter learning over several operational cycles,
 we simulated component failure times for five subsequent operational cycles for each simulation repetition.
 We thus can compare policies that use information gained in previous operational cycles
-%We thus can compare policies that carry information gained in one operational cycle to the next operational cycle
 with policies that do not update component parameters at the end of an operational cycle.
 We also distinguish condition-based maintenance policies with and without continuous parameter update
 as in Section~\ref{sec:examples}.
@@ -1771,19 +1607,15 @@ CM      & Corrective maintenance\\
 \end{table}
 
 We compare these policies by three simple performance measures,
-calculated for each repetition. %, which contains five operational cycles.
+calculated for each repetition. 
 $\esys$ is the number of system failures that occured when applying the policy,
 This is an integer between zero and five, as there are five operational cycles per repetition.
 $\mrsys$ is the mean realized system runtime,
 i.e., the average of the realized operational cycle length,
 taken over the five operational cycles per repetition.
-%(I called this 'cycle length' before),
 $\bar{g}$ is the mean realized operational cycle cost rate obtained over the five operational cycles.
 This is calculated as the sum of preventive and corrective maintenance costs incurred in the five operational cycles,
 divided by the sum of the five realized operational cycle lengths.
-%This is a weighted average of the realized operational cycle cost rate for each of the five operational cycles,
-%with weights proportional to the corresponding realized operational cycle length.
-%This equals 
 
 We use again the simplified automotive brake system depicted in Figure~\ref{fig:brakesys-layout},
 together with the prior parameters for the component models as given in Table~\ref{tab:priorparams},
@@ -1792,7 +1624,8 @@ We study three data scenarios A, B and C, corresponding to failure times as expe
 failure times earlier and later than expected.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{br1sim1fig5Tt01ac}
+%\includegraphics[width=\textwidth]{br1sim1fig5Tt01ac}
+\includegraphics[width=\textwidth]{fig10}
 \caption{Simulation study with 20 repetitions, where each repetition consists of 5 subsequent operational cycles.
 Case A: $\lambda_k = \ykz$.}
 \label{fig:br1sim1fig5Tt01}
@@ -1822,7 +1655,8 @@ As the system does not fail before this time in any of the five operational cycl
 the mean realized system runtime is constantly $1.6$, with mean cost rate $0.2 / 1.6 = 0.125$.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{br1sim2fig5Tt01ac}
+%\includegraphics[width=\textwidth]{br1sim2fig5Tt01ac}
+\includegraphics[width=\textwidth]{fig11}
 \caption{Simulation study with 20 repetitions, where each repetition consists of 5 subsequent operational cycles.
 Case B: $\lambda_k = 0.5\ykz$.}
 \label{fig:br1sim2fig5Tt01}
@@ -1835,16 +1669,14 @@ For the second scenario,
 component failure times were simulated as being earlier than expected,
 by choosing $\lambda_k$ for all component types as half the size of the expert's prior guess,
 i.e., $\lambda_k = 0.5 \ykz$ for all $k =$ C, H, M, P.
-%($0.5 \times$ MTTF) than expected.
 The results are depicted in Figure~\ref{fig:br1sim2fig5Tt01}.
 
-%Here, most condition-based and all age-based policies cannot avoid system failures entirely.
 Here, only CBM-cpu can avoid system failures entirely.
 Both CBM-epu and CBM-npu result in one system failure in the $20 \times 5 = 100$ system runs,
 whereas the two age-based policies each result in ten system failures.
 System runtimes are less variable for the age-based policies
-since they do not use the current system structure information, %available information on the component level,
-i.e., which components have failed and which not. %during operational cycles
+since they do not use the current system structure information, 
+i.e., which components have failed and which not.
 System runtimes are more variable for the condition-based policies,
 but longer on average, leading to lower realized cost rates.
 Again, CBM-cpu performs slightly better than CBM-epu
@@ -1855,7 +1687,8 @@ This confirms the observation from Section~\ref{sec:ex-3}
 that current system structure information delivers a major part of the gains for our CBM policy.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{br1sim3fig5Tt01ac}
+%\includegraphics[width=\textwidth]{br1sim3fig5Tt01ac}
+\includegraphics[width=\textwidth]{fig12}
 \caption{Simulation study with 20 repetitions, where each repetition consists of 5 subsequent operational cycles.
 Case C: $\lambda_k = 2\ykz$.}
 \label{fig:br1sim3fig5Tt01}
@@ -1880,46 +1713,6 @@ with a clear advantage over CBM-epu and CBM-npu.
 Overall, it seems that CBM-cpu can exert its adaptive strengths most effectively
 when prior assumptions are too pessimistic,
 while also performing well when prior assumptions are correct or too optimistic.
-%This means that experts may confidently tend towards pessimistic specifications
-%of the component mean time to failures $\yzk$.
-
-
-% ------------- old overview figures ----------------------------------
-\iffalse
-\begin{figure}
-\includegraphics[width=0.5\textwidth]{br1sim1fig5}
-\includegraphics[width=0.5\textwidth]{br1sim2fig5}
-\includegraphics[width=0.5\textwidth]{br1sim3fig5}
-\includegraphics[width=0.5\textwidth]{br1sim4fig5}
-\caption{***Simulation study with ***prospective costrate criterion***, $\tthresh = 0.5$.
-TL: $\lambda_k =     \ykz$,
-TR: $\lambda_k = 0.5 \ykz$,
-BL: $\lambda_k = 2   \ykz$,
-BR: $\lambda_k = 0.2 \ykz$}
-\label{fig:simprospcostrate05}
-\end{figure}
-
-\begin{figure}
-\includegraphics[width=0.5\textwidth]{br1sim1fig5T}
-\includegraphics[width=0.5\textwidth]{br1sim2fig5T}
-\includegraphics[width=0.5\textwidth]{br1sim3fig5T}
-\includegraphics[width=0.5\textwidth]{br1sim4fig5T}
-\caption{***Simulation study with ***total costrate criterion***, $\tthresh = 0.5$.
-TL: $\lambda_k =     \ykz$,
-TR: $\lambda_k = 0.5 \ykz$,
-BL: $\lambda_k = 2   \ykz$,
-BR: $\lambda_k = 0.2 \ykz$}
-\label{fig:simtotalcostrate05}
-\end{figure}
-
-\begin{figure}
-\includegraphics[width=0.5\textwidth]{br1sim2fig5Tt01}
-\includegraphics[width=0.5\textwidth]{br1sim2fig5Tt02}
-\caption{***Simulation study with ***total costrate criterion***, early failures ($0.5 \times$ MTTF),
-$\tthresh = 0.1$ (left) and $\tthresh = 0.2$ (right).}
-\label{fig:simtotalcostrate0102}
-\end{figure}
-\fi
 
 
 \section{Summary and outlook}
@@ -1940,9 +1733,6 @@ at inspections, leading to interval-censored failure time observations.
 Extending the model to account for interval-censored failure times
 would allow to derive a condition-based maintenance policy with wider-spaced inspections
 by determining the optimal moment for the next inspection of the system.
-%which could also determine the optimal moment for the next inspection of the system.
-%*** extend the model for inspection-based CBM (if no repair necessary, find optimal timing of next inspection),
-%we would need to add interval-censored data (failure has happened between last and current inspection)
 
 Another way to relax the assumption of precise component monitoring
 is to consider unreliable detection of component failures.
@@ -1964,9 +1754,6 @@ Common cause failures can drastically reduce the system reliability
 by leading to sudden system failures.
 To offer a realistic estimation of the optimal time to maintenance $\tausnow$,
 the system RLD $\Rsys(t)$ needs to account for such failures when they are possible.
-%This needs to be implemented on the level of component models,
-%specifically $P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big)$ 
-%(not a product anymore if common-case failures can affect several component types at once).
 When common cause failures can affect several component types at once,
 the joint posterior predictive probabilities $P\Big( \bigcap_{k=1}^K \{ C^k_t = l_k\} \Big)$ in \eqref{eq:sysrel-survsign}
 cannot be obtained as a product of component posterior predictive probabilities any more.
@@ -1984,18 +1771,8 @@ To account for different ages of components at system startup,
 one could introduce artificial component types in \eqref{eq:sysrel-survsign},
 grouping components both by type and by age.
 However, computational complexity increases with the number of component types,
-%and the conceptual algorithmic advantage of the survival signature vanishes
-%when each component forms its own type
 so it seems most promising to replace batches of components,
 or all components of one type.
-%*** study other replacement schemes, e.g., replacing only failed components:
-%when repaired/replaced components are present in system,
-%then one needs to use actual ages (and not time since system startup) in parameter update,
-%introduces new component type for $\Rsysnow(t)$ calculation but with same posterior parameters as unreplaced component type.
-%Repaired/replaced components require the creation of a separate type in the survival signature decomposition
-%and thus the calculation of separate posterior predictive probabilities
-%$P(C^k_t = l_k \mid \nkz,\ykz,\vectknow)$,
-%which use, however, the same hyperparameter learning (using actual component ages) as the `parent type'.
 
 A further simplifying assumption relates to the cost of preventive and corrective replacements,
 which we consider as fixed.
@@ -2007,13 +1784,11 @@ by letting $c_p$ and $c_c$ in \eqref{eq:gtau} depend on $\tau$.
 It will be more complex to account for costs that are dependent on the system state,
 but our approach already provides the necessary information
 in form of the posterior predictive distributions derived in Section~\ref{sec:postpred}.
-%since the calculation of $\Rsysnow(t)$ involves  
 
 Another promising extension would be to use sets of conjugate priors for the component models.
 This approach is described in \cite{2016:walter-coolen},
 leading to sets of residual life distributions $\Rsysnow(t)$.
 Consequently, we would obtain a set of expected operational cycle cost rate functions $\gnow(\tau)$.
-%and this would lead to sets of expected operational cycle cost rate functions $\gnow(\tau)$.
 The determination of the (set of) optimal time(s) to maintenance $\tausnow$
 is then non-trivial,
 and would involve decision criteria discussed in the imprecise probability literature,
